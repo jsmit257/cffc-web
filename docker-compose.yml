@@ -1,0 +1,16 @@
+---
+services:
+  cffc-web:
+    image: cffc-web:latest
+    restart: always
+    hostname: cffc-web
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    ports: [ 8081:80 ]
+    volumes:
+      - ./background/:/www/css/images/background/
+      - ./album:/album
+    environment:
+      - CFFC_API_HOST
+      - CFFC_API_PORT
