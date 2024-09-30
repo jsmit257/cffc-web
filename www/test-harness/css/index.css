@@ -103,33 +103,33 @@ body>.background-image {
   width: 100%;
 }
 
-body>.powered-by {
+body>.main>.footer>.powered-by {
   bottom: 0;
   padding-right: 2em;
   position: fixed;
   right: 0;
 }
 
-body>.powered-by>div {
+body>.main>.footer>.powered-by>div {
   display: inline-block;
   font-style: italic;
   /* line-height: 2em; */
 }
 
-body>.powered-by>ul {
+body>.main>.footer>.powered-by>ul {
   display: inline-block;
   vertical-align: middle;
 }
 
-body>.powered-by>ul .long-text {
+body>.main>.footer>.powered-by>ul .long-text {
   display: none;
 }
 
-body>.powered-by:hover>ul .long-text {
+body>.main>.footer>.powered-by:hover>ul .long-text {
   display: block;
 }
 
-body>.powered-by:hover>ul .short-text {
+body>.main>.footer>.powered-by:hover>ul .short-text {
   display: none;
 }
 

@@ -47,10 +47,8 @@ $(function () {
     })
   })
 
-  $buttonbar.find('>.remove').on('click', e => {
-    if ($(e.currentTarget).hasClass('active')) {
-      $table.trigger('delete', { buttonbar: $buttonbar })
-    }
+  $buttonbar.find('.remove.active').on('click', e => {
+    $table.trigger('delete', { buttonbar: $buttonbar })
   })
 
   $buttonbar.find('>.refresh').on('click', e => {

@@ -1,0 +1,22 @@
+body>.main>.workspace.hide-timestamps .history [sort-key="mtime"],
+body>.main>.workspace.hide-timestamps .history [sort-key="ctime"],
+body>.main>.workspace.hide-timestamps .history [sort-key="dtime"],
+body>.main>.workspace.hide-uuid [sort-key="id"],
+body>.main>.workspace.hide-deleted [dtime] {
+  display: none;
+}
+
+body>.main>.footer>.cookie-bar {
+  bottom: 0;
+  margin-bottom: 1em;
+  position: fixed;
+}
+
+body>.main>.footer>.cookie-bar>label {
+  margin-left: .25em;
+  width: 4em;
+}
+
+body>.main>.footer>.cookie-bar>input {
+  margin-left: .33em;
+}

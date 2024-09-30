@@ -6,6 +6,7 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="./js/index.js" defer></script>
+  <script src="./js/cookiebar.js" defer></script>
   <script src="./js/imageview.js" defer></script>
   <script src="./js/note.js" defer></script>
   <script src="./js/photo.js" defer></script>
@@ -25,6 +26,7 @@
 
   <!-- <link href="jquery-ui.min.css" rel="stylesheet"> -->
   <link href="./css/index.css" rel="stylesheet">
+  <link href="./css/cookiebar.css" rel="stylesheet">
   <link href="./css/imageview.css" rel="stylesheet">
   <link href="./css/note.css" rel="stylesheet">
   <link href="./css/photo.css" rel="stylesheet">
@@ -200,7 +202,7 @@
             <div class="column name" sort-key="name">Name</div>
             <div class="column type">
               <span>Type</span>
-              <select class="types">
+              <select class="type">
                 <option value="plating">Plating</option>
                 <option value="liquid">Liquid</option>
                 <option value="grain">Grain</option>
@@ -316,27 +318,45 @@
         </div>
       </div>
     </div>
-    <div class="footer"></div>
-  </div>
-  <div class="powered-by">
-    <div>Powered by:</div>
-    <ul>
-      <li>
-        <div class="short-text">Huautla</div>
-        <div class="long-text">
-          <a href="https://github.com/jsmit257/huautla">Huautla</a>
-          <a href="https://jsmit257.github.io/huautla">(README)</a>
-        </div>
-      </li>
-      <li>
-        <div class="short-text">CFFC</div>
-        <div class="long-text">
-          <a href="https://github.com/jsmit257/centerforfunguscontrol">CFFC</a>
-          <a href="https://jsmit257.github.io/centerforfunguscontrol">(README)</a>
-          <a href="https://jsmit257.github.io/centerforfunguscontrol/standalone">(Standalone)</a>
-        </div>
-      </li>
-    </ul>
+    <div class="footer">
+      <div class="cookie-bar">
+        <div>Hide:</div>
+        <input type="checkbox" id="hide-deleted">
+        <label for="hide-deleted">deleted</label>
+        <input type="checkbox" id="hide-uuid">
+        <label for="hide-uuid">ID</label>
+        <input type="checkbox" id="hide-timestamps">
+        <label for="hide-timestamps">timestamps</label>
+      </div>
+
+      <div class="powered-by">
+        <div>Powered by:</div>
+        <ul>
+          <li>
+            <div class="short-text">Huautla</div>
+            <div class="long-text">
+              <a href="https://github.com/jsmit257/huautla">Huautla</a>
+              <a href="https://jsmit257.github.io/huautla">(README)</a>
+            </div>
+          </li>
+          <li>
+            <div class="short-text">CFFC</div>
+            <div class="long-text">
+              <a href="https://github.com/jsmit257/centerforfunguscontrol">CFFC</a>
+              <a href="https://jsmit257.github.io/centerforfunguscontrol">(README)</a>
+            </div>
+          </li>
+          <li>
+            <div class="short-text">CFFC-Web</div>
+            <div class="long-text">
+              <a href="https://github.com/jsmit257/cffc-web">CFFC-Web</a>
+              <a href="https://jsmit257.github.io/cffc-web">(README)</a>
+              <a href="https://jsmit257.github.io/cffc-web/standalone">(Standalone)</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
   <div class="template">
     <div class="notes">
@@ -373,6 +393,8 @@
       <div class="columns">
         <div class="column full">Events</div>
         <div class="column eventtype" sort-key="eventtype">Event</div>
+        <div class="column severity" sort-key="severity">Severity</div>
+        <div class="column stage">Stage</div>
         <div class="column temperature">Temp.</div>
         <div class="column humidity">Humidity</div>
         <div class="column mtime" sort-key="mtime">Modified</div>
@@ -380,11 +402,13 @@
       </div>
       <div class="rows" name="event">
         <div class="row hover template">
-          <select class="eventtype"></select>
-          <input class="temperature live" min="0" type="number">
-          <input class="humidity live" type="number" min="0" max="100">
+          <select class="eventtype" disabled="disabled"></select>
+          <div class="severity"></div>
+          <div class="stage"></div>
+          <input class="temperature" type="number" min="0" disabled="disabled">
+          <input class="humidity" type="number" min="0" max="100" disabled="disabled">
           <div class="mtime static date"></div>
-          <div class="mtime static date"></div>
+          <div class="ctime static date"></div>
         </div>
       </div>
       <div class="buttonbar">

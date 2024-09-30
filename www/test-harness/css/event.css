@@ -31,20 +31,40 @@ body>.main>.workspace .table.events>.columns>div,
 body>.main>.workspace .table.events>.rows>.row>div,
 body>.main>.workspace .table.events>.rows>.row>input,
 body>.main>.workspace .table.events>.rows>.row>select {
-  padding-left: 1%;
   text-align: center;
   width: 14%;
 }
 
-body>.main>.workspace .table.events>.columns>div.temperature,
-body>.main>.workspace .table.events>.columns>div.humidity,
+body>.main>.workspace .table.events>.columns>.severity,
+body>.main>.workspace .table.events>.columns>.stage,
+body>.main>.workspace .table.events>.columns>.temperature,
+body>.main>.workspace .table.events>.columns>.humidity,
+body>.main>.workspace .table.events>.rows>.row>.severity,
+body>.main>.workspace .table.events>.rows>.row>.stage,
 body>.main>.workspace .table.events>.rows>.row>.temperature,
 body>.main>.workspace .table.events>.rows>.row>.humidity {
-  width: 10%;
+  width: 12%;
 }
 
 body>.main>.workspace .table.events>.columns>div.eventtype,
 body>.main>.workspace .table.events>.rows>.row>.eventtype {
   overflow: hidden;
-  width: 45%;
+  width: 23%;
+}
+
+body>.main>.workspace .table.events>.rows>.row>.static.date {
+  display: block !important;
+}
+
+body>.main>.workspace .table.events>.rows>.row>select[disabled="disabled"] {
+  appearance: none;
+  color: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+body>.main>.workspace>.generation>.table.events>.rows>.row>.eventtype>option[stage="Colonization"],
+body>.main>.workspace>.generation>.table.events>.rows>.row>.eventtype>option[stage="Majority"],
+body>.main>.workspace>.lifecycle>.table.events>.rows>.row>.eventtype>option[stage="Gestation"] {
+  display: none;
 }

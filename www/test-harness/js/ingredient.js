@@ -1,4 +1,4 @@
-$(function () {
+$(() => {
   var $ingredient = $('body>.main>.workspace>.ingredient')
   var $table = $ingredient.find('>.table>.rows')
   var $buttonbar = $ingredient.find('>.table>.buttonbar')
@@ -47,7 +47,7 @@ $(function () {
     })
   })
 
-  $buttonbar.find('>.remove').on('click', e => {
+  $buttonbar.find('.remove').on('click', e => {
     if ($(e.currentTarget).hasClass('active')) {
       $table.trigger('delete', { buttonbar: $buttonbar })
     }

@@ -1,52 +1,5 @@
 $(_ => {
-  let newEventRow = (data = { event_type: { stage: {} }, mtime: "Now", ctime: "Now" }) => {
-    return $('<div>')
-      .addClass('row hover')
-      .attr('id', data.id)
-      .append($('<div class="eventtype static" />')
-        .html(`${data.event_type.name} &bull; ${data.event_type.severity} &bull; ${data.event_type.stage.name}`))
-      .append($('<select class="eventtype live" />')
-        .data('eventtype_uuid', data.event_type.id)
-        .val(data.event_type.id))
-      .append($('<div class="temperature static" />')
-        .text(data.temperature))
-      .append($('<input class="temperature live" min="0" type="number">')
-        .val(data.temperature))
-      .append($('<div class="humidity static" />').text(data.humidity))
-      .append($('<input class="humidity live" type="number" min="0" max="100">')
-        .val(data.humidity))
-      .append($('<div class="mtime static const date" />')
-        .data('value', data.mtime)
-        .text(data.mtime.replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')))
-      .append($('<div class="ctime static const date" />')
-        .data('value', data.ctime)
-        .text(data.ctime.replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')))
-  }
-
-  let getEventtypes = $events => {
-    let $result
-
-    $.ajax({
-      url: '/eventtypes',
-      method: 'GET',
-      async: false,
-      success: (result, status, xhr) => {
-        let eventtypes = []
-        result.forEach(r => {
-          eventtypes.push($(new Option())
-            .val(r.id)
-            .html(`${r.name} &bull; ${r.severity} &bull; ${r.stage.name}`))
-        })
-        $result = $events
-          .find('>.row.selected>select.eventtype.live')
-          .empty()
-          .append(eventtypes)
-      },
-      error: console.log,
-    })
-
-    return $result
-  }
+  let $rowtmpl = $('body>.template>.events>.rows>.row.template')
 
   $('body>.template>.notes')
     .clone(true, true)
@@ -56,19 +9,86 @@ $(_ => {
     .clone(true, true)
     .insertAfter($('body>.template>.table.events>.rows'))
 
-  $('body>.main>.workspace .table.events>.rows, body>.template>.table>.rows').off('send')
+  $('body>.main>.workspace .events>.rows, body>.template>.events>.rows').off('send')
     .on('send', (e, ...data) => {
-      let $table = $(e.currentTarget).data('events', data)
+      e.stopPropagation()
 
-      $table.empty()
-      data.forEach(d => {
-        $table.append(newEventRow(d))
+      let $table = $(e.currentTarget)
+      let selected = $table.find('>.selected').attr('id')
+
+      $.ajax({
+        url: '/eventtypes',
+        method: 'GET',
+        async: false,
+        success: data => $rowtmpl
+          .find('>.eventtype')
+          .trigger('send', data
+            .sort((a, b) => a.name.localeCompare(b.name))
+          ),
+        error: console.log,
       })
-      $table.find('.row').first().click()
-      $table
-        .data('config')
-        .$eventbar
-        .find('>.remove')[data.length !== 0 ? "addClass" : "removeClass"]('active')
+
+      $table.find('>.row.removable').remove()
+
+      data.forEach(v => {
+        $rowtmpl
+          .clone(true, true)
+          .appendTo($table)
+          .toggleClass('template removable')
+          .trigger('send', v)
+      })
+
+      if ($table.data('config').$eventbar.find('.remove')[data.length > 0
+        ? 'addClass'
+        : 'removeClass'
+      ]('active')
+        .hasClass('active')
+      ) {
+        $table.trigger('select', selected)
+      }
+    })
+    .on('send', '>.row', (e, data) => {
+      e.stopPropagation()
+
+      let $e = $(e.currentTarget).data('row', data).attr('id', data.id)
+
+      $e
+        .find('>select.eventtype')
+        .val(data.event_type.id)
+        .trigger('change')
+      $e.find('>input.temperature').val(data.temperature)
+      $e.find('>input.humidity').val(data.humidity)
+      $e.find('>.mtime').trigger('set', data.mtime)
+      $e.find('>.ctime').trigger('set', data.ctime)
+    })
+    .on('reset', '>.row', (e, data) => {
+      e.stopPropagation()
+
+      let $e = $(e.currentTarget)
+      $e.trigger('send', $e.data('row'))
+    })
+    .on('change', '>.row>select.eventtype', e => {
+      let $e = $(e.currentTarget.parentNode)
+
+      let $opt = $(e.currentTarget).find('option:selected')
+
+      // console.log('changing', e.currentTarget.value)
+      $e.find('>.severity').text($opt.attr('severity'))
+      $e.find('>.stage').text($opt.attr('stage'))
+    })
+    .on('send', '>.row>select.eventtype', (e, ...data) => {
+      e.stopPropagation()
+
+      let $e = $(e.currentTarget)
+        .empty()
+
+      data.forEach(r => {
+        $e.append($(new Option())
+          .attr('stage', r.stage.name)
+          .attr('severity', r.severity)
+          .val(r.id)
+          .text(r.name))
+      })
     })
     .on('initialize', (e, cfg) => {
       let $events = $(e.currentTarget)
@@ -81,75 +101,69 @@ $(_ => {
       $events.data('config', { $eventbar: $eventbar })
 
       $eventbar
-        .on('click', '>.edit', e => {
-          if (!$(e.currentTarget).hasClass('active')) {
-            return
-          }
-          getEventtypes($events)
-            .val($events.find('.selected>.eventtype.live').data('eventtype_uuid'))
-
-          var $modifiedDate = $events.find('.selected>.mtime.static').text("Now")
+        .on('click', '>.edit.active', e => {
+          let $selected = $events.find('>.selected')
+          $selected.find('[disabled="disabled"]').removeAttr('disabled')
+          $selected.find('>.mtime.static').text("Now")
 
           $events.trigger('edit', {
             url: `${cfg.parent}/${$owner.data('record').id}/events`,
             data: $selected => {
               return JSON.stringify({
                 "id": $selected.attr('id'),
-                "temperature": parseFloat($selected.find('>.temperature.live').val()) || 0,
-                "humidity": parseFloat($selected.find('>.humidity.live').val()) || 0,
+                "temperature": parseFloat($selected.find('>.temperature').val()) || 0,
+                "humidity": parseFloat($selected.find('>.humidity').val()) || 0,
                 "event_type": {
-                  "id": $selected.find('>.eventtype.live').val()
+                  "id": $selected.find('>.eventtype').val()
                 },
                 "ctime": new Date($selected.find('>.ctime.static').data('value')).toISOString(),
               })
             },
             success: (data, status, xhr) => { $owner.trigger('send', data) },
-            cancel: _ => { $modifiedDate.trigger('reset') },
+            error: _ => $selected.trigger('reset'),
+            complete: _ => $selected.find('select, input').attr('disabled', 'disabled'),
+            cancel: _ => $selected
+              .trigger('reset')
+              .find('select, input')
+              .attr('disabled', 'disabled'),
             buttonbar: $eventbar
           })
         })
-        .on('click', '>.add', e => {
-          if (!$(e.currentTarget).hasClass('active')) {
-            return
-          }
-          if ($events
-            .trigger('add', {
-              newRow: newEventRow,
-              url: `${cfg.parent}/${$owner.data('record').id}/events`,
-              data: $selected => {
-                return JSON.stringify({
-                  "temperature": parseFloat($selected.find('>.temperature.live').val()) || 0,
-                  "humidity": parseFloat($selected.find('>.humidity.live').val().trim()) || 0,
-                  "event_type": {
-                    "id": $selected.find('>.eventtype.live').val()
-                  },
-                })
-              },
-              success: (data, status, xhr) => { $owner.trigger('send', data) },
-              error: _ => { $events.trigger('remove-selected') },
-              buttonbar: $eventbar
-            })
-            .children()
-            .length === 0
-          ) {
-            cfg.$tablebar.find('.remove').addClass('active')
-          }
-          getEventtypes($events)
+        .on('click', '>.add.active', e => {
+          $events.trigger('add', {
+            newRow: _ => $rowtmpl
+              .clone(true, true)
+              .toggleClass('template removable')
+              .prependTo($events)
+              .find('[disabled="disabled"]')
+              .removeAttr('disabled')
+              .parent()
+              .first()
+              .trigger('send', { event_type: { stage: {} }, mtime: 'Now', ctime: 'Now' }),
+            url: `${cfg.parent}/${$owner.data('record').id}/events`,
+            data: $selected => {
+              return JSON.stringify({
+                "temperature": parseFloat($selected.find('>.temperature').val()) || 0,
+                "humidity": parseFloat($selected.find('>.humidity').val()) || 0,
+                "event_type": {
+                  "id": $selected.find('>.eventtype').val()
+                },
+              })
+            },
+            success: data => $events
+              .find('>.selected')
+              .trigger('send', data.events[0])
+              .find('select, input')
+              .attr('disabled', 'disabled'),
+            error: _ => $events.trigger('remove-selected'),
+            buttonbar: $eventbar
+          })
         })
-        .on('click', '>.remove', e => {
-          if (!$(e.currentTarget).hasClass('active')) {
-            return
-          }
-          if ($events
-            .trigger('delete', {
-              url: `${cfg.parent}/${$owner.data('record').id}/events/${$events.find('.selected').attr('id')}`,
-              buttonbar: $eventbar
-            })
-            .children()
-            .length === 0
-          ) {
-            cfg.$tablebar.find('.remove').addClass('active')
-          }
+        .on('click', '.remove.active', e => {
+          $events.trigger('delete', {
+            url: `${cfg.parent}/${$owner.data('record').id}/events/${$events.find('.selected').attr('id')}`,
+            buttonbar: $eventbar
+          })
         })
         .trigger('subscribe', {
           clazz: 'notes',

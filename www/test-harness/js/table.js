@@ -15,38 +15,10 @@ $(function () {
         .find(`.buttonbar>.${btn}`)
         .click()
     })
-    .on('click', '>.row', e => {
-      var $row = $(e.currentTarget)
-
-      if ($row.hasClass('selected')) {
-        e.stopPropagation()
-        return false
-      }
-
-      $row
-        .parents('.table')
-        .first()
-        .find('.buttonbar')
-        .trigger('reset')
-
-      $row
-        .parent()
-        .find('.row.selected')
-        .removeClass('selected editing')
-
-      $row.addClass('selected')
-    })
-    .on('dblclick', '>.row', e => {
-      $(e.currentTarget)
-        .parents('.table')
-        .first()
-        .find('.buttonbar>.edit')
-        .click()
-    })
     .on('remove-selected', e => {
-      var $selected = $(e.currentTarget).find('>.selected')
-      if ($selected.next().trigger('click').length == 0) {
-        $selected.prev().trigger('click')
+      let $selected = $(e.currentTarget).find('>.selected')
+      if ($selected.next('.row:not(.template)').trigger('click').length == 0) {
+        $selected.prev('.row:not(.template)').trigger('click')
       }
       $selected.remove()
     })
@@ -86,6 +58,34 @@ $(function () {
         error: args.error || console.log
       })
     })
+    .on('click', '>.row:not(.template)', e => {
+      let $row = $(e.currentTarget)
+
+      if ($row.hasClass('selected')) {
+        e.stopPropagation()
+        return false
+      }
+
+      $row
+        .parents('.table')
+        .first()
+        .find('.buttonbar')
+        .trigger('reset')
+
+      $row
+        .parent()
+        .find('.row.selected')
+        .removeClass('selected editing')
+
+      $row.addClass('selected')
+    })
+    .on('dblclick', '>.row:not(.template)', e => {
+      $(e.currentTarget)
+        .parents('.table')
+        .first()
+        .find('.buttonbar>.edit')
+        .click()
+    })
     .on('send', '>.row', (e, data = { mtime: 'Now', ctime: 'Now' }) => {
       let $row = $(e.currentTarget)
 
@@ -96,19 +96,20 @@ $(function () {
       $row.find('>.ctime').trigger('set', data.ctime)
     })
     .on('add', (e, args) => {
-      var $table = $(e.currentTarget)
+      let $table = $(e.currentTarget)
 
-      var $row = args.newRow()
-        .trigger('click')
-        .addClass('selected editing')
-      var $selected = $table
+      let $selected = $table
         .find('.selected')
         .removeClass('selected editing')
-      if ($selected.length === 0) {
-        $table.append($row)
-      } else {
+
+      let $row = args.newRow()
+        .prependTo($table)
+        .addClass('selected editing')
+
+      if ($selected.length !== 0) {
         $row.insertBefore($selected)
       }
+
       $row.find('input, select')
         .first()
         .focus()
@@ -116,9 +117,11 @@ $(function () {
       args.buttonbar.trigger('set', {
         "target": $table,
         "handlers": {
-          "cancel": e => { $table.trigger('remove-selected') },
+          "cancel": e => {
+            $table.trigger('remove-selected')
+          },
           "ok": args.ok || (e => {
-            var $selected = $table.find('.selected')
+            let $selected = $table.find('.selected')
             $.ajax({
               url: args.url || `/${$table.attr('name')}`,
               contentType: 'application/json',
@@ -126,7 +129,6 @@ $(function () {
               dataType: 'json',
               data: args.data($selected),
               async: true,
-              // async: typeof (args.async) === 'undefined' ? true : args.async,
               success: (result, status, xhr) => {
                 args.success(result, status, xhr)
                 if ($table.children().length > 0) {
@@ -140,7 +142,7 @@ $(function () {
       })
     })
     .on('edit', (e, args) => {
-      var $table = $(e.currentTarget)
+      let $table = $(e.currentTarget)
       $table
         .find('.row.selected')
         .addClass('editing')
@@ -153,31 +155,35 @@ $(function () {
         "handlers": {
           "cancel": args.cancel || console.log,
           "ok": args.ok || (e => {
-            var $selected = $table.find('.selected')
+            let $selected = $table.find('.selected')
+            let data = args.data($selected)
+            delete args.data
             $.ajax({
-              url: args.url || `/${$table.attr('name')}/${$selected.find('>.uuid').text()}`,
-              contentType: 'application/json',
-              method: 'PATCH',
-              dataType: 'json',
-              data: args.data($selected),
-              async: false,
-              success: args.success,
-              error: args.error || console.log,
+              ...{
+                url: `/${$table.attr('name')}/${$selected.attr('id')}`,
+                contentType: 'application/json',
+                method: 'PATCH',
+                dataType: 'json',
+                data: data,
+                async: true,
+                success: console.log,
+                error: console.log,
+              },
+              ...args,
             })
           })
         }
       })
     })
     .on('delete', (e, args) => {
-      var $table = $(e.currentTarget)
+      let $table = $(e.currentTarget)
       $.ajax({
-        url: args.url || `/${$table.attr('name')}/${$table.find('.selected>.uuid').text()}`,
+        url: args.url || `/${$table.attr('name')}/${$table.find('.selected').attr('id')}`,
         contentType: 'application/json',
         method: 'DELETE',
         async: false,
         success: (result, status, xhr) => {
           $table.trigger('remove-selected')
-          args.buttonbar.find('.remove, .edit')[$table.children().length === 0 ? "removeClass" : "addClass"]('active')
         },
         error: console.log,
       })
@@ -188,5 +194,13 @@ $(function () {
           .find(`.static.${key}`)
           .sort((a, b) => (order === 'sort-desc' ? -1 : 1) * a.innerText.localeCompare(b.innerText))
           .map((_, x) => $(x).parent()))
+    })
+    .on('select', (e, id) => {
+      e.stopPropagation()
+
+      let $e = $(e.currentTarget)
+      if ($e.find(`.row#${id}`).click().length === 0) {
+        $e.children('.removable').first().click()
+      }
     })
 })
