@@ -1,0 +1,160 @@
+.photoing>.buttonbar>.stdctrl,
+.noting>.buttonbar>.stdctrl {
+  visibility: hidden;
+}
+
+body>.main>.workspace .table>.buttonbar {
+  background-image: linear-gradient(0, #fff3, transparent 80%);
+  border-radius: 0 0 10px 10px;
+  float: left;
+  height: 1.7em;
+  padding-top: .3em;
+  position: relative;
+  width: 100%;
+}
+
+.buttonbar>.bumper {
+  float: right;
+  margin-left: 10%;
+}
+
+.button {
+  background-image: radial-gradient(#999, #777, #555);
+  background-repeat: no-repeat;
+  border-radius: .75em;
+  border-style: none;
+  cursor: not-allowed;
+  float: right;
+  margin-right: .5em;
+  opacity: .4;
+  text-align: center;
+}
+
+.button.active {
+  opacity: .8;
+  cursor: pointer;
+}
+
+.button.active:hover {
+  opacity: 1;
+}
+
+.button>.icon {
+  background-image: url(images/button-sprites.png);
+  height: 1.4em;
+  width: 1.4em;
+}
+
+.buttonbar>.remove.button {
+  float: left;
+  margin-left: .5em;
+}
+
+/* 
+ * background colors 
+ */
+.action.button {
+  background-image: radial-gradient(#37da37, transparent);
+}
+
+.add.button {
+  background-image: radial-gradient(#8d8df3, transparent);
+}
+
+.back.button {
+  background-image: radial-gradient(#8b94e8, transparent);
+}
+
+.editing .action.button,
+.cancel.button {
+  background-image: radial-gradient(#ffffff, transparent 80%);
+}
+
+/*&check;*/
+.edit.button {
+  background-image: radial-gradient(#8cf, transparent);
+}
+
+.genlink.button {
+  background-image: radial-gradient(#3caaac, transparent);
+}
+
+.notes.button {
+  background-image: radial-gradient(#dd55ff, transparent);
+}
+
+.editing .commit.button,
+.ok.button {
+  background-image: radial-gradient(#04ff25, transparent);
+}
+
+.photos.button {
+  background-image: radial-gradient(#f1ad2d, transparent);
+}
+
+.refresh.button {
+  background-image: radial-gradient(#0f0, transparent);
+}
+
+.commit.button,
+.remove.button {
+  background-image: radial-gradient(#ed1e1e 30%, transparent);
+}
+
+.report.button {
+  background-image: radial-gradient(#7ad9ff, transparent);
+}
+
+/* 
+ * icon placements 
+ */
+.action.button>.icon {
+  background-position: -680px -481px;
+}
+
+.add.button>.icon {
+  background-position: -410px -229px;
+}
+
+.back.button>.icon {
+  background-position: -692px -54px;
+}
+
+.editing .action.button>.icon,
+.cancel.button>.icon {
+  background-position: -725px -193px;
+}
+
+.edit.button>.icon {
+  background-position: -620px -228px;
+}
+
+.genlink.button>.icon {
+  background-position: -411px -54px;
+}
+
+.notes.button>.icon {
+  background-position: -621px -54px;
+}
+
+.editing .commit.button>.icon,
+.ok.button>.icon {
+  background-position: -635px -482px;
+}
+
+.photos.button>.icon {
+  background-position: -445px -89px;
+}
+
+.refresh.button>.icon {
+  background-position: -724px -54px;
+}
+
+.commit.button>.icon,
+.remove.button>.icon {
+  background-position: -445px -158px;
+}
+
+.report.button>.icon {
+  background-position: -550px -123px;
+}

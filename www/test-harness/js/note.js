@@ -79,8 +79,8 @@ $(_ => {
 
       $row.attr('id', data.id)
       $row.find('>.note').val(data.note)
-      $row.find('>.mtime').trigger('set', data.mtime)
-      $row.find('>.ctime').trigger('set', data.ctime)
+      $row.find('>.mtime').trigger('format', data.mtime)
+      $row.find('>.ctime').trigger('format', data.ctime)
     })
     .on('click', '>.rows>.row>div.action', e => {
       e.stopPropagation()

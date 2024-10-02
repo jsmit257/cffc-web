@@ -1,19 +1,13 @@
-$(function () {
-  let newNdxRow = (data) => {
-    return $('<div>')
-      .addClass('row hover')
-      .attr('id', data.id)
-      .append($('<div>')
-        .addClass('lineage static')
-        .text(
-          (sources => {
-            let result = []
-            sources.forEach(s => {
-              result.push(s.strain.name)
-            })
-            return `${result.join(' + ')} - ${new Date(data.ctime).toLocaleString()}`
-          })(data.sources)))
-  }
+$(_ => {
+
+  $('.rows[name="editor"]>.field>.progeny').on('send', (e, ...data) => {
+    e.stopPropagation()
+
+    $(e.currentTarget)
+      .prepend($('<option>')
+        .addClass('null-pointer')
+        .text('-- None --'))
+  })
 
   let $generation = $('body>.main>.workspace>.generation')
     .on('activate', (e, selected) => {
@@ -21,128 +15,97 @@ $(function () {
         selected = $ndx.find('>.selected').attr('id')
       }
 
-      $.ajax({
-        url: '/strains',
-        method: 'GET',
-        async: true,
-        success: (result = [{ id: "No Strains found" }], status, xhr) => {
-          let $progeny = $generation
-            .find('select.progeny.strain-list')
-            .empty()
-            .append($('<option>')
-              .addClass('null-pointer')
-              .text('-- None --'))
-
-          let $strains = $generation
-            .find('select[name=strains].strain-list')
-            .empty()
-
-          result.forEach(s => {
-            let $o = $('<option>')
-              .data('record', s)
-              .val(s.id)
-
-            let gid = {}
-            if (s.generation !== undefined) {
-              gid.gid = s.generation.id
-            }
-
-            $o
-              .clone(true, true)
-              .attr(gid)
-              .appendTo($progeny)
-              .trigger('long-format', s)
-            $o.clone(true, true).appendTo($strains).trigger('long-format', s)
+      $('select[url="strains"]')
+        .on('attrs', '>option', (e, s) => $(e.currentTarget)
+          .attr({
+            gid: (s.generaton || {}).id,
+            dtime: s.dtime,
           })
-        },
-        error: console.log,
-      })
+          .data('record', s)
+          .trigger('strain-format', s))
+        .trigger('refresh')
 
-      $.ajax({
-        url: `/lifecycles`,
-        method: 'GET',
-        async: true,
-        success: (result = [{ id: 'No Lifecycles found' }], status, xhr) => {
-          let $lcs = $source.find('select[name="lcs"]').empty()
-          result.forEach(v => {
-            $lcs
-              .append($('<option>')
-                .val(v.id)
-                .text(`${v.location || v.id} | ${(v.mtime || '').replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')}`)
-                .data('record', v))
-          })
-        },
-        error: console.log,
-      })
+      $('select[url="lifecycles"]')
+        .on('attrs', '>option', (e, lc) => $(e.currentTarget)
+          .data('record', lc)
+          .text(`${lc.location || lc.id} | ${(lc.mtime || '?').replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')}`))
+        .trigger('refresh')
 
-      $.ajax({
-        url: '/substrates',
-        method: 'GET',
-        async: true,
-        success: (result, status, xhr) => {
-          var substrates = { bulk: [], grain: [], liquid: [], plating: [] }
-          result.forEach(r => {
-            substrates[r.type]
-              .push($('<option>')
-                .val(r.id)
-                .text(`${r.name} | Vendor: ${r.vendor.name}`)
-                .data('record', r))
-          })
-          $gentable
-            .find('>.row.plating>select.value')
-            .empty()
-            .append(substrates.plating)
+      $('select[url="substrates"]')
+        .on('attrs', '>option', (e, s) => $(e.currentTarget)
+          .data('record', s)
+          .trigger('substrate-format', s))
+        .trigger('refresh')
 
-          $gentable
-            .find('.row.liquid>select.value')
-            .empty()
-            .append(substrates.liquid)
-        },
-        error: console.log,
-      })
-
-      $source.find('>.src-ctl').addClass('active') // wtaf?!
-
-      $ndx.trigger('refresh', { newRow: newNdxRow, buttonbar: $tablebar })
+      $ndx.trigger('refresh')
 
       setTimeout(_ => {
         $ndx.find(`>.row#${selected}:not(.selected)`).click()
       }, 50)
     })
-    .on('select', (e, gid) => { $ndx.find(`.row#${gid}`).click() })
+    .on('select', (e, gid) => $ndx.find(`.row#${gid}`).click())
 
+  let $ndx = $generation.find('>.table.generation>.rows[name="generation"]')
+    .on('refresh', _ => $gentable.removeClass('editing adding'))
+    .on('send', '>.row', (e, data = {}) => {
+      e.stopPropagation()
+
+      $(e.currentTarget)
+        .attr('dtime', data.dtime)
+        .find('>.lineage')
+        .text((sources => (($(sources || [])
+          .map((_, v) => v.strain.name)
+          .get()
+          .join(' + ')) || 'None') + ` - ${new Date(data.ctime).toLocaleString()}`)(data.sources))
+    })
+    .on('click', '>.row', e => {
+      if (e.isPropagationStopped()) {
+        return false
+      }
+
+      $gentable.trigger('refresh', { url: `/generation/${$(e.currentTarget).attr('id')}` })
+    })
 
   let $gentable = $generation.find('>.table.generation>.rows[name="editor"]')
-    .off('refresh').off('add').off('edit').off('click').off('send')
-    .on('send', (e, data = { plating_substrate: {}, liquid_substrate: {}, mtime: 'Now', ctime: 'Now' }) => {
+    .off('click').off('send')
+    .on('refresh', e => $(e.currentTarget)
+      .find('>.field>.progeny')
+      .trigger('activate', $ndx.find('.selected').attr('id')))
+    .on('send', (e, data = {
+      plating_substrate: { vendor: {} },
+      liquid_substrate: { vendor: {} },
+      mtime: 'Now',
+      ctime: 'Now',
+    }) => {
       let $g = $(e.currentTarget)
 
-      $g.attr('id', data.id)
-      $g.find('>.row.plating>select').val(data.plating_substrate.id)
-      $g.find('>.row.liquid>select').val(data.liquid_substrate.id)
-      $g.find('>.row.mtime>.static.date').trigger('set', data.mtime)
-      $g.find('>.row.ctime>.static.date').trigger('set', data.ctime)
+      $g
+        .data('record', data)
+        .attr('id', data.id)
+        .parent()
+        .addClass('selecting') // gets removed on column.click
+        .find('>.columns>.column.full')
+        .text($ndx.find('>.selected>.lineage').text())
+        .trigger('click')
+
+      $g.find('>.field>.plating').val(data.plating_substrate.id)
+      $g.find('>.field>.liquid').val(data.liquid_substrate.id)
+      $g.find('>.field>.substrate').prop('disabled', true)
+      $g.find('>.field>.mtime').trigger('format', data.mtime)
+      $g.find('>.field>.ctime').trigger('format', data.ctime)
 
       $sources.trigger('send', data.sources)
+
       $events.trigger('send', data.events)
-    })
-    .on('refresh', (e, gid) => {
-      $.ajax({
-        url: `/generation/${gid}`,
-        method: 'GET',
-        async: true,
-        success: (result, status, xhr) => { $gentable.trigger('send', result) },
-        error: console.log,
-      })
     })
     .on('resend', e => {
       $(e.currentTarget)
         .removeClass('editing adding')
         .trigger('send', $(e.currentTarget).data('record'))
-        .find('>.row>select:not(.progeny)')
-        .attr('disabled', true)
+        .find('>.field>select.substrate')
+        .prop('disabled', true)
     })
-    .on('change', '>.row.strain>.progeny', e => {
+    .on('change', '>.field>.progeny', e => {
       let $p = $(e.currentTarget)
       let curr = $p.attr('curr-id')
       let val = $p.val()
@@ -164,14 +127,13 @@ $(function () {
         })
       }
 
-      let $row = $p.parents('.row.strain').first()
+      let $row = $p.parent()
       if (val === $p.children().first().text()) {
         $row.removeClass('link')
         return
       }
 
-      $row.addClass('link')
-      url = `${url}/${$row.parents('.rows').first().attr('id')}`
+      url = `${url}/${$row.attr('id')}`
 
       $.ajax({
         url: url,
@@ -183,13 +145,15 @@ $(function () {
             .find(`option[value=${val}]`)
             .attr({
               disabled: true,
-              gid: $row.parents('.rows').first().attr('id'),
+              gid: $row.attr('id'),
             })
+
+          $row.addClass('link')
         },
         error: console.log,
       })
     })
-    .on('activate', '>.row.strain>.progeny', (e, gid) => {
+    .on('activate', '>.field>.progeny', (e, gid) => {
       e.stopPropagation()
 
       $.ajax({
@@ -200,7 +164,8 @@ $(function () {
           let $link = $(e.currentTarget)
             .removeAttr('curr-id')
             .val(strain.id || $(e.currentTarget).children().first().text())
-            .parents('.row.strain')
+            .parents('.field')
+            .first()
             .removeClass('link')
 
           if (strain.id) {
@@ -211,112 +176,75 @@ $(function () {
         error: (xhr, status, err) => { console.log('error', xhr, status, err) },
       })
     })
-    .on('click', '>.row.strain.link>.label', e => {
+    .on('click', '>.field.link>.label', e => {
       e.stopPropagation()
 
       $('body>.main>.header>.menuitem[name=strain]')
         .trigger('click', $(e.delegateTarget)
-          .find('>.row.strain.link>select.progeny')
+          .find('>.field.link>select.progeny')
           .attr('curr-id'))
+    })
+
+  $gentable.parents('.table.generation')
+    .on('click', '>.columns>.column.full', e => {
+      $(e.delegateTarget)
+        .removeClass('noting')
+        .toggleClass('selecting')
     })
 
   let $tablebar = $generation.find('>.table.generation>.buttonbar')
     .on('click', '.edit.active', e => {
+      let id = $gentable.attr('id')
+      let cleanup = _ => $gentable.removeClass('editing').trigger('resend')
       $gentable
         .addClass('editing')
-        .find('>.row>select:not(.progeny)')
-        .attr('disabled', false)
-
-      $tablebar.trigger('set', {
-        "target": $gentable,
-        "handlers": {
-          "cancel": e => { $gentable.trigger('resend') },
-          "ok": e => {
-            let id = $gentable.attr('id')
-            $.ajax({
-              url: `/generation/${id}`,
-              method: 'PATCH',
-              async: true,
-              data: JSON.stringify({
-                id: id,
-                plating_substrate: { id: $gentable.find('>.plating>select').val() },
-                liquid_substrate: { id: $gentable.find('>.liquid>select').val() },
-                ctime: $gentable.find('>.mtime>.static.date').data('value'),
-              }),
-              success: (result, status, xhr) => {
-                $gentable
-                  .removeClass('editing')
-                  .trigger('send', {
-                    ...$gentable.data('record'),
-                    ...result,
-                  })
-              },
-              error: (xhr, status, err) => {
-                console.log(xhr, status, err)
-                $gentable.trigger('resend')
-              },
-            })
-          }
-        }
-      })
+        .trigger('edit', {
+          url: `/generation/${id}`,
+          cancel: _ => $gentable.trigger('resend'),
+          data: _ => JSON.stringify({
+            id: id,
+            plating_substrate: { id: $gentable.find('>.field>.plating').val() },
+            liquid_substrate: { id: $gentable.find('>.field>.liquid').val() },
+          }),
+          success: data => $gentable
+            .removeClass('editing')
+            .trigger('send', {
+              ...$gentable.data('record'),
+              ...data,
+              ctime: $gentable.find('>.field>.ctime').text(),
+            }),
+          error: cleanup,
+        })
+        .find('>.field>select.progeny')
+        .prop('disabled', false)
     })
     .on('click', '.add.active', e => {
+      let cleanup = _ => $ndx.trigger('refresh')
       $gentable
         .addClass('adding')
         .trigger('send')
-        .find('>div>select[disabled]')
-        .attr('disabled', false)
-
-      $tablebar.trigger('set', {
-        "target": $gentable,
-        "handlers": {
-          "cancel": e => { $gentable.trigger('resend') },
-          "ok": e => {
-            $.ajax({
-              url: '/generation',
-              method: 'POST',
-              async: true,
-              data: JSON.stringify({
-                plating_substrate: { id: $gentable.find('>.plating>select').val() },
-                liquid_substrate: { id: $gentable.find('>.liquid>select').val() },
-              }),
-              success: (result, status, xhr) => {
-                $gentable
-                  .trigger('send', result)
-                  .find('>div>select')
-                  .attr('disabled', true)
-                $sources.attr('source-type', 'spore')
-              },
-              error: (xhr, status, err) => {
-                console.log(xhr, status, err)
-                $gentable.trigger('resend')
-              },
-              complete: (xhr, status) => {
-                $gentable.removeClass('adding')
-              }
-            })
-          }
-        }
-      })
+        .trigger('add', {
+          url: '/generation',
+          cancel: cleanup,
+          data: _ => JSON.stringify({
+            plating_substrate: { id: $gentable.find('>.field>.plating').val() },
+            liquid_substrate: { id: $gentable.find('>.field>.liquid').val() },
+          }),
+          success: data => $gentable
+            .removeClass('adding')
+            .trigger('send', data)
+            .find('>div>select')
+            .attr('disabled', true),
+          error: cleanup,
+        })
+        .find('select[disabled]')
+        .prop('disabled', false)
     })
-    .on('click', '.remove.active', e => {
-      $.ajax({
-        url: `/generation/${$gentable.attr('id')}`,
-        method: 'DELETE',
-        async: true,
-        success: (result, status, xhr) => {
-          $ndx.trigger('refresh', { newRow: newNdxRow, buttonbar: $tablebar })
-        },
-        error: console.log,
-      })
-    })
+    .on('click', '.remove.active', e => $gentable
+      .trigger('delete', `/generation/${$gentable.attr('id')}`))
     .on('click', '.refresh', e => {
       $gentable.removeClass('editing')
-
-      $ndx
-        .find('>.row.selected')
-        .removeClass('selected')
-        .click()
+      $ndx.trigger('refresh')
     })
     .trigger('subscribe', {
       clazz: 'notes',
@@ -342,77 +270,32 @@ $(function () {
       }
     })
 
-  let $ndx = $generation
-    .find('>.table.generation>.rows[name="generation"]')
-    .on('click', '>.row', e => {
-      if (e.isPropagationStopped()) {
-        return false
-      }
-      var $row = $(e.currentTarget)
-      $.ajax({
-        url: '/generation/' + $row.attr('id'),
-        method: 'GET',
-        async: true,
-        success: (result, status, xhr) => {
-          $gentable
-            .trigger('send', result)
-            .data('record', result)
-            .parents('.table.generation')
-            .first()
-            .addClass('selecting') // gets removed on column.click
-            .find('>.columns>.column.full')
-            .text($row.find('.lineage').text())
-            .trigger('click')
-
-          $gentable
-            .find('>.row.strain>.progeny')
-            .trigger('activate', $row.attr('id'))
-        },
-        error: console.log,
-      })
-    })
-
-  let $events = $('body>.template>.table.events')
-    .clone(true, true)
-    .appendTo($generation)
-    .find('>div.rows')
-    .on('send', (e, ...ev) => {
-      // $tablebar.find('.remove')[((ev ||= []).length !== 0 ? "removeClass" : "addClass")]('active')
-    })
-    .trigger('initialize', {
-      parent: 'generation',
-      $owner: $gentable,
-      // $tablebar: $tablebar,
-    })
-
-  let $notes = $('body>.template>.notes')
-    .clone(true, true)
-    .insertAfter($gentable)
-
-  let $sources = $gentable.find('>.row.sources')
-  let $source = $sources.children().first()
-
-  $gentable.parents('.table.generation')
-    .on('click', '>.columns>.column.full', e => {
-      $(e.delegateTarget)
-        .removeClass('noting')
-        .toggleClass('selecting')
-    })
-
-  $sources
+  let $sources = $generation.find('>.table.generation>.rows.sources')
+    .off('refresh')
+    .off('send')
+    .on('refresh', e => $(e.currentTarget)
+      .trigger('send', $(e.currentTarget).data('rows')))
     .on('send', (e, ...data) => {
       e.stopPropagation()
 
-      $(e.currentTarget).find('>.source.removable').remove()
+      $(e.currentTarget)
+        .removeAttr('source-type')
+        .data('rows', data)
+        .find('>.removable')
+        .remove()
 
-      data.forEach(s => {
-        let $s = $source
-          .clone(true, true)
-          .insertBefore($(e.delegateTarget).find('.add-source'))
-          .toggleClass('removable template')
-          .data('record', s)
-          .trigger('send', s)
-      })
+      data.forEach(s => $source
+        .clone(true, true)
+        .insertBefore($(e.delegateTarget).find('.add-source'))
+        .toggleClass('removable template')
+        .data('record', s)
+        .trigger('send', s))
+
+      $tablebar
+        .find('>.buttonbar>.remove, >.buttonbar>.edit')[data.length > 0
+          ? 'addClass'
+          : 'removeClass'
+      ]('active')
     })
     .on('click', '.add-source', e => {
       let $curr = $source
@@ -420,16 +303,19 @@ $(function () {
         .insertBefore($(e.delegateTarget).find('.add-source'))
         .toggleClass('removable editing adding template')
 
-      $curr.find('>select').attr('disabled', false)
+      $curr.find('>select').prop('disabled', false)
       $curr.find('>select[name="type"]').val('spore').trigger('change')
       $curr.find('>select[name="origin"]').val('strain').trigger('change')
     })
 
-    .find('>.source')
+  let $source = $sources.find('>.source.template')
     .on('send', (e, data = {}) => {
       e.stopPropagation()
 
-      let $s = $(e.currentTarget).attr('id', data.id)
+      let $s = $(e.currentTarget)
+        .data('record', data)
+        .attr('id', data.id)
+
       let strainsource = typeof data.lifecycle === 'undefined'
 
       $s.find('>select[name="origin"]')
@@ -455,20 +341,20 @@ $(function () {
       $(e.currentTarget)
         .trigger('send', $(e.currentTarget).data('record'))
         .find('select')
-        .attr('disabled', true)
+        .prop('disabled', true)
     })
-
     .on('change', '>select[name="origin"]', e => {
       $(e.delegateTarget).attr("source-origin", $(e.currentTarget).val())
     })
-    .on('change', '>select[name="lcs"]', e => {
-      $(e.currentTarget)
-        .parents('.source')
+    .on('change', '>select[name="type"]', e => {
+      $(e.delegateTarget)
+        .parents('.sources')
         .first()
-        .find('>.progenitor>select[name="progenitor"]')
-        .trigger('events', $(e.currentTarget).val())
+        .attr('source-type', $(e.currentTarget).val())
     })
-    .on('events', '>.progenitor>select[name="progenitor"]', (e, p) => {
+    .on('events', '>select[name="progenitor"]', (e, p) => {
+      e.stopPropagation()
+
       let $e = $(e.currentTarget).empty()
 
       $.ajax({
@@ -495,24 +381,24 @@ $(function () {
         error: console.log,
       })
     })
-    .on('change', '>select[name="type"]', e => {
+    .on('change', '>select[name="lcs"]', e => {
+      e.stopPropagation()
+
       $(e.delegateTarget)
-        .parents('.sources')
-        .first()
-        .attr('source-type', $(e.currentTarget).val())
+        .find('select[name="progenitor"]')
+        .trigger('events', $(e.currentTarget).val())
     })
-    .on('click', '>div.action', e => {
+    .on('click', '>.buttonbox>.action', e => {
       let $src = $(e.delegateTarget)
       if ($src.toggleClass('editing').hasClass('adding')) {
         $src.remove()
-        return
       } else if ($src.hasClass('editing')) {
         $src.find('select').attr('disabled', false)
       } else {
         $src.trigger('resend')
       }
     })
-    .on('click', '>div.commit', e => {
+    .on('click', '>.buttonbox>.commit', e => {
       let $src = $(e.delegateTarget)
       let type = $src.find('>select[name="type"]').val()
       let method = 'POST'
@@ -525,7 +411,7 @@ $(function () {
         url = `${url}/${$src.attr('source-origin')}`
         other.data = JSON.stringify({
           ...$src
-            .find('>.progenitor>select[name="progenitor"]>option:selected')
+            .find('>select[name="progenitor"]>option:selected')
             .data('record'),
           strain: $src
             .find('>select[name="strains"]>option:selected')
@@ -548,7 +434,7 @@ $(function () {
               .data('record'),
             events: [
               $src
-                .find('>.progenitor>select[name="progenitor"]>option:selected')
+                .find('>select[name="progenitor"]>option:selected')
                 .data('record'),
             ]
           }
@@ -566,18 +452,32 @@ $(function () {
       }
 
       $.ajax({
-        ...{
-          url: url,
-          method: method,
-          async: true,
-          success: console.log,
-          error: (xhr, status, err) => {
-            console.log(status, err, xhr)
-            $src.trigger('resend')
-          },
-          complete: _ => { $src.removeClass('adding editing') }
+        url: url,
+        method: method,
+        async: true,
+        success: console.log,
+        error: (xhr, status, err) => {
+          console.log(status, err, xhr)
+          $src.trigger('resend')
         },
+        complete: _ => { $src.removeClass('adding editing') },
         ...other,
       })
     })
+
+  let $events = $('body>.template>.table.events')
+    .clone(true, true)
+    .appendTo($generation)
+    .find('>div.rows')
+    .on('send', (e, ...ev) => {
+      $tablebar.find('.remove')[((ev ||= []).length !== 0 ? "removeClass" : "addClass")]('active')
+    })
+    .trigger('initialize', {
+      parent: 'generation',
+      $owner: $gentable,
+    })
+
+  let $notes = $('body>.template>.notes')
+    .clone(true, true)
+    .insertAfter($gentable)
 })

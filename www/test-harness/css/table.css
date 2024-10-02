@@ -20,52 +20,36 @@ body>.main>.workspace>div .table>.rows {
   overflow-y: auto;
 }
 
-body>.main>.workspace>div .table>.rows>.row {
+body>.main>.workspace>div .table>.rows>.row,
+body>.main>.workspace>div .table>.rows>.row>.field,
+body>.main>.workspace>div .table>.rows>.field {
   border-radius: 0px;
   float: left;
   position: relative;
   width: 100%;
 }
 
-body>.main>.workspace>div .table>.rows>.row>input,
-body>.main>.workspace>div .table>.rows>.row>select,
-body>.main>.workspace>div .table>.rows>.row>div {
+body>.main>.workspace>div .table>.rows div {
   float: left;
-  overflow: hidden;
 }
 
 body>.main>.workspace>div .table>.rows>.row>.website,
-body>.main>.workspace>div .table>.rows>.row>.static.date {
+body>.main>.workspace>div .table>.rows>.row>.date,
+body>.main>.workspace>div .table>.rows>.field>.short-date {
   text-align: center;
 }
 
-body>.main>.workspace>div .table>.rows>.row input,
-body>.main>.workspace>div .table>.rows>.row select {
+body>.main>.workspace>div .table>.rows input,
+body>.main>.workspace>div .table>.rows select {
   background-color: inherit;
   border-style: none;
   color: inherit;
+  float: left;
   font-size: inherit;
+  overflow: hidden;
 }
 
-body>.main>.workspace>div .table>.rows>.row>.live {
-  display: none;
-}
-
-body>.main>.workspace>div .table>.rows.editing>.row>.live,
-body>.main>.workspace>div .table>.rows>.row.editing>.live {
-  display: revert;
-}
-
-body>.main>.workspace>div .table>.rows.editing>.row>.static,
-body>.main>.workspace>div .table>.rows>.row.editing>.static {
-  display: none;
-}
-
-body>.main>.workspace>div .table>.rows.editing>.row>.static.const,
-body>.main>.workspace>div .table>.rows>.row.editing>.static.const {
-  display: block !important;
-}
-
+body>.main>.workspace>div .table>.rows>.field option,
 body>.main>.workspace>div .table>.rows>.row option {
   background-color: #004050;
 }

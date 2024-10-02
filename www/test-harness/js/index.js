@@ -1,11 +1,11 @@
-$(function () {
+$(_ => {
   let previous = {}
   let rownames = ['main', 'ancillary', 'reporting'/*,'analytics*/]
   let changerow = ((len) => {
     return (curr, dir) => { return rownames[(len + rownames.indexOf(curr) + Number(dir)) % len] }
   })(rownames.length)
 
-  let $menubar = $('body>.main>.header')
+  $('body>.main>.header')
     .on('click', '>.menuitem:not(.selected)', (e, data) => {
       let $t = $(e.currentTarget).addClass('selecting')
       let row = $(e.delegateTarget).attr('menu-row')
@@ -15,7 +15,7 @@ $(function () {
         .parent()
         .find('>.workspace')
 
-      $menubar
+      $(e.delegateTarget)
         .find('>.menuitem.selected')
         .removeClass('selected')
 
@@ -70,22 +70,24 @@ $(function () {
     })
 
   $(document.body)
-    .on('set', '.static.date', (e, d) => {
-      $(e.currentTarget)
-        .data('value', d)
-        .text(d.replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, ''))
-    })
-    .on('reset', '.static.date', e => {
-      $(e.currentTarget).text(
-        $(e.currentTarget)
-          .data('value')
-          .replace('T', ' ')
-          .replace(/:\d{1,2}(\..+)?Z.*/, ''))
-    })
     .on('error-message', (e, ...data) => {
       console.log('data', ...data)
     })
-    .on('long-format', 'select.strain-list>option', (e, s) => {
-      $(e.currentTarget).html(`${s.name} &bull; ${s.species} &bull; ${s.vendor.name} &bull; ${s.ctime.replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')}`)
-    })
+
+  buildcss = query => {
+    console.log($($(query)
+      .parents()
+      .get()
+      .reverse())
+      .map((_, v) => '.'
+        + v.className.replace(/\s+/g, '.')
+        + (v.id !== '' ? `#${v.id}` : '')
+        + $(v.attributes)
+          .map((_, v) => `[${v.nodeName + (v.nodeValue !== '' ? '="' + v.nodeValue + '"' : '')}]`)
+          .get()
+          .join(''))
+      .get()
+      .filter(v => v !== '.')
+      .join('>'))
+  }
 })

@@ -54,8 +54,8 @@ $(_ => {
 
       $row.attr('id', data.id)
       $row.find('>img.image').attr('src', `/album/${data.image || '../images/transparent.png'}`)
-      $row.find('>.mtime').trigger('set', data.mtime)
-      $row.find('>.ctime').trigger('set', data.ctime)
+      $row.find('>.mtime').trigger('format', data.mtime)
+      $row.find('>.ctime').trigger('format', data.ctime)
     })
     .on('click', '>.rows>.row>div.back', e => {
       let $row = $(e.currentTarget)
@@ -74,9 +74,6 @@ $(_ => {
       if ($row.hasClass('noting')) {
         $row.find('>.notes').trigger('refresh', $row.attr('id'))
       }
-    })
-    .on('click', '>.rows>.row>div.paste-file', e => {
-      $(e.currentTarget).trigger('paste')
     })
     .on('paste', (e, cd) => {
       $('.rows>.row>div.paste-file')
@@ -169,6 +166,8 @@ $(_ => {
         }
       }
 
+      $('body').css('cursor', 'wait');
+
       $.ajax({
         ...{
           url: url,
@@ -186,6 +185,7 @@ $(_ => {
               .removeClass('editing adding')
               .find('input')
               .attr('disabled', true)
+            $('body').css('cursor', 'default');
           }
         },
         ...other
@@ -197,8 +197,6 @@ $(_ => {
           .parents('.row')
           .first()
           .toggleClass('selected')
-          .find('.toggle-notes')
-          .click()
           .parents('.photos')
           .first()
           .toggleClass('gallery singleton')
@@ -232,13 +230,4 @@ $(_ => {
         .find('.notes>.rows>.row>div.toggle-notes')
         .click()
     })
-
-  // $(window).on('paste', e => {
-  //   $('.rows>.row>div.paste-file')
-  //     .parents('.row')
-  //     .first()
-  //     .find('input.photo')
-  //     .get(0)
-  //     .files = e.clipboardData.files;
-  // })
 })

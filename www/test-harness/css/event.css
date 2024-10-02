@@ -56,13 +56,6 @@ body>.main>.workspace .table.events>.rows>.row>.static.date {
   display: block !important;
 }
 
-body>.main>.workspace .table.events>.rows>.row>select[disabled="disabled"] {
-  appearance: none;
-  color: inherit;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
 body>.main>.workspace>.generation>.table.events>.rows>.row>.eventtype>option[stage="Colonization"],
 body>.main>.workspace>.generation>.table.events>.rows>.row>.eventtype>option[stage="Majority"],
 body>.main>.workspace>.lifecycle>.table.events>.rows>.row>.eventtype>option[stage="Gestation"] {

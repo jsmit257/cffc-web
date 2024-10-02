@@ -4,7 +4,15 @@ body>.main>.workspace>.vendor.active>.table {
 }
 
 body>.main>.workspace>.vendor.active>.table>.columns>div,
-body>.main>.workspace>.vendor.active>.table>.rows>.row>div {
-  margin-left: 2%;
+body>.main>.workspace>.vendor.active>.table>.rows>.row>input {
   width: 48%;
+}
+
+body>.main>.workspace>.vendor.active>.table>.rows>.row>input {
+  text-align: left;
+}
+
+body>.main>.workspace>.vendor.active>.table>.rows>.row>.website:hover {
+  color: #482be9;
+  text-decoration: underline;
 }

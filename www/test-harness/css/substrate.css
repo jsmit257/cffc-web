@@ -4,10 +4,13 @@ body>.main>.workspace>.substrate>.table.substrate {
 
 body>.main>.workspace>.substrate>.table.substrate>.columns>div,
 body>.main>.workspace>.substrate>.table.substrate>.rows>.row>input,
-body>.main>.workspace>.substrate>.table.substrate>.rows>.row>select,
-body>.main>.workspace>.substrate>.table.substrate>.rows>.row>div {
+body>.main>.workspace>.substrate>.table.substrate>.rows>.row>select {
   padding-left: 2%;
   width: 31%;
+}
+
+body>.main>.workspace>.substrate>.table.substrate>.rows>.row>.type {
+  padding-left: 2em;
 }
 
 body>.main>.workspace>.substrate>.table.substrate>.rows>.row {
@@ -22,7 +25,7 @@ body>.main>.workspace>.substrate>.table.substrate.grain>.rows>.row.grain {
   display: revert;
 }
 
-body>.main>.workspace>.substrate>.table.substrate>.columns>.column.type>select.types {
+body>.main>.workspace>.substrate>.table.substrate>.columns>.column.type>select.type {
   line-height: 150%;
   background-color: transparent;
   color: aliceblue;
@@ -32,7 +35,7 @@ body>.main>.workspace>.substrate>.table.substrate>.columns>.column.type>select.t
   font-weight: bolder;
 }
 
-body>.main>.workspace>.substrate>.table.substrate>.columns>.column.type>select.types>option {
+body>.main>.workspace>.substrate>.table.substrate>.columns>.column.type>select.type>option {
   background-color: black;
 }
 
@@ -42,8 +45,7 @@ body>.main>.workspace>.substrate>.table.ingredients {
 }
 
 body>.main>.workspace>.substrate>.table.ingredients>.columns>div,
-body>.main>.workspace>.substrate>.table.ingredients>.rows>.row>select,
-body>.main>.workspace>.substrate>.table.ingredients>.rows>.row>div {
+body>.main>.workspace>.substrate>.table.ingredients>.rows>.row>select {
   border-style: none;
   margin-left: 2%;
   width: 98%;

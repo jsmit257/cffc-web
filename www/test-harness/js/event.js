@@ -1,6 +1,4 @@
 $(_ => {
-  let $rowtmpl = $('body>.template>.events>.rows>.row.template')
-
   $('body>.template>.notes')
     .clone(true, true)
     .insertAfter($('body>.template>.table.events>.rows'))
@@ -9,48 +7,27 @@ $(_ => {
     .clone(true, true)
     .insertAfter($('body>.template>.table.events>.rows'))
 
-  $('body>.main>.workspace .events>.rows, body>.template>.events>.rows').off('send')
-    .on('send', (e, ...data) => {
+  $('body>.main>.workspace .events>.rows, body>.template>.table.events>.rows')
+    .on('pre-send', e => {
       e.stopPropagation()
 
-      let $table = $(e.currentTarget)
-      let selected = $table.find('>.selected').attr('id')
+      let $tmpl = $(e.currentTarget).find('>.row.template>.eventtype')
 
       $.ajax({
         url: '/eventtypes',
         method: 'GET',
         async: false,
-        success: data => $rowtmpl
-          .find('>.eventtype')
+        success: data => $tmpl
           .trigger('send', data
             .sort((a, b) => a.name.localeCompare(b.name))
           ),
         error: console.log,
       })
-
-      $table.find('>.row.removable').remove()
-
-      data.forEach(v => {
-        $rowtmpl
-          .clone(true, true)
-          .appendTo($table)
-          .toggleClass('template removable')
-          .trigger('send', v)
-      })
-
-      if ($table.data('config').$eventbar.find('.remove')[data.length > 0
-        ? 'addClass'
-        : 'removeClass'
-      ]('active')
-        .hasClass('active')
-      ) {
-        $table.trigger('select', selected)
-      }
     })
-    .on('send', '>.row', (e, data) => {
+    .on('send', '>.row', (e, data = { event_type: {}, mtime: 'Now', ctime: 'Now' }) => {
       e.stopPropagation()
 
-      let $e = $(e.currentTarget).data('row', data).attr('id', data.id)
+      let $e = $(e.currentTarget)
 
       $e
         .find('>select.eventtype')
@@ -58,16 +35,10 @@ $(_ => {
         .trigger('change')
       $e.find('>input.temperature').val(data.temperature)
       $e.find('>input.humidity').val(data.humidity)
-      $e.find('>.mtime').trigger('set', data.mtime)
-      $e.find('>.ctime').trigger('set', data.ctime)
+      $e.find('>.mtime').trigger('format', data.mtime)
+      $e.find('>.ctime').trigger('format', data.ctime)
     })
-    .on('reset', '>.row', (e, data) => {
-      e.stopPropagation()
-
-      let $e = $(e.currentTarget)
-      $e.trigger('send', $e.data('row'))
-    })
-    .on('change', '>.row>select.eventtype', e => {
+    .on('change', '>.row>.eventtype', e => {
       let $e = $(e.currentTarget.parentNode)
 
       let $opt = $(e.currentTarget).find('option:selected')
@@ -76,7 +47,7 @@ $(_ => {
       $e.find('>.severity').text($opt.attr('severity'))
       $e.find('>.stage').text($opt.attr('stage'))
     })
-    .on('send', '>.row>select.eventtype', (e, ...data) => {
+    .on('send', '>.row>.eventtype', (e, ...data) => {
       e.stopPropagation()
 
       let $e = $(e.currentTarget)
@@ -92,6 +63,9 @@ $(_ => {
     })
     .on('initialize', (e, cfg) => {
       let $events = $(e.currentTarget)
+      let $parent = $(e.delegateTarget)
+        .parents('.table.events')
+        .first()
       let $eventbar = $events
         .parents('div.table.events')
         .first()
@@ -102,81 +76,56 @@ $(_ => {
 
       $eventbar
         .on('click', '>.edit.active', e => {
-          let $selected = $events.find('>.selected')
-          $selected.find('[disabled="disabled"]').removeAttr('disabled')
+          let $selected = $events
+            .find('>.selected')
+            .trigger('edit')
+
           $selected.find('>.mtime.static').text("Now")
 
           $events.trigger('edit', {
-            url: `${cfg.parent}/${$owner.data('record').id}/events`,
+            url: `${cfg.parent}/${$owner.data('row').id}/events`,
             data: $selected => {
               return JSON.stringify({
-                "id": $selected.attr('id'),
-                "temperature": parseFloat($selected.find('>.temperature').val()) || 0,
-                "humidity": parseFloat($selected.find('>.humidity').val()) || 0,
-                "event_type": {
-                  "id": $selected.find('>.eventtype').val()
+                id: $selected.attr('id'),
+                temperature: parseFloat($selected.find('>.temperature').val()) || 0,
+                humidity: parseFloat($selected.find('>.humidity').val()) || 0,
+                event_type: {
+                  id: $selected.find('>.eventtype').val()
                 },
-                "ctime": new Date($selected.find('>.ctime.static').data('value')).toISOString(),
+                ctime: new Date($selected.find('>.ctime.static').data('value')).toISOString(),
               })
             },
             success: (data, status, xhr) => { $owner.trigger('send', data) },
-            error: _ => $selected.trigger('reset'),
-            complete: _ => $selected.find('select, input').attr('disabled', 'disabled'),
-            cancel: _ => $selected
-              .trigger('reset')
-              .find('select, input')
-              .attr('disabled', 'disabled'),
-            buttonbar: $eventbar
           })
         })
         .on('click', '>.add.active', e => {
           $events.trigger('add', {
-            newRow: _ => $rowtmpl
-              .clone(true, true)
-              .toggleClass('template removable')
-              .prependTo($events)
-              .find('[disabled="disabled"]')
-              .removeAttr('disabled')
-              .parent()
-              .first()
-              .trigger('send', { event_type: { stage: {} }, mtime: 'Now', ctime: 'Now' }),
-            url: `${cfg.parent}/${$owner.data('record').id}/events`,
+            url: `${cfg.parent}/${$owner.data('row').id}/events`,
             data: $selected => {
               return JSON.stringify({
-                "temperature": parseFloat($selected.find('>.temperature').val()) || 0,
-                "humidity": parseFloat($selected.find('>.humidity').val()) || 0,
-                "event_type": {
-                  "id": $selected.find('>.eventtype').val()
+                temperature: parseFloat($selected.find('>.temperature').val()) || 0,
+                humidity: parseFloat($selected.find('>.humidity').val()) || 0,
+                event_type: {
+                  id: $selected.find('>.eventtype').val()
                 },
               })
             },
             success: data => $events
               .find('>.selected')
-              .trigger('send', data.events[0])
-              .find('select, input')
-              .attr('disabled', 'disabled'),
-            error: _ => $events.trigger('remove-selected'),
-            buttonbar: $eventbar
+              .trigger('reset')
+              .trigger('send', data.events[0]),
           })
         })
-        .on('click', '.remove.active', e => {
-          $events.trigger('delete', {
-            url: `${cfg.parent}/${$owner.data('record').id}/events/${$events.find('.selected').attr('id')}`,
-            buttonbar: $eventbar
-          })
-        })
+        .on('click', '>.remove.active', e => $events.trigger('delete', `${cfg.parent}/${$owner.data('row').id}/events/${$events.find('.selected').attr('id')}`))
         .trigger('subscribe', {
           clazz: 'notes',
           clicker: e => {
             e.stopPropagation()
 
-            let $p = $(e.delegateTarget)
-              .parents('.table.events')
-              .first()
-
-            if ($p.toggleClass('noting').hasClass('noting')
-            ) {
-              $p.find('div.notes').trigger('refresh', $events.find('.selected').attr('id'))
+            if ($parent.toggleClass('noting').hasClass('noting')) {
+              $parent
+                .find('div.notes')
+                .trigger('refresh', $events.find('.selected').attr('id'))
             }
           },
         })
@@ -185,13 +134,8 @@ $(_ => {
           clicker: e => {
             e.stopPropagation()
 
-            let $p = $(e.delegateTarget)
-              .parents('.table.events')
-              .first()
-
-            if ($p.toggleClass('photoing').hasClass('photoing')
-            ) {
-              $p
+            if ($parent.toggleClass('photoing').hasClass('photoing')) {
+              $parent
                 .find('div.photos')
                 .addClass('gallery')
                 .removeClass('singleton')
@@ -199,6 +143,7 @@ $(_ => {
             }
           },
         })
-        .find('.refresh').remove()
+        .find('.refresh')
+        .css('visibility', 'hidden')
     })
 })

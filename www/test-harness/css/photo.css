@@ -11,7 +11,7 @@ body>.main>.workspace .table.photoing>.photos {
   margin-top: .5em;
 }
 
-div.photos {
+div:not(.buttonbar)>div.photos {
   display: none;
   width: 100%;
 }
@@ -44,6 +44,10 @@ div.photos.singleton>div.rows>div.row.selected {
   clear: both;
 }
 
+div.photos.singleton>.rows>.row.selected>.notes {
+  display: block;
+}
+
 div.photos.singleton>div.rows>div.row:not(.selected) {
   display: none;
 }
@@ -68,22 +72,24 @@ div.photos>div.rows>div.row>img {
 
 div.photos.singleton>div.rows>div.row>img {
   cursor: zoom-in;
+  height: 11em;
+  width: 11em;
 }
 
 div.photos>div.rows>div.row>input.photo {
   float: left;
 }
 
-div.photos>div.rows>div.row:not(.editing)>div.paste-file,
 div.photos>div.rows>div.row:not(.editing)>input.photo {
   display: none;
 }
 
-div.photos>div.rows>div.row>div.photo-ctl {
+div.photos>div.rows>div.row>.button {
   clear: right;
   float: right;
   margin-left: .5em;
   margin-bottom: .5em;
+  position: relative;
 }
 
 div.photos>div.rows>div.row>div.mtime,

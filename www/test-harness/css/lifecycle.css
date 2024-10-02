@@ -17,21 +17,21 @@ body>.main>.workspace>.lifecycle>.table.lifecycle>.rows {
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.lc {
+  border-radius: 8px;
+  border-color: #b099b699;
+  border-style: groove;
+  border-width: 0 0 0 3px;
   float: right;
   margin-left: -5px;
   width: 70%;
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx {
-  border-radius: 8px;
-  border-color: #b099b699;
-  border-style: groove;
-  border-width: 0 3px 0 0;
   float: left;
   width: 29%;
 }
 
-body>.main>.workspace>.lifecycle>.rows.ndx>.row.new>.ctime::before {
+body>.main>.workspace>.lifecycle>.rows.ndx>.field.new>.ctime::before {
   content: '*'
 }
 
@@ -43,16 +43,22 @@ body>.main>.workspace>.lifecycle>.table.lifecycle {
   width: 100%;
 }
 
-
-body>.main>.workspace>.lifecycle>.table.lifecycle>.rows>div>.label {
+body>.main>.workspace>.lifecycle>.table.lifecycle>.rows>.row>.field>.label {
   padding-left: 1%;
   width: 20%;
 }
 
-body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.add>.row.no-add {
+body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.add>.row>.field.no-add {
   display: none;
 }
 
 body>.main>.workspace>.lifecycle>.table.events>.columns>.column.full::before {
   content: "Lifecycle ";
+}
+
+select.plating>option:not([type="plating"]),
+select.liquid>option:not([type="liquid"]),
+select.grain_substrate>option:not([type="grain"]),
+select.bulk_substrate>option:not([type="bulk"]) {
+  display: none;
 }

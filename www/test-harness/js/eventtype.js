@@ -1,129 +1,71 @@
-$(function () {
-  var $eventtype = $('body>.main>.workspace>.eventtype')
-  var $table = $eventtype.find('>.table>.rows')
-  var $buttonbar = $eventtype.find('>.table>.buttonbar')
+$(_ => {
+  let $eventtype = $('body>.main>.workspace>.eventtype')
+    .on('activate', e => $eventtype
+      .addClass('active')
+      .find('>.table>.rows')
+      .trigger('refresh'))
 
-  var severities = [
-    $('<option value=Begin>Begin</option>'),
-    $('<option value=Info>Info</option>'),
-    $('<option value=Warn>Warn</option>'),
-    $('<option value=Error>Error</option>'),
-    $('<option value=Fatal>Fatal</option>'),
-    $('<option value=RIP>RIP</option>'),
-    $('<option value=Generation>Generation</option>'),
-  ]
-  var stages = []
+  let $table = $eventtype.find('>.table>.rows')
+    .on('pre-send', e => {
+      e.stopPropagation()
 
-  function newRow(data) {
-    data ||= { stage: {} }
-    return $('<div>')
-      .addClass('row hover')
-      .attr('id', data.id)
-      .append($('<div class="name static" />').text(data.name))
-      .append($('<input class="name live" />').val(data.name))
-      .append($('<div class="severity static" />').text(data.severity))
-      .append($('<select class="severity live" />')
-        .append(severities)
-        .val(data.severity))
-      .append($('<div class="stage static" />').text(data.stage.name))
-      .append($('<select class="stage live" />')
-        .append(stages)
-        .data('stage_uuid', data.stage.id)
-        .val(data.stage.id))
-  }
+      $.ajax({
+        url: '/stages',
+        method: 'GET',
+        async: false,
+        success: data => $(e.currentTarget)
+          .find('>.row.template>.stage')
+          .trigger('send', data),
+        error: console.log,
+      })
+    })
+    .on('send', '>.row', (e, data = { stage: {} }) => {
+      e.stopPropagation()
 
-  $table.on('reinit', e => {
-    stages = []
-    $.ajax({
-      url: '/stages',
-      method: 'GET',
-      async: false,
-      success: (result, status, xhr) => {
-        result.forEach(r => {
-          stages.push($(`<option value="${r.id}">${r.name}</option>`))
-        })
-      },
-      error: console.log,
+      let $e = $(e.currentTarget)
+
+      $e.find('>.name').val(data.name)
+      $e.find('>.severity').val(data.severity)
+      $e.find('>.stage').val(data.stage.id)
+    })
+    .on('send', '>.row>.stage', (e, ...data) => {
+      e.stopPropagation()
+
+      let $e = $(e.currentTarget)
+        .empty()
+
+      data.forEach(r => {
+        $e.append($(new Option())
+          .val(r.id)
+          .text(r.name))
+      })
     })
 
-    $(e.currentTarget).trigger('refresh', {
-      newRow: newRow,
-      buttonbar: $buttonbar
-    })
-  })
-
-  $buttonbar.find('>.edit').on('click', e => {
-    if (!$(e.currentTarget).hasClass('active')) {
-      return
-    }
-    $table.find('.selected>select.severity')
-      .append(severities)
-      .val($table.find('.selected>div.severity').text())
-    $table.find('.selected>select.stage')
-      .append(stages)
-      .val($table.find('.selected>select.stage').data('stage_uuid'))
-
-    $table.trigger('edit', {
-      data: $selected => {
-        return JSON.stringify({
-          "name": $selected.find('>.name.live').val(),
-          "severity": $selected.find('>.severity.live').val(),
-          "stage": {
-            "id": $selected.find('>.stage.live').val()
+  $eventtype.find('>.table>.buttonbar')
+    .on('click', '>.edit.active', e => {
+      $table.trigger('edit', {
+        data: $selected => JSON.stringify({
+          name: $selected.find('>.name').val(),
+          severity: $selected.find('>.severity').val(),
+          stage: {
+            id: $selected.find('>.stage').val()
           }
-        })
-      },
-      success: (data, status, xhr) => {
-        var $selected = $table.find('.selected')
-        $selected.find('>.name.static').text($selected.find('>.name.live').val())
-        $selected.find('>.severity.static').text($selected.find('>.severity.live').val())
-        $selected
-          .find('>.stage.static')
-          .text($selected.find('>.stage.live>option:selected').text())
-      },
-      buttonbar: $buttonbar
+        }),
+        cancel: _ => $table.find('>.selected').trigger('resend'),
+      })
     })
-  })
-
-  $buttonbar.find('>.add').on('click', e => {
-    if (!$(e.currentTarget).hasClass('active')) {
-      return
-    }
-    $table.trigger('add', {
-      newRow: newRow,
-      data: $selected => {
-        return JSON.stringify({
-          "name": $selected.find('>.name.live').val(),
-          "severity": $selected.find('>.severity.live').val(),
-          "stage": {
-            "id": $selected.find('>.stage.live').val()
+    .on('click', '>.add.active', e => {
+      $table.trigger('add', {
+        data: $selected => JSON.stringify({
+          name: $selected.find('>.name').val(),
+          severity: $selected.find('>.severity').val(),
+          stage: {
+            id: $selected.find('>.stage').val()
           }
-        })
-      },
-      success: (data, status, xhr) => {
-        var $selected = $table.find('.selected')
-        $selected.attr('id', data.id)
-        $selected.find('>.name.static').text($selected.find('>.name.live').val())
-        $selected.find('>.severity.static').text($selected.find('>.severity.live').val())
-        $selected
-          .find('>.stage.static')
-          .text($selected.find('>.stage.live>option:selected').text())
-      },
-      error: (xhr, status, error) => { $table.trigger('remove-selected') },
-      buttonbar: $buttonbar
+        }),
+        success: console.log,
+      })
     })
-  })
-
-  $buttonbar.find('.remove.active').on('click', e => {
-    $table.trigger('delete', { buttonbar: $buttonbar })
-  })
-
-  $buttonbar.find('>.refresh').on('click', e => {
-    $table.trigger('reinit')
-  })
-
-  $eventtype.on('activate', e => {
-    $eventtype.addClass('active')
-    $table.trigger('reinit')
-  })
+    .on('click', '.remove.active', e => $table.trigger('delete'))
+    .on('click', '>.refresh', e => $table.trigger('refresh'))
 })

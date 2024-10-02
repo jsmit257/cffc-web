@@ -13,7 +13,7 @@ body>.main>.workspace .noting>.notes {
   display: block;
 }
 
-div.notes {
+div:not(.buttonbar)>div.notes {
   clear: left;
   display: none;
   width: 100%;
@@ -76,15 +76,16 @@ div.notes>div.rows>div.row>div.ctime:before {
   content: 'Created: ';
 }
 
-div.notes>div.rows>div.row>div.note-ctl {
+div.notes>div.rows>div.row>.button {
   clear: right;
   display: none;
   float: right;
   margin-left: .5em;
   margin-bottom: .5em;
+  position: relative;
 }
 
-div.notes>div.rows>div.row.selected>div.note-ctl {
+div.notes>div.rows>div.row.selected>.button {
   display: block
 }
 

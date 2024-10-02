@@ -12,9 +12,10 @@ body>.main>.workspace>.generation>.table.generation>.columns>.column.full {
 
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] {
   overflow-x: hidden;
+  width: 49%;
 }
 
-body>.main>.workspace>.generation>.table.generation.noting>.rows[name="editor"] {
+body>.main>.workspace>.generation>.table.generation.noting>.rows.main {
   display: none;
 }
 
@@ -23,76 +24,79 @@ body>.main>.workspace>.generation>.table.generation.selecting>.rows[name="genera
   width: 100%;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources {
-  background-image: radial-gradient(#0ff1, #0ff2, transparent);
-  background-position-x: 7em;
-  border-radius: 20px;
-  border-style: none;
-  margin-left: 7em;
-  margin-right: 1em;
-  width: fit-content;
+body>.main>.workspace>.generation>.table.generation>.rows.sources {
+  border-radius: 8px;
+  border-color: #b099b699;
+  border-style: groove;
+  border-width: 0 0 0 3px;
+  padding-left: .5em;
+  width: 49%;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].adding>.row.strain,
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].editing>.row.strain,
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].adding>.row.sources,
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].editing>.row.sources {
-  display: none;
-}
-
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources::before {
-  content: 'Sources';
-  float: left;
-  line-height: 4em;
-  margin-left: -7em;
-}
-
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>div.source {
-  display: none;
-  padding-bottom: .25em;
-  /* padding-left is ~1/3 of .row.sources(border-radius} */
-  padding-left: 7px;
-  padding-top: .25em;
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.source {
+  padding-top: .5em;
   width: 100%;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>div.source>div,
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>div.source>div>div {
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>select {
   float: left;
+  text-overflow: ellipsis;
+  width: initial;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>div.row {
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>select.break {
+  clear: right;
+}
+
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>select[name="strains"] {
+  width: 80%;
+}
+
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>.buttonbox {
+  float: left;
+  height: 4em;
+  opacity: .4;
+  width: 2em;
+}
+
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.source:hover>.buttonbox {
+  opacity: 1;
+}
+
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>.buttonbox>.button {
+  margin-bottom: .5em;
+}
+
+body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] {
   padding-left: .5em;
-}
-
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>div.row>select {
-  width: 33%;
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] select {
   margin-right: .5em;
   padding-right: 2px;
   padding-top: 3.1px;
+  text-overflow: ellipsis;
+  width: 80%;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>div.row>div.label,
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>div.source>div.label {
-  width: 7em;
+body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.field>.label,
+body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].sources>div.source>div.label {
+  width: 5em;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>div.source div.caption {
+body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].sources>div.source div.caption {
   float: left;
   padding-right: .2em;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>div.source>select {
+body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].sources>div.source>select {
   float: left;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>div.source>.src-ctl {
+body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].sources>div.source>.button {
   float: right;
-  margin-left: 0;
-  margin-right: 1em;
+  margin-right: .5em;
+  position: relative;
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].editing>.mtime>.static.date,
@@ -110,7 +114,6 @@ body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] select 
   -moz-appearance: none;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>.source.editing>select,
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].adding select,
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].editing select:not(.progeny) {
   appearance: initial;
@@ -118,15 +121,11 @@ body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].editing
   -webkit-appearance: auto;
 }
 
-body>.main>.workspace>.generation>.table.events>.columns>.column.full::before {
-  content: "Generation ";
-}
-
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>div.source.removable {
+body>.main>.workspace>.generation>.table.generation>.rows.sources>div.source.removable {
   display: block;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>.add-source {
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.add-source {
   font-size: larger;
   font-weight: bold;
   line-height: 1.5em;
@@ -134,18 +133,18 @@ body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.so
   width: 100%;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources>.add-source::after {
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.add-source::after {
   content: 'add source';
   font-size: smaller;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources[source-type="spore"]>div:nth-child(4),
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.row.sources[source-type="clone"]>.add-source {
+body>.main>.workspace>.generation>.table.generation>.rows.sources[source-type="spore"]>div:nth-child(4),
+body>.main>.workspace>.generation>.table.generation>.rows.sources[source-type="clone"]>.add-source {
   display: none;
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows[name="generation"],
-body>.main>.workspace>.generation>.table.generation.selecting>.rows[name="editor"] {
+body>.main>.workspace>.generation>.table.generation.selecting>.rows.main {
   display: none;
 }
 
@@ -153,10 +152,27 @@ body>.main>.workspace>.generation>.table.generation.selecting>.rows[name="genera
   display: block;
 }
 
-.source[source-origin="event"]>.type,
-.source[source-origin="event"]>select[name="strains"],
-.source[source-origin="strain"]>.progenitor,
-.source[source-origin="strain"]>select[name="lcs"] {
+body>.main>.workspace>.generation>.table.events>.columns>.column.full::before {
+  content: "Generation ";
+}
+
+.source.adding>[name="origin"],
+.source.adding>[name="type"] {
+  display: block !important;
+}
+
+.source>[name="origin"] {
+  display: none;
+}
+
+.source[source-origin="event"]>[name="type"] {
+  display: none;
+}
+
+.source[source-origin="event"]>[name="type"],
+.source[source-origin="event"]>[name="strains"],
+.source[source-origin="strain"]>[name="progenitor"],
+.source[source-origin="strain"]>[name="lcs"] {
   display: none;
 }
 
@@ -167,15 +183,20 @@ body>.main>.workspace>.generation>.table.generation.selecting>.rows[name="genera
   font-size: larger;
 }
 
+.rows[name="editor"].adding .no-edit,
+.rows[name="editor"].editing .no-edit {
+  display: none;
+}
+
 .progeny>option[gid] {
   display: none;
 }
 
-.row.strain.link>.label {
+.rows.link>.label {
   cursor: pointer;
 }
 
-.row.strain.link:hover>.label:after {
+.rows.link:hover>.label:after {
   color: #8db1d0;
   content: '>>';
   padding-left: .5em;
@@ -186,4 +207,15 @@ body>.main>.workspace>.generation>.table.generation.selecting>.rows[name="genera
   border-radius: 1em;
   border-style: none; */
   width: 2em;
+}
+
+.sources>.add-ctl {
+  float: left;
+  width: 100%
+}
+
+.from {
+  line-height: 1.3em;
+  margin-left: .5em;
+  margin-right: .5em;
 }
