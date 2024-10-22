@@ -1,6 +1,4 @@
-$(_ => {
-  let $rowtmpl = $('body>.template>.notes>.rows>.row.template')
-
+$((e, $rowtmpl = $('body>.template>.notes>.rows>.row.template')) =>
   $('div.notes')
     .on('refresh', (e, owner) => {
       e.stopPropagation()
@@ -172,5 +170,4 @@ $(_ => {
         .find('textarea')
         .attr('disabled', false)
         .focus()
-    })
-})
+    }))

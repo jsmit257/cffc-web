@@ -184,8 +184,8 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
   .on('sort', (e, key, order) => {
     $(e.currentTarget)
       .append(...$(e.currentTarget)
-        .find(`.static.${key}`)
-        .sort((a, b) => (order === 'sort-desc' ? -1 : 1) * a.innerText.localeCompare(b.innerText))
+        .find(`.removable .${key}`)
+        .sort((a, b) => order * $(a).sortKey().localeCompare($(b).sortKey()))
         .map((_, x) => $(x).parent()))
   })
   .on('select', (e, id) => {

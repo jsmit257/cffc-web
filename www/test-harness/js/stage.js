@@ -12,7 +12,7 @@ $(_ => {
       $(e.currentTarget).find('>.name').val(data.name)
     })
 
-  let $buttonbar = $stage.find('>.table>.buttonbar')
+  $stage.find('>.table>.buttonbar')
     .on('click', '>.edit.active', e => $table.trigger('edit', {
       data: $selected => JSON.stringify({ name: $selected.find('>.name').val() })
     }))

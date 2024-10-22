@@ -23,6 +23,7 @@
   <script src="./js/eventtype.js" defer></script>
   <script src="./js/substrate.js" defer></script>
   <script src="./js/generation.js" defer></script>
+  <script src="./js/album.js" defer></script>
   <script src="./js/reporting.js" defer></script>
 
   <!-- <link href="jquery-ui.min.css" rel="stylesheet"> -->
@@ -49,9 +50,11 @@
 
 <body>
   <div class="background-image"></div>
+
   <div class="imageview">
     <img class="viewport">
   </div>
+
   <div class="main">
     <div class="header" menu-row="main">
       <div class="menuitem hover main" name="lifecycle">lifecycles</div>
@@ -62,6 +65,7 @@
       <div class="menuitem hover ancillary" name="eventtype">eventtypes</div>
       <div class="menuitem hover ancillary" name="stage">stages</div>
       <div class="menuitem hover main ancillary" name="vendor">vendors</div>
+      <div class="menuitem hover ancillary" name="album">gallery</div>
       <div class="menuitem hover reporting" entity-name="lifecycle" name="history.lc">lifecycle</div>
       <div class="menuitem hover reporting" entity-name="generation" name="history.gen">generation</div>
       <div class="menuitem hover reporting" entity-name="strain" name="history.str">strain</div>
@@ -73,6 +77,7 @@
         <div class="desc" dir="1">&dArr;</div>
       </div>
     </div>
+
     <div class="workspace">
       <div class="lifecycle">
         <div class="table lifecycle">
@@ -112,7 +117,7 @@
 
               <div class="field hover">
                 <div class="label">Strain</div>
-                <select class="strain" disabled></select>
+                <select class="strains" url="strains" disabled></select>
               </div>
 
               <div class="field hover">
@@ -122,7 +127,7 @@
 
               <div class="field hover">
                 <div class="label">Grain</div>
-                <select class="grain_substrate substrate" disabled></select>
+                <select class="grain_substrate substrate" url disabled></select>
               </div>
 
               <div class="field hover">
@@ -132,7 +137,7 @@
 
               <div class="field hover">
                 <div class="label">Bulk</div>
-                <select class="bulk_substrate substrate" disabled></select>
+                <select class="bulk_substrate substrate" url disabled></select>
               </div>
 
               <div class="field hover">
@@ -142,12 +147,12 @@
 
               <div class="field hover">
                 <div class="label">Modified At</div>
-                <div class="mtime static const date"></div>
+                <div class="mtime short-date"></div>
               </div>
 
               <div class="field hover">
                 <div class="label">Created At</div>
-                <div class="ctime static const date"></div>
+                <div class="ctime short-date"></div>
               </div>
             </div>
           </div>
@@ -195,7 +200,7 @@
             <div class="row hover template">
               <input class="name" readonly>
               <input class="species" readonly>
-              <select class="vendor" disabled></select>
+              <select class="vendor" url="vendors" disabled></select>
               <div class="ctime short-date"></div>
             </div>
           </div>
@@ -246,7 +251,7 @@
                 <option value="grain">Grain</option>
                 <option value="bulk">Bulk</option>
               </select>
-              <select class="vendor" disabled></select>
+              <select class="vendor" url="vendors" disabled></select>
             </div>
           </div>
           <div class="buttonbar"></div>
@@ -254,11 +259,11 @@
 
         <div class="table ingredients">
           <div class="columns">
-            <div class="column name" sort-key="ingredient">Ingredients</div>
+            <div class="column name" sort-key="ingredients">Ingredients</div>
           </div>
           <div class="rows" name="ingredients">
             <div class="row hover template">
-              <select class="ingredients" disabled></select>
+              <select class="ingredients" url="ingredients"></select>
             </div>
           </div>
           <div class="buttonbar"></div>
@@ -296,7 +301,7 @@
                 <option value=RIP>RIP</option>
                 <option value=Generation>Generation</option>
               </select>
-              <select class="stage" disabled></select>
+              <select class="stages" url="stages" disabled></select>
             </div>
           </div>
           <div class="buttonbar"></div>
@@ -317,17 +322,17 @@
           <div class="rows main" name="editor">
             <div class="field hover countable">
               <div class="label">Plating</div>
-              <select class="plating substrate" url="substrates" disabled></select>
+              <select class="plating substrate" url disabled></select>
             </div>
 
             <div class="field hover">
               <div class="label">Liquid</div>
-              <select class="liquid substrate" url="substrates" disabled></select>
+              <select class="liquid substrate" url disabled></select>
             </div>
 
             <div class="field no-edit hover">
               <div class="label">Progeny</div>
-              <select class="progeny" url="strains"></select>
+              <select class="strains progeny" url="strains"></select>
             </div>
 
             <div class="field hover">
@@ -360,17 +365,17 @@
 
               <select name="progenitor" disabled></select>
 
-              <div class="from">from</div>
-
               <select name="lcs" class="lcs break" url="lifecycles" disabled></select>
 
-              <select name="strains" class="break" url="strains" disabled></select>
+              <select class="strains break" url="strains" disabled></select>
             </div>
             <div class="add-source add-ctl">+</div>
           </div>
 
           <div class="buttonbar"></div>
         </div>
+      </div>
+      <div class="album">
       </div>
       <div class="history lc gen str sub ev ven">
         <div class="entity collapsed">
@@ -381,6 +386,7 @@
         </div>
       </div>
     </div>
+
     <div class="footer">
       <div class="cookie-bar">
         <ul class="list">
@@ -427,6 +433,7 @@
       </div>
     </div>
   </div>
+
   <div class="template">
     <div class="notes">
       <div class="rows">

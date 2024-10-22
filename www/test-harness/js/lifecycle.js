@@ -1,15 +1,7 @@
 $(_ => {
   let $lifecycle = $('body>.main>.workspace>.lifecycle')
     .on('activate', e => {
-      $.ajax({
-        url: '/strains',
-        method: 'GET',
-        async: true,
-        success: data => $table
-          .find('>.row>.field>.strain')
-          .trigger('send', data),
-        error: console.log,
-      })
+      $('.table.lifecycle select.strains').trigger('refresh')
 
       $.ajax({
         url: '/substrates',
@@ -17,7 +9,7 @@ $(_ => {
         async: true,
         success: data => $table
           .find('>.row>.field>.substrate')
-          .trigger('send', data),
+          .send(data),
         error: console.log,
       })
 
@@ -25,7 +17,14 @@ $(_ => {
     })
 
   let $ndx = $lifecycle.find('.table.lifecycle>.rows.ndx')
-    .on('send', '>.row', (e, data = {}) => {
+    .on('add', e => {
+      $table
+        .trigger('send')
+        .trigger('set-editing', 'add')
+
+      $events.find('>.removable').remove()
+    })
+    .on('send', '>.row', (e, data = { location: 'far, far away...', mtime: new Date().toISOString() }) => {
       e.stopPropagation()
 
       let $n = $(e.currentTarget)
@@ -84,7 +83,7 @@ $(_ => {
 
       fields.forEach(n => $table.find(`>.row>.field>.${n}`).val(lc[n] || 0))
 
-      $table.find('.row>.field>.strain').val(lc.strain.id)
+      $table.find('.row>.field>.strains').val(lc.strain.id)
       $table.find('.row>.field>.grain_substrate').val(lc.grain_substrate.id)
       $table.find('.row>.field>.bulk_substrate').val(lc.bulk_substrate.id)
 
@@ -101,13 +100,6 @@ $(_ => {
         .trigger('set-editing', 'edit')
         .find('>.row>.field>.mtime')
         .trigger('format', new Date().toISOString())
-    })
-    .on('add', (e, args) => {
-      $(e.currentTarget)
-        .trigger('send')
-        .trigger('set-editing', 'add')
-
-      $events.find('>.removable').remove()
     })
     .on('set-editing', (e, status) => {
       e.stopPropagation()
@@ -129,31 +121,12 @@ $(_ => {
         .trigger('set-editing', false)
         .trigger('send', $(e.currentTarget).data('row'))
     })
-    .on('send', '>.row>.field>.strain', (e, ...data) => {
-      e.stopPropagation()
-
-      let $list = $(e.currentTarget)
-        .empty()
-
-      data.forEach(s => $list
-        .append($(new Option())
-          .val(s.id)
-          .text(`${s.name} | Species: ${s.species || "unknown"} | Vendor: ${s.vendor.name}`))
-      )
-    })
-    .on('send', '>.row>.field>.substrate', (e, ...data) => {
-      e.stopPropagation()
-
-      let $list = $(e.currentTarget)
-        .empty()
-
-      data.forEach(s => $list
-        .append($(new Option())
-          .val(s.id)
-          .attr('type', s.type)
-          .text(`${s.name} | Vendor: ${s.vendor.name}`))
-      )
-    })
+    .on('focus', 'input, select', e => $(e.currentTarget)
+      .parent()
+      .addClass('selected'))
+    .on('blur', 'input, select', e => $(e.currentTarget)
+      .parent()
+      .removeClass('selected'))
 
   let $tablebar = $lifecycle.find('.table.lifecycle>.buttonbar')
     .on('click', '>.edit.active', e => {
@@ -170,7 +143,7 @@ $(_ => {
           count: parseFloat($table.find('.row>.field>.count').val()) || 0,
           gross: parseFloat($table.find('.row>.field>.gross').val()) || 0,
           strain: {
-            id: $table.find('.row>.field>.strain').val(),
+            id: $table.find('.row>.field>.strains').val(),
           },
           grain_substrate: {
             id: $table.find('.row>.field>.grain_substrate').val(),
@@ -184,9 +157,8 @@ $(_ => {
       })
     })
     .on('click', '>.add.active', e => {
-      $table.trigger('add', {
-        url: '/lifecycle',
-        cancel: _ => $ndx.trigger('resend'),
+      $ndx.trigger('add', {
+        cancel: _ => $ndx.trigger('remove-selected'),
         data: _ => JSON.stringify({
           location: $table.find('.row>.field>.location').val(),
           strain_cost: parseFloat($table.find('.row>.field>.strain_cost').val()) || 0,
@@ -196,7 +168,7 @@ $(_ => {
           count: parseFloat($table.find('.row>.field>.count').val()) || 0,
           gross: parseFloat($table.find('.row>.field>.gross').val()) || 0,
           strain: {
-            id: $table.find('.row>.field>.strain').val(),
+            id: $table.find('.row>.field>.strains').val(),
           },
           grain_substrate: {
             id: $table.find('.row>.field>.grain_substrate').val(),
@@ -205,14 +177,8 @@ $(_ => {
             id: $table.find('.row>.field>.bulk_substrate').val(),
           },
         }),
-        success: _ => {
-          $ndx
-            .find('>.selected')
-            .removeClass('selected')
-
-          $ndx.trigger('refresh')
-        },
-        error: _ => $ndx.trigger('resend'),
+        success: _ => $ndx.trigger('refresh'),
+        error: _ => $ndx.trigger('remove-selected'),
       })
     })
     .on('click', '.remove.active', _ => $ndx.trigger('delete'))

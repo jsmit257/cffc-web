@@ -46,7 +46,7 @@ body>.main>.workspace>div .table>.rows select {
   color: inherit;
   float: left;
   font-size: inherit;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 body>.main>.workspace>div .table>.rows>.field option,

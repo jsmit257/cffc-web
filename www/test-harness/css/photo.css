@@ -58,6 +58,7 @@ div.photos>div.rows>div.row.editing>img {
   display: none;
 }
 
+.thumbnail,
 div.photos>div.rows>div.row>img {
   border-color: lightseagreen;
   /* border-color: lightskyblue; */
@@ -65,6 +66,7 @@ div.photos>div.rows>div.row>img {
   cursor: pointer;
   float: left;
   height: 150px;
+  margin-bottom: .5em;
   margin-right: .5em;
   object-fit: cover;
   width: 150px;

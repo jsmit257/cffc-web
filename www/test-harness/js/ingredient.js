@@ -6,11 +6,8 @@ $(() => {
       .trigger('refresh'))
 
   let $table = $ingredient.find('>.table>.rows')
-    .on('send', '>.row', (e, data = {}) => {
-      e.stopPropagation()
-
-      $(e.currentTarget).find('>.name').val(data.name)
-    })
+    .on('send', '>.row', (e, data = {}) =>
+      $(e.currentTarget).find('>.name').val(data.name))
 
   let $buttonbar = $ingredient.find('>.table>.buttonbar')
     .on('click', '>.edit.active', e => {

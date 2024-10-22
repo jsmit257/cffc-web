@@ -39,7 +39,7 @@ $(_ => {
       data.forEach(v => {
         $rowtmpl
           .clone(true, true)
-          .insertBefore($table.children().first())
+          .appendTo($table)
           .toggleClass('template removable')
           .data('row', v)
           .trigger('send', v)
@@ -56,14 +56,6 @@ $(_ => {
       $row.find('>img.image').attr('src', `/album/${data.image || '../images/transparent.png'}`)
       $row.find('>.mtime').trigger('format', data.mtime)
       $row.find('>.ctime').trigger('format', data.ctime)
-    })
-    .on('click', '>.rows>.row>div.back', e => {
-      let $row = $(e.currentTarget)
-        .parents('.row')
-        .first()
-        .removeClass('selected noting')
-        .parents('.photos')
-        .toggleClass('gallery singleton')
     })
     .on('click', '>.rows>.row>div.toggle-notes', e => {
       let $row = $(e.currentTarget)
@@ -169,27 +161,34 @@ $(_ => {
       $('body').css('cursor', 'wait');
 
       $.ajax({
-        ...{
-          url: url,
-          method: 'HEAD',
-          async: true,
-          success: (result, status, xhr) => {
-            $selected.trigger('send', result[0])
-          },
-          error: (xhr, status, err) => {
-            $selected.trigger('reset')
-            console.log(xhr, status, err)
-          },
-          complete: (xhr, status) => {
-            $selected
-              .removeClass('editing adding')
-              .find('input')
-              .attr('disabled', true)
-            $('body').css('cursor', 'default');
-          }
+        url: url,
+        method: 'HEAD',
+        async: true,
+        success: (result, status, xhr) => {
+          $selected.trigger('send', result[0])
+        },
+        error: (xhr, status, err) => {
+          $selected.trigger('reset')
+          console.log(xhr, status, err)
+        },
+        complete: (xhr, status) => {
+          $selected
+            .removeClass('editing adding')
+            .find('input')
+            .attr('disabled', true)
+          $('body').css('cursor', 'default');
         },
         ...other
       })
+    })
+    .on('click', '>.rows>.row>div.back', e => {
+      // if hasClass('adding') then remove()? removeClass('photoing')?
+      let $row = $(e.currentTarget)
+        .parents('.row')
+        .first()
+        .removeClass('selected noting editing adding')
+        .parents('.photos')
+        .toggleClass('gallery singleton')
     })
     .on('click', '>.rows>.row>img', e => {
       if ($(e.delegateTarget).hasClass('gallery')) {

@@ -1,24 +1,15 @@
 $(_ => {
   let $eventtype = $('body>.main>.workspace>.eventtype')
-    .on('activate', e => $eventtype
-      .addClass('active')
-      .find('>.table>.rows')
-      .trigger('refresh'))
+    .on('activate', e => {
+      $('.template>.stages').trigger('refresh')
+
+      $eventtype
+        .addClass('active')
+        .find('>.table>.rows')
+        .trigger('refresh')
+    })
 
   let $table = $eventtype.find('>.table>.rows')
-    .on('pre-send', e => {
-      e.stopPropagation()
-
-      $.ajax({
-        url: '/stages',
-        method: 'GET',
-        async: false,
-        success: data => $(e.currentTarget)
-          .find('>.row.template>.stage')
-          .trigger('send', data),
-        error: console.log,
-      })
-    })
     .on('send', '>.row', (e, data = { stage: {} }) => {
       e.stopPropagation()
 
@@ -26,19 +17,7 @@ $(_ => {
 
       $e.find('>.name').val(data.name)
       $e.find('>.severity').val(data.severity)
-      $e.find('>.stage').val(data.stage.id)
-    })
-    .on('send', '>.row>.stage', (e, ...data) => {
-      e.stopPropagation()
-
-      let $e = $(e.currentTarget)
-        .empty()
-
-      data.forEach(r => {
-        $e.append($(new Option())
-          .val(r.id)
-          .text(r.name))
-      })
+      $e.find('>.stages').val(data.stage.id)
     })
 
   $eventtype.find('>.table>.buttonbar')
@@ -48,7 +27,7 @@ $(_ => {
           name: $selected.find('>.name').val(),
           severity: $selected.find('>.severity').val(),
           stage: {
-            id: $selected.find('>.stage').val()
+            id: $selected.find('>.stages').val()
           }
         }),
         cancel: _ => $table.find('>.selected').trigger('resend'),
@@ -60,7 +39,7 @@ $(_ => {
           name: $selected.find('>.name').val(),
           severity: $selected.find('>.severity').val(),
           stage: {
-            id: $selected.find('>.stage').val()
+            id: $selected.find('>.stages').val()
           }
         }),
         success: console.log,

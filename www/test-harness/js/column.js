@@ -5,19 +5,16 @@ $(function () {
   })
 
   $('.table>.columns>.column[sort-key]')
-    .append($('<div class="sort-icon" />')
+    .append($('<div>')
+      .addClass('sort-icon')
       .html('&nbsp'))
-    .on('click', e => {
-      var $col = $(e.currentTarget)
-      var sortOrder = $col.attr('sort-order') !== 'sort-asc' ? 'sort-asc' : 'sort-desc'
-
-      $col.parent().trigger('clear-sort')
-
-      $col
-        .attr('sort-order', sortOrder)
-        .parents('.table')
-        .find('.rows')
-        .trigger('sort', [$col.attr('sort-key'), $col.attr('sort-order')])
-    })
-
+    .on('click', e => $(e.currentTarget)
+      .attr('sort-order', ($(e.currentTarget).attr('sort-order') || 1) * -1)
+      .parents('.table')
+      .first()
+      .find('.rows')
+      .trigger('sort', [
+        $(e.currentTarget).attr('sort-key'),
+        $(e.currentTarget).attr('sort-order'),
+      ]))
 })

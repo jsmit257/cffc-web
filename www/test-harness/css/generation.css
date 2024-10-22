@@ -39,16 +39,17 @@ body>.main>.workspace>.generation>.table.generation>.rows.sources>.source {
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>select {
-  float: left;
+  /* float: left; */
   text-overflow: ellipsis;
   width: initial;
+  margin-right: 0.5em;
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>select.break {
   clear: right;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>select[name="strains"] {
+body>.main>.workspace>.generation>.table.generation>.rows.sources>.source>select.strains {
   width: 80%;
 }
 
@@ -162,7 +163,7 @@ body>.main>.workspace>.generation>.table.events>.columns>.column.full::before {
 }
 
 .source>[name="origin"] {
-  display: none;
+  /* display: none; */
 }
 
 .source[source-origin="event"]>[name="type"] {
@@ -170,7 +171,7 @@ body>.main>.workspace>.generation>.table.events>.columns>.column.full::before {
 }
 
 .source[source-origin="event"]>[name="type"],
-.source[source-origin="event"]>[name="strains"],
+.source[source-origin="event"]>.strains,
 .source[source-origin="strain"]>[name="progenitor"],
 .source[source-origin="strain"]>[name="lcs"] {
   display: none;

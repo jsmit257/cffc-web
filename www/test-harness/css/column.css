@@ -32,10 +32,10 @@ body>.main>.workspace>div .table>.columns>div[sort-key]>.sort-icon {
   width: 12px;
 }
 
-body>.main>.workspace>div .table>.columns>div[sort-order=sort-asc]>.sort-icon {
+body>.main>.workspace>div .table>.columns>div[sort-order="1"]>.sort-icon {
   background-position: -487px -228px;
 }
 
-body>.main>.workspace>div .table>.columns>div[sort-order=sort-desc]>.sort-icon {
+body>.main>.workspace>div .table>.columns>div[sort-order="-1"]>.sort-icon {
   background-position: -557px -228px;
 }

@@ -1,13 +1,15 @@
 $(_ => {
 
-  $('.rows[name="editor"]>.field>.progeny').on('send', (e, ...data) => {
-    e.stopPropagation()
-
-    $(e.currentTarget)
+  $('.progeny')
+    .on('sent', (e, ...data) => $(e.currentTarget)
       .prepend($('<option>')
         .addClass('null-pointer')
-        .text('-- None --'))
-  })
+        .text('-- None --')))
+
+  $('select[url="lifecycles"]')
+    .on('attrs', '>option', (e, lc) => $(e.currentTarget)
+      .data('record', lc)
+      .text(`${lc.location || lc.id} | ${(lc.mtime || '?').replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')}`))
 
   let $generation = $('body>.main>.workspace>.generation')
     .on('activate', (e, selected) => {
@@ -15,27 +17,27 @@ $(_ => {
         selected = $ndx.find('>.selected').attr('id')
       }
 
-      $('select[url="strains"]')
-        .on('attrs', '>option', (e, s) => $(e.currentTarget)
-          .attr({
-            gid: (s.generaton || {}).id,
-            dtime: s.dtime,
-          })
-          .data('record', s)
-          .trigger('strain-format', s))
-        .trigger('refresh')
+      $.ajax({
+        url: '/strains',
+        method: 'GET',
+        async: true,
+        success: s => $generation
+          .find('select.strains')
+          .trigger('send', s),
+        error: console.log,
+      })
 
-      $('select[url="lifecycles"]')
-        .on('attrs', '>option', (e, lc) => $(e.currentTarget)
-          .data('record', lc)
-          .text(`${lc.location || lc.id} | ${(lc.mtime || '?').replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')}`))
-        .trigger('refresh')
+      $('.table.generation .row.template>select[url="lifecycles"]').trigger('refresh')
 
-      $('select[url="substrates"]')
-        .on('attrs', '>option', (e, s) => $(e.currentTarget)
-          .data('record', s)
-          .trigger('substrate-format', s))
-        .trigger('refresh')
+      $.ajax({
+        url: '/substrates',
+        method: 'GET',
+        async: true,
+        success: s => $gentable
+          .find('select.substrate')
+          .trigger('send', s),
+        error: console.log,
+      })
 
       $ndx.trigger('refresh')
 
@@ -322,7 +324,7 @@ $(_ => {
         .val(strainsource ? 'strain' : 'event')
         .trigger('change')
 
-      $s.find('>select[name="strains"]')
+      $s.find('>select.strains')
         .val(data.strain.id)
 
       $s.find('>select[name="type"]')
@@ -414,7 +416,7 @@ $(_ => {
             .find('>select[name="progenitor"]>option:selected')
             .data('record'),
           strain: $src
-            .find('>select[name="strains"]>option:selected')
+            .find('>select.strains>option:selected')
             .data('record'),
           type: type[0].toUpperCase().concat(type.slice(1)) // mea culpa
         })
@@ -424,7 +426,7 @@ $(_ => {
           id: $src.attr('id'),
           type: type[0].toUpperCase().concat(type.slice(1)),
           strain: $src
-            .find('>select[name="strains"]>option:selected')
+            .find('>select.strains>option:selected')
             .data('record'),
         }
         if ($src.attr('source-origin') !== 'strain') {

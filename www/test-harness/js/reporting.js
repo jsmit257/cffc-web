@@ -13,7 +13,7 @@ $(_ => {
     'mtime': 'Modified',
     'plating_substrate': 'Plating',
     'strain_cost': 'Strain cost',
-    'yield': 'yield (g)',
+    'yield': 'Yield (g)',
   }
 
   let pluralmap = {
@@ -153,6 +153,7 @@ $(_ => {
 
       data.forEach(gen => {
         let strains = []
+        gen.sources ||= []
         gen.sources.forEach(v => {
           strains.push(v.strain.name)
         })
@@ -160,10 +161,11 @@ $(_ => {
         $('<div>')
           .addClass('row hover')
           .attr('id', gen.id)
+          .data('url', `/reports/generation/${gen.id}`)
           .appendTo(e.currentTarget)
           .trigger('send', {
             mtime: gen.mtime,
-            strains: strains.join(' & '),
+            strains: strains.join(' & ') || 'Not assigned',
           })
       })
     })
@@ -174,6 +176,7 @@ $(_ => {
         $('<div>')
           .addClass('row hover')
           .attr('id', lc.id)
+          .data('url', `/reports/lifecycle/${lc.id}`)
           .appendTo(e.currentTarget)
           .trigger('send', {
             mtime: lc.mtime,
@@ -189,6 +192,7 @@ $(_ => {
         $('<div>')
           .addClass('row hover')
           .attr({ id: strain.id, dtime: strain.dtime })
+          .data('url', `/reports/strain/${strain.id}`)
           .appendTo(e.currentTarget)
           .trigger('send', {
             name: strain.name,
@@ -203,11 +207,8 @@ $(_ => {
       data.forEach(sub => {
         $('<div>')
           .addClass('row hover')
-          .attr({
-            id: sub.id,
-            param: `${sub.type}-id=${sub.id}`,
-            owner: ['grain', 'bulk'].indexOf(sub.type) !== -1 ? 'lifecycle' : 'generation',
-          })
+          .attr('id', sub.id)
+          .data('url', `/reports/substrate/${sub.id}`)
           .appendTo(e.currentTarget)
           .trigger('send', { name: sub.name, vendor_name: sub.vendor.name })
       })
@@ -271,9 +272,7 @@ $(_ => {
     .on('send', '.entity[name="event"]', (e, data) => {
       e.stopPropagation()
 
-      $(e.currentTarget)
-        .trigger('get-child', { id: data.id, entityname: 'notes' })
-        .trigger('cliff-notes', [format(data.mtime), data.event_type.name])
+      $(e.currentTarget).trigger('cliff-notes', [format(data.mtime), data.event_type.name])
     })
     .on('send', '.entity[name="event_type"]', (e, data) => {
       e.stopPropagation()
@@ -284,13 +283,13 @@ $(_ => {
       e.stopPropagation()
 
       let strains = []
-      data.sources.forEach(v => {
-        strains.push(v.strain.name)
-      })
+
+      if (data.sources) {
+        data.sources.forEach(v => strains.push(v.strain.name))
+      }
 
       $(e.currentTarget)
-        .trigger('get-child', { id: data.id, entityname: 'notes' })
-        .trigger('cliff-notes', [format(data.mtime), strains.join(' & ')])
+        .trigger('cliff-notes', [format(data.mtime), strains.join(' & ') || 'Not assigned'])
     })
     .on('send', '.entity[name="ingredient"]', (e, data) => {
       e.stopPropagation()
@@ -309,7 +308,6 @@ $(_ => {
       delete data.bulk_cost
 
       $(e.currentTarget)
-        .trigger('get-child', { id: data.id, entityname: 'notes' })
         .trigger('cliff-notes', [data.strain.name, format(data.mtime), `$${totalcost || '~'}`])
     })
     .on('send', '.entity[name="note"]', (e, data) => {
@@ -334,37 +332,18 @@ $(_ => {
 
       $(e.currentTarget).trigger('cliff-notes', [data.name])
     })
-    .on('send', '.entity[name="strain"]', (e, data) => {
+    .on('send', '.entity[name="strain"], .entity[name="progeny"]', (e, data) => {
       e.stopPropagation()
 
-      let $s = $(e.currentTarget)
-
-      $s
-        .trigger('get-child', { id: data.id, entityname: 'photos' })
+      $(e.currentTarget)
+        .removeAttr('dtime')
+        .attr('dtime', data.dtime)
         .trigger('cliff-notes', [
           data.name,
           data.species,
           data.vendor.name,
           `$${data.strain_cost || '~'}`,
         ])
-
-      if (data.generation) {
-        $s.trigger('get-child', { id: data.generation.id, entityname: 'generation' })
-        delete data.generation
-      }
-
-      if ($s.parents('.entity[name="lifecycle"], .entity[name="generation"]').length === 0) {
-        $s
-          .trigger('get-child', {
-            entityname: "lifecycles",
-            url: `/reports/lifecycles?strain-id=${data.id}`,
-          })
-        $s
-          .trigger('get-child', {
-            entityname: "generations",
-            url: `/reports/generations?strain-id=${data.id}`,
-          })
-      }
 
       // delete data.strain_cost
     })
@@ -378,29 +357,16 @@ $(_ => {
     .on('send', ['.entity[name="plating', 'liquid', 'grain', 'bulk_substrate"]'].join('_substrate"], .entity[name="'), (e, data) => {
       e.stopPropagation()
 
-      $(e.currentTarget)
-        .trigger('cliff-notes', [data.name, data.vendor.name, `$${data.grain_cost || data.bulk_cost || '~'}`])
+      $(e.currentTarget).trigger('cliff-notes', [
+        data.name, data.vendor.name,
+        `$${data.grain_cost || data.bulk_cost || '~'}`
+      ])
 
       // delete data.grain_cost
       // delete data.strain_cost
     })
     .on('send', '.entity[name="substrate"]', (e, data) => {
-      let $s = $(e.currentTarget)
-      let $selected = $s
-        .parents('.history')
-        .find('>.entity>.ndx>.row.selected')
-      let owner = $selected.attr('owner')
-
-      if ($s
-        .trigger('cliff-notes', [data.name, data.vendor.name])
-        .parents(`.entity[name = "${owner}"]`).length === 0
-      ) {
-        $s
-          .trigger('get-child', {
-            entityname: `${owner}s`,
-            url: `/reports/${owner}s?${$selected.attr('param')}`,
-          })
-      }
+      $(e.currentTarget).trigger('cliff-notes', [data.name, data.vendor.name])
     })
     .on('send', '.entity', (e, data) => {
       e.stopPropagation()
@@ -438,45 +404,13 @@ $(_ => {
 
       data.forEach(v => $cliff.append($('<div>').text(v)))
     })
-    .on('reinit', '>.entity', e => {
-      $(e.currentTarget)
-        .find('>.list')
-        .empty()
-        .parent()
-        .find('>.cliff-notes')
-        .html('(choose ye)')
-    })
-    .on('add-child', '.entity', (e, name) => {
-      $(e.currentTarget)
-        .find('>.list')
-        .append(cloneentity(name))
-    })
-    .on('get-child', '.entity', (e, data) => {
-      e.stopPropagation()
-
-      $.ajax({
-        url: data.url || `/${data.entityname}/${data.id}`,
-        method: 'GET',
-        async: true,
-        success: (result, status, xhr) => {
-          if (!result) {
-            return
-          }
-
-          let entity = {}
-          entity[`${data.entityname}`] = result  // inlining doesn't work: { `${ data.entityname }` : result }
-
-          parsedata(data.entityname, entity, $(e.currentTarget))
-
-          $(e.currentTarget)
-            .trigger('sort')
-            .parents('.entity')
-            .first()
-            .trigger('sort')
-        },
-        error: console.log,
-      })
-    })
+    .on('reinit', '>.entity', e => $(e.currentTarget)
+      .removeAttr('dtime')
+      .find('>.list')
+      .empty()
+      .parent()
+      .find('>.cliff-notes')
+      .html('(choose ye)'))
     .on('click', '.entity-name, .cliff-notes', (e, data) => {
       e.stopPropagation()
 
@@ -499,7 +433,7 @@ $(_ => {
       attribute: ['id', 'name', 'value'],
       event: ['id', 'temperature', 'humidity', 'event_type', 'photos', 'notes', 'mtime', 'ctime'],
       event_type: ['id', 'name', 'severity', 'stage'],
-      generation: ['id', 'sources', 'plating_substrate', 'liquid_substrate', 'events', 'notes', 'mtime', 'ctime'],
+      generation: ['id', 'sources', 'progeny', 'plating_substrate', 'liquid_substrate', 'events', 'notes', 'mtime', 'ctime'],
       ingredient: ['id', 'name'],
       lifecycle: ['id', 'location', 'yield', 'count', 'strain', 'grain_substrate', 'bulk_substrate', 'events', 'notes', 'mtime', 'ctime'],
       note: ['id', 'note', 'mtime', 'ctime'],
@@ -510,6 +444,7 @@ $(_ => {
       vendor: ['id', 'name', 'website'],
     }
 
+    result.progeny = result.strain
     result.grain_substrate
       = result.bulk_substrate
       = result.plating_substrate

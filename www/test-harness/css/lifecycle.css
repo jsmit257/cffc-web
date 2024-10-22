@@ -5,13 +5,13 @@ body>.main>.workspace>.lifecycle>.table.lifecycle.noting>.rows.lc {
 body>.main>.workspace>.lifecycle>.table.lifecycle>.notes {
   clear: none;
   float: right;
-  height: 17em;
+  height: 18em;
   margin-left: -5px;
   width: 69%;
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows {
-  height: 18em;
+  height: 19em;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -29,6 +29,10 @@ body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.lc {
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx {
   float: left;
   width: 29%;
+}
+
+body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx>.row {
+  padding-left: .5em;
 }
 
 body>.main>.workspace>.lifecycle>.rows.ndx>.field.new>.ctime::before {

@@ -47,6 +47,13 @@ body>.main>.workspace>.substrate>.table.ingredients {
 body>.main>.workspace>.substrate>.table.ingredients>.columns>div,
 body>.main>.workspace>.substrate>.table.ingredients>.rows>.row>select {
   border-style: none;
-  margin-left: 2%;
-  width: 98%;
+  /* padding-left: 2%; */
+  width: 100%;
+}
+
+body>.main>.workspace>.substrate>.table.ingredients>.rows>.row>select {
+  appearance: none;
+  /* width: initial; */
+  -webkit-appearance: none;
+  padding-left: 5px;
 }

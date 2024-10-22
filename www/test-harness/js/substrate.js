@@ -1,34 +1,13 @@
 $(_ => {
   let $substrate = $('body>.main>.workspace>.substrate')
-    .on('activate', e => $table.trigger('refresh'))
+    .on('activate', e => {
+      $('.table.substrate .row.template>select.vendor').trigger('refresh')
+      $('.table.ingredients .row.template>.ingredients').trigger('refresh')
+
+      $table.trigger('refresh')
+    })
 
   let $table = $substrate.find('>.table.substrate>.rows')
-    .on('pre-send', e => {
-      e.stopPropagation()
-
-      $.ajax({
-        url: '/vendors',
-        method: 'GET',
-        async: false,
-        success: data => $table
-          .find('>.row.template>.vendor')
-          .trigger('send', data),
-        error: console.log,
-      })
-
-      e.stopPropagation()
-
-      $.ajax({
-        url: '/ingredients',
-        method: 'GET',
-        async: false,
-        success: data => $ingredients
-          .find('>.row.template>.ingredients')
-          .trigger('send', data
-          ),
-        error: console.log,
-      })
-    })
     .on('send', '>.row', (e, data = { vendor: {} }) => {
       e.stopPropagation()
 
@@ -37,6 +16,8 @@ $(_ => {
       $s.find('>.name').val(data.name)
       $s.find('>.type').val(data.type)
       $s.find('>.vendor').val(data.vendor.id)
+
+      data.ingredients ||= []
     })
     .on('click', '>.row', e => {
       if (e.isPropagationStopped()) {
@@ -45,19 +26,8 @@ $(_ => {
 
       $ingredients.trigger('send', ($(e.currentTarget)
         .data('row')
-        .ingredients || [])
+        .ingredients)
         .sort((a, b) => a.name.localeCompare(b.name)))
-    })
-    .on('send', '>.row>.vendor', (e, ...data) => {
-      e.stopPropagation()
-
-      let $list = $(e.currentTarget)
-        .empty()
-
-      data.forEach(v => $list
-        .append($(new Option())
-          .val(v.id)
-          .text(v.name)))
     })
 
   let $buttonbar = $substrate.find('>.table.substrate>.buttonbar')
@@ -87,7 +57,8 @@ $(_ => {
         success: console.log,
       })
     })
-    .on('click', '.remove.active', e => $table.trigger('delete', `/substrate/${$table.find('>.selected').attr('id')}`))
+    .on('click', '.remove.active', e => $table
+      .trigger('delete', `/substrate/${$table.find('>.selected').attr('id')}`))
     .on('click', '>.refresh', e => $table.trigger('refresh'))
 
   let $ingredients = $substrate.find('>.table.ingredients>.rows')
@@ -98,35 +69,45 @@ $(_ => {
         : 'addClass'
       ]('active')
     })
-    .on('send', '>.row', (e, data = {}) => {
-      e.stopPropagation()
-      $(e.currentTarget).find('>.ingredients').val(data.id)
-    })
-    .on('send', '>.row>.ingredients', (e, ...data) => {
-      e.stopPropagation()
+    .on('send', '>.row', (e, data = {}) => $(e.currentTarget)
+      .find('>.ingredients')
+      .val(data.id))
+    .on('change', '>.row>.ingredients', e => {
+      let $ing = $(e.currentTarget)
+      let rec = $ing.find('>option:selected').data('record')
+      let $selected = $ing.parent()
 
-      let $e = $(e.currentTarget)
-        .empty()
+      $.ajax({
+        url: `/substrate/${$table.find('.selected').attr('id')}/ingredients/${$selected.attr('id')}`,
+        contentType: 'application/json',
+        method: 'PATCH',
+        dataType: 'json',
+        async: true,
+        data: JSON.stringify({
+          id: $selected.find('>.ingredients').val(),
+          name: $selected.find('>.ingredients>option:selected').text(),
+        }),
+        success: _ => {
+          let ing = $table
+            .find('>.selected')
+            .data('row')
+            .ingredients
 
-      data.forEach(r => {
-        $e.append($(new Option())
-          .val(r.id)
-          .text(r.name))
+          ing.forEach((v, i) => {
+            if (v.id == $selected.attr('id')) {
+              ing[i] = rec
+            }
+          })
+
+          $selected
+            .data('row', rec)
+            .attr('id', $ing.val())
+        },
+        error: console.log,
       })
     })
 
   $substrate.find('>.table.ingredients>.buttonbar')
-    .on('click', '>.edit.active', e => {
-      $ingredients.trigger('edit', {
-        url: `/substrate/${$table.find('.selected').attr('id')}/ingredients/${$ingredients.find('.selected').attr('id')}`,
-        data: $selected => {
-          return JSON.stringify({
-            id: $selected.find('>.ingredients').val(),
-            name: $selected.find('>.ingredients>option:selected').text(),
-          })
-        },
-      })
-    })
     .on('click', '>.add.active', e => {
       $ingredients.trigger('add', {
         url: `/substrate/${$table.find('.selected').attr('id')}/ingredients`,
@@ -144,16 +125,17 @@ $(_ => {
         : 'addClass'
       ]('active')
     })
-    .find('.refresh').remove()
+    .find('.edit, .refresh').remove()
 
   $('.table.substrate>.columns>.column.type>select')
     .on('change', e => {
+      let val = $(e.currentTarget).val()
       $('.table.substrate')
         .removeClass('plating liquid grain bulk all')
-        .addClass($(e.currentTarget).val())
+        .addClass(val)
 
-      if ($table.find(`.selected.${$(e.currentTarget).val()}:visible`).length === 0) {
-        $table.find(`.row.${$(e.currentTarget).val()}`).first().click()
+      if ($table.find(`.selected.${val}:visible`).length === 0) {
+        $table.find(`.row.${val}`).first().click()
       }
     })
     .trigger('change')

@@ -13,6 +13,6 @@ body>.main>.workspace>.vendor.active>.table>.rows>.row>input {
 }
 
 body>.main>.workspace>.vendor.active>.table>.rows>.row>.website:hover {
-  color: #482be9;
+  color: #00edff;
   text-decoration: underline;
 }

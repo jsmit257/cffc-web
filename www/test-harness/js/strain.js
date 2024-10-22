@@ -5,6 +5,8 @@ $(function () {
         selected = $table.find('>.row.selected').attr('id')
       }
 
+      $('.table.strain .template>select.vendor').trigger('refresh')
+
       $table.trigger('refresh')
 
       setTimeout(_ => {
@@ -12,23 +14,7 @@ $(function () {
       }, 20)
     })
 
-  let $straintmpl = $strain.find('>.table.strain>.rows>.row.template')
-  let $attrtmpl = $strain.find('>.table.strainattribute>.rows>.row.template')
-
   let $table = $strain.find('>.table.strain>.rows')
-    .on('pre-send', e => {
-      e.stopPropagation()
-
-      $.ajax({
-        url: '/vendors',
-        method: 'GET',
-        async: false,
-        success: data => $straintmpl
-          .find('>.vendor')
-          .trigger('send', data),
-        error: console.log,
-      })
-    })
     .on('send', '>.row', (e, data = { ctime: 'Now', vendor: {} }) => {
       e.stopPropagation()
 
@@ -72,17 +58,6 @@ $(function () {
         ? 'addClass'
         : 'removeClass'
       ]('active')
-    })
-    .on('send', '>.row>.vendor', (e, ...data) => {
-      e.stopPropagation()
-
-      let $list = $(e.currentTarget)
-        .empty()
-
-      data.forEach(v => $list
-        .append($(new Option())
-          .val(v.id)
-          .text(v.name)))
     })
 
   let $buttonbar = $strain.find('>.table.strain>.buttonbar')

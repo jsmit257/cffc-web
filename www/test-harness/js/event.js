@@ -92,7 +92,7 @@ $(_ => {
                 event_type: {
                   id: $selected.find('>.eventtype').val()
                 },
-                ctime: new Date($selected.find('>.ctime.static').data('value')).toISOString(),
+                ctime: new Date($selected.find('>.ctime').data('value')).toISOString(),
               })
             },
             success: (data, status, xhr) => { $owner.trigger('send', data) },

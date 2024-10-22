@@ -9,9 +9,10 @@ body>.main>.workspace>.eventtype>.table>.rows>.row>select,
 body>.main>.workspace>.eventtype>.table>.rows>.row>div {
   margin-left: 2%;
   width: 31%;
+  /* text-align: center; */
 }
 
 body>.main>.workspace>.eventtype>.table>.rows>.row>.severity,
-body>.main>.workspace>.eventtype>.table>.rows>.row>.stage {
+body>.main>.workspace>.eventtype>.table>.rows>.row>.stages {
   text-align: center;
 }

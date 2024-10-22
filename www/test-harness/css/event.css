@@ -6,11 +6,11 @@ body>.main>.workspace .table.events {
 
 body>.main>.workspace .table.events>.photos>.rows,
 body>.main>.workspace .table.events>.notes>.rows {
-  height: 11.5em;
+  height: 12.5em;
 }
 
 body>.main>.workspace .table.events>.rows {
-  height: 15em;
+  height: 16em;
 }
 
 body>.main>.workspace .table.events.photoing>.rows,
