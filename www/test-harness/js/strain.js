@@ -104,6 +104,7 @@ $(function () {
     .on('click', '>.refresh.active', e => $table.trigger('reinit'))
     .trigger('subscribe', {
       clazz: 'photos',
+      attrs: { 'hover': 'photos' },
       clicker: e => {
         e.stopPropagation()
         if ($strain
@@ -120,6 +121,7 @@ $(function () {
     })
     .trigger('subscribe', {
       clazz: 'genlink',
+      attrs: { 'hover': 'go to parent(s)' },
       clicker: e => {
         e.stopPropagation()
 
@@ -129,6 +131,7 @@ $(function () {
     })
     .trigger('subscribe', {
       clazz: 'report',
+      attrs: { 'hover': 'go to report' },
       clicker: e => {
         e.stopPropagation()
         $('body>.main>.header>.menu-scroll')

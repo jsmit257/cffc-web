@@ -5,6 +5,7 @@
   <title>test harness</title>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <!-- <script src="./jquery-offline.js"></script> -->
   <script src="./js/widget.js" defer></script>
   <script src="./js/index.js" defer></script>
   <script src="./js/cookiebar.js" defer></script>
@@ -103,11 +104,13 @@
               <div class="field hover no-add">
                 <div class="label">Yield (g)</div>
                 <input class="yield" type="number" min="0" readonly>
+                <div class="dry-weight"></div>
               </div>
 
               <div class="field hover no-add">
-                <div class="label">Count/kg</div>
+                <div class="label">Count</div>
                 <input class="count" type="number" min="0" readonly>
+                <div class="per-kilo"></div>
               </div>
 
               <div class="field hover no-add">
@@ -330,7 +333,7 @@
               <select class="liquid substrate" url disabled></select>
             </div>
 
-            <div class="field no-edit hover">
+            <div class="field no-edit hover" hover="go to strain">
               <div class="label">Progeny</div>
               <select class="strains progeny" url="strains"></select>
             </div>
@@ -349,8 +352,8 @@
           <div class="rows sources main">
             <div class="row source countable template">
               <div class="buttonbox">
-                <div class="button action active"></div>
-                <div class="button commit active"></div>
+                <div class="button action active" hover></div>
+                <div class="button commit active" hover></div>
               </div>
 
               <select class="type" name="type" disabled>
@@ -440,9 +443,9 @@
         <div class="row template">
           <textarea class="note" disabled></textarea>
           <div class="mtime short-date"></div>
-          <div class="action button note-ctl active"></div>
+          <div class="action button note-ctl active" hover></div>
           <div class="ctime short-date"></div>
-          <div class="commit button note-ctl active"></div>
+          <div class="commit button note-ctl active" hover></div>
         </div>
       </div>
       <div class="add-note add-ctl">+</div>
@@ -455,9 +458,9 @@
           <input type="file" class="photo" disabled></textarea>
           <div class="mtime short-date"></div>
           <div class="ctime short-date"></div>
-          <div class="action photo-ctl button active"></div>
-          <div class="commit photo-ctl button active"></div>
-          <div class="back photo-ctl button active"></div>
+          <div class="action photo-ctl button active" hover></div>
+          <div class=" commit photo-ctl button active" hover></div>
+          <div class="back photo-ctl button active" hover="back"></div>
         </div>
       </div>
       <div class="add-photo add-ctl">+</div>

@@ -1,4 +1,7 @@
 $(_ => {
+
+  let fmt = (v, r) => v.toFixed ? v.toFixed(r) : v
+
   let $lifecycle = $('body>.main>.workspace>.lifecycle')
     .on('activate', e => {
       $('.table.lifecycle select.strains').trigger('refresh')
@@ -83,6 +86,8 @@ $(_ => {
 
       fields.forEach(n => $table.find(`>.row>.field>.${n}`).val(lc[n] || 0))
 
+      $table.find('.row>.field>.yield').trigger('change')
+
       $table.find('.row>.field>.strains').val(lc.strain.id)
       $table.find('.row>.field>.grain_substrate').val(lc.grain_substrate.id)
       $table.find('.row>.field>.bulk_substrate').val(lc.bulk_substrate.id)
@@ -95,12 +100,18 @@ $(_ => {
         .parent()
         .removeClass('noting photoing')
     })
-    .on('edit', (e, args) => {
-      $(e.currentTarget)
-        .trigger('set-editing', 'edit')
-        .find('>.row>.field>.mtime')
-        .trigger('format', new Date().toISOString())
+    .on('change', '.yield, .count, .gross', e => {
+      let gross = $(e.delegateTarget).find('>.row>.field>.gross').val()
+      let count = $(e.delegateTarget).find('>.row>.field>.count').val()
+      let yield = $(e.delegateTarget).find('>.row>.field>.yield').val()
+
+      $table.find('.row>.field>.dry-weight').text(fmt(yield / gross * 100, 3))
+      $table.find('.row>.field>.per-kilo').text(fmt(count / yield * 1000, 2))
     })
+    .on('edit', (e, args) => $(e.currentTarget)
+      .trigger('set-editing', 'edit')
+      .find('>.row>.field>.mtime')
+      .trigger('format', new Date().toISOString()))
     .on('set-editing', (e, status) => {
       e.stopPropagation()
 
@@ -185,15 +196,21 @@ $(_ => {
     .on('click', '.refresh.active', _ => $ndx.trigger('refresh'))
     .trigger('subscribe', {
       clazz: 'notes',
+      attrs: { 'hover': 'notes' },
       clicker: e => {
         e.stopPropagation()
-        if ($lifecycle.find('>.table.lifecycle').toggleClass('noting').hasClass('noting')) {
-          $gennotes.trigger('refresh', ($table.data('record') || {}).id)
+        if ($lifecycle
+          .find('>.table.lifecycle')
+          .toggleClass('noting')
+          .hasClass('noting')
+        ) {
+          $notes.trigger('refresh', ($table.data('row') || {}).id)
         }
       },
     })
     .trigger('subscribe', {
       clazz: 'report',
+      attrs: { 'hover': 'go to report' },
       clicker: e => {
         e.stopPropagation()
         $('body>.main>.header>.menu-scroll')
@@ -201,7 +218,7 @@ $(_ => {
       }
     })
 
-  let $gennotes = $('body>.template>.notes')
+  let $notes = $('body>.template>.notes')
     .clone(true, true)
     .insertAfter($table)
 

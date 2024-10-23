@@ -25,6 +25,8 @@ $(_ => {
     'notes': 'note',
     'photos': 'photo',
     'sources': 'source',
+    'strains': 'strain',
+    'substrates': 'substrate',
   }
 
   let format = (p => {
@@ -36,65 +38,46 @@ $(_ => {
     }
   })(/^(\d{4}.\d\d.\d\d).(\d\d.\d\d.\d\d).*/)
 
-  let cloneentity = ($tmpl => {
+  let newentity = ($tmpl => {
     $tmpl.find('>.ndx').remove()
 
-    return name => $tmpl
+    return ((entityname, data, $parent) => $tmpl
       .clone(true, true)
-      .attr('name', name)
-      .attr('sort-key', name)
-  })($('.workspace>.history>.entity').clone(true, true))
-
-  let newentity = ((entityname, data, $parent) => {
-    // return $parent.trigger('add-child', entityname)
-    //   .find('>.list>div')
-    //   .last()
-    //   .trigger('send', data)
-    //   .find('>.entity-name')
-    //   .trigger('map', entityname)
-    //   .parent()
-    return cloneentity(entityname)
+      .attr('name', entityname)
+      .attr('sort-key', entityname)
       .appendTo($parent)
       .trigger('send', data)
       .find('>.entity-name')
       .trigger('map', entityname)
-      .parent()
-  })
+      .parent())
+  })($('.workspace>.history>.entity').clone(true, true))
 
-  let parsedata = (k, data, $parent) => {
-    switch (data[k].constructor.prototype) {
-      case Object.prototype:
-        newentity(k, data[k], $parent.find('>.list'))
-        break
-
-      case Array.prototype:
-        let $list = newentity(k, [], $parent.find('>.list'))
-          .removeClass('collapsed')
-          .find('>.list')
-
-        $list.prev().text(`(${data[k].length})`)
-
-        data[k].forEach(v => {
-          newentity(pluralmap[k] || k, v, $list)
-        })
-
-        break
-
-      default:
-        let $row = $('<div>')
-          .addClass(`scalar`)
-          .attr('sort-key', k)
-          .append($('<div>')
-            .addClass('label'))
-          .append($('<div>')
-            .addClass('value')
-            .html(format(data[k])))
-          .appendTo($parent.find('>.list'))
-          .find('>.label')
-          .trigger('map', k)
-          .parent()
+  let sortindices = (_ => {
+    let result = {
+      attribute: ['id', 'name', 'value'],
+      event: ['id', 'temperature', 'humidity', 'event_type', 'photos', 'notes', 'mtime', 'ctime'],
+      eventtype: ['id', 'name', 'severity', 'stage', 'lifecycles', 'generations'],
+      generation: ['id', 'sources', 'progeny', 'plating_substrate', 'liquid_substrate', 'events', 'notes', 'mtime', 'ctime'],
+      ingredient: ['id', 'name'],
+      lifecycle: ['id', 'location', 'yield', 'count', 'gross', 'strain', 'grain_substrate', 'bulk_substrate', 'events', 'notes', 'mtime', 'ctime'],
+      note: ['id', 'note', 'mtime', 'ctime'],
+      photo: ['id', 'image', 'notes', 'mtime', 'ctime'],
+      source: ['lifecycle', 'strain', 'type'],
+      stage: ['id', 'name'],
+      strain: ['id', 'name', 'species', 'strain_cost', 'generation', 'attributes', 'photos', 'vendor', 'lifecycles', 'generations', 'ctime', 'dtime'],
+      substrate: ['id', 'name', 'type', 'grain_cost', 'bulk_cost', 'ingredients', 'vendor', 'generations', 'lifecycles'],
+      vendor: ['id', 'name', 'website', 'strains', 'substrates'],
     }
-  }
+
+    result.progeny = result.strain
+    result.grain_substrate
+      = result.bulk_substrate
+      = result.plating_substrate
+      = result.liquid_substrate
+      = result.substrate
+
+    return result
+  })()
 
   $('.main>.workspace>.history')
     .on('activate', (e, id) => {
@@ -112,6 +95,13 @@ $(_ => {
         .find('>.entity-name')
         .trigger('map', entityname)
     })
+    .on('reinit', '>.entity', e => $(e.currentTarget)
+      .removeAttr('dtime')
+      .find('>.list')
+      .empty()
+      .parent()
+      .find('>.cliff-notes')
+      .html('(choose ye)'))
     .on('refresh', '>.entity>.ndx', (e, id) => {
       e.stopPropagation()
 
@@ -140,6 +130,7 @@ $(_ => {
         $('<div>')
           .addClass('row hover')
           .attr('id', ev.id)
+          .data('url', `/reports/eventtype/${ev.id}`)
           .appendTo(e.currentTarget)
           .trigger('send', {
             name: ev.name,
@@ -220,6 +211,7 @@ $(_ => {
         $('<div>')
           .addClass('row hover')
           .attr({ id: ven.id })
+          .data('url', `/reports/vendor/${ven.id}`)
           .appendTo(e.currentTarget)
           .trigger('send', { name: ven.name })
       })
@@ -259,7 +251,6 @@ $(_ => {
             .empty()
             .parent()
             .trigger('send', data)
-            .trigger('sort')
         },
         error: console.log,
       })
@@ -274,7 +265,7 @@ $(_ => {
 
       $(e.currentTarget).trigger('cliff-notes', [format(data.mtime), data.event_type.name])
     })
-    .on('send', '.entity[name="event_type"]', (e, data) => {
+    .on('send', '.entity[name="eventtype"]', (e, data) => {
       e.stopPropagation()
 
       $(e.currentTarget).find('>.cliff-notes').text(data.name)
@@ -375,7 +366,9 @@ $(_ => {
 
       for (let el in data) {
         if (Object.prototype.hasOwnProperty.call(data, el)) {
-          parsedata(el, data, $(e.currentTarget))
+          $(e.currentTarget)
+            .find('>.list')
+            .trigger('parse-data', [el, data])
         }
       }
 
@@ -395,6 +388,42 @@ $(_ => {
           .children()
           .sort((a, b) => ndx.indexOf(a.getAttribute('sort-key')) - ndx.indexOf(b.getAttribute('sort-key'))))
     })
+    .on('parse-data', '.list', (e, k, data) => {
+      e.stopPropagation()
+
+      switch (data[k].constructor.prototype) {
+        case Object.prototype:
+          newentity(k, data[k], $(e.currentTarget))
+          break
+
+        case Array.prototype:
+          let $list = newentity(k, [], $(e.currentTarget))
+            .removeClass('collapsed')
+            .find('>.list')
+
+          $list.prev().text(`(${data[k].length})`)
+
+          data[k].forEach(v => {
+            newentity(pluralmap[k] || k, v, $list)
+          })
+
+          break
+
+        default:
+          let $row = $('<div>')
+            .addClass(`scalar`)
+            .attr('sort-key', k)
+            .append($('<div>')
+              .addClass('label'))
+            .append($('<div>')
+              .addClass('value')
+              .html(format(data[k])))
+            .appendTo($(e.currentTarget))
+            .find('>.label')
+            .trigger('map', k)
+            .parent()
+      }
+    })
     .on('cliff-notes', '.entity', (e, ...data) => {
       e.stopPropagation()
 
@@ -404,13 +433,6 @@ $(_ => {
 
       data.forEach(v => $cliff.append($('<div>').text(v)))
     })
-    .on('reinit', '>.entity', e => $(e.currentTarget)
-      .removeAttr('dtime')
-      .find('>.list')
-      .empty()
-      .parent()
-      .find('>.cliff-notes')
-      .html('(choose ye)'))
     .on('click', '.entity-name, .cliff-notes', (e, data) => {
       e.stopPropagation()
 
@@ -427,30 +449,4 @@ $(_ => {
     .on('map', '.label, .entity-name', (e, key) => {
       $(e.currentTarget).html(labelmap[key] || key)
     })
-
-  let sortindices = (_ => {
-    let result = {
-      attribute: ['id', 'name', 'value'],
-      event: ['id', 'temperature', 'humidity', 'event_type', 'photos', 'notes', 'mtime', 'ctime'],
-      event_type: ['id', 'name', 'severity', 'stage'],
-      generation: ['id', 'sources', 'progeny', 'plating_substrate', 'liquid_substrate', 'events', 'notes', 'mtime', 'ctime'],
-      ingredient: ['id', 'name'],
-      lifecycle: ['id', 'location', 'yield', 'count', 'strain', 'grain_substrate', 'bulk_substrate', 'events', 'notes', 'mtime', 'ctime'],
-      note: ['id', 'note', 'mtime', 'ctime'],
-      photo: ['id', 'image', 'notes', 'mtime', 'ctime'],
-      // source: [],
-      stage: ['id', 'name'],
-      strain: ['id', 'name', 'species', 'strain_cost', 'generation', 'attributes', 'photos', 'vendor', 'lifecycles', 'generations', 'ctime', 'dtime'],
-      vendor: ['id', 'name', 'website'],
-    }
-
-    result.progeny = result.strain
-    result.grain_substrate
-      = result.bulk_substrate
-      = result.plating_substrate
-      = result.liquid_substrate
-      = ['id', 'name', 'type', 'grain_cost', 'bulk_cost', 'ingredients', 'vendor']
-
-    return result
-  })()
 })

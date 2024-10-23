@@ -79,6 +79,21 @@ $(_ => {
   $('select.vendor, select.ingredients, select.stages')
     .on('attrs', '>option', (e, v) => $(e.currentTarget).text(v.name))
 
+  $(document.body)
+    .on('mouseover', '[hover]>div', e => {
+      let $t = $(e.currentTarget)
+      $t
+        .data('hover-text', $('<div>')
+          .appendTo($t)
+          .addClass('hover-text')
+          .text($t.attr('hover') || $t.parent().attr('hover'))
+          .css({
+            // 'x': e.clientX,
+            // 'y': e.clientY,
+          }))
+    })
+    .on('mouseout', '[hover]>div', e => $(e.currentTarget).data('hover-text').remove())
+
   $('.test-runner')
     .on('sending', (e, ...data) =>
       console.log('sending:', data.length))

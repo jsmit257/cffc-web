@@ -119,6 +119,7 @@ $(_ => {
         .on('click', '>.remove.active', e => $events.trigger('delete', `${cfg.parent}/${$owner.data('row').id}/events/${$events.find('.selected').attr('id')}`))
         .trigger('subscribe', {
           clazz: 'notes',
+          attrs: { 'hover': 'notes' },
           clicker: e => {
             e.stopPropagation()
 
@@ -131,6 +132,7 @@ $(_ => {
         })
         .trigger('subscribe', {
           clazz: 'photos',
+          attrs: { 'hover': 'photos' },
           clicker: e => {
             e.stopPropagation()
 

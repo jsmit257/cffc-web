@@ -1,30 +1,34 @@
 $(_ => {
-  let $rowtmpl = $('body>.template>.photos>.rows>.row.template')
+  // let $rowtmpl = $('body>.template>.photos>.rows>.row.template')
 
-  $('body>.template>.notes')
-    .clone(true, true)
-    .appendTo($('body>.template>.photos>.rows>.row.template'))
+  // $('body>.template>.notes')
+  //   .clone(true, true)
+  //   .appendTo($('body>.template>.photos>.rows>.row.template'))
+
+  let $rowtmpl = $('body>.template>.photos>.rows>.row.template')
+    .append($('body>.template>.notes')
+      .clone(true, true))
 
   $('div.photos')
     .on('refresh', (e, owner) => {
       e.stopPropagation()
 
-      let $n = $(e.currentTarget)
+      let $p = $(e.currentTarget)
 
       $.ajax({
         url: `/photos/${owner}`,
         method: 'GET',
         async: true,
         success: (result, status, xhr) => {
-          $n
+          $p
             .data('owner', owner)
             .find('>.rows')
             .trigger('send', result)
         },
         error: console.log,
         complete: (xhr, status) => {
-          if (status === 'success' && $n.find('.removable').length === 0) {
-            $n.find('div.add-photo').click()
+          if (status === 'success' && $p.find('.removable').length === 0) {
+            $p.find('div.add-photo').click()
           }
         }
       })
@@ -50,9 +54,8 @@ $(_ => {
     .on('send', '>.rows>.row', (e, data = { mtime: 'Now', ctime: 'Now' }) => {
       e.stopPropagation()
 
-      let $row = $(e.currentTarget)
+      let $row = $(e.currentTarget).attr('id', data.id)
 
-      $row.attr('id', data.id)
       $row.find('>img.image').attr('src', `/album/${data.image || '../images/transparent.png'}`)
       $row.find('>.mtime').trigger('format', data.mtime)
       $row.find('>.ctime').trigger('format', data.ctime)
@@ -192,13 +195,19 @@ $(_ => {
     })
     .on('click', '>.rows>.row>img', e => {
       if ($(e.delegateTarget).hasClass('gallery')) {
-        $(e.currentTarget)
+        let $row = $(e.currentTarget)
           .parents('.row')
           .first()
           .toggleClass('selected')
+
+        $row
           .parents('.photos')
           .first()
           .toggleClass('gallery singleton')
+
+        $row
+          .find('>.notes')
+          .trigger('refresh', $row.attr('id'))
       } else if ($(e.delegateTarget).hasClass('singleton')) {
         $('body>div.imageview').trigger('activate', $(e.currentTarget).attr('src'))
       }
@@ -209,10 +218,6 @@ $(_ => {
       let $row = $rowtmpl
         .clone(true, true)
         .toggleClass('template removable editing adding selected')
-        // .insertBefore($(e.delegateTarget)
-        //   .find('>.rows')
-        //   .children()
-        //   .first())
         .prependTo($(e.delegateTarget).find('>.rows'))
         .trigger('send')
 

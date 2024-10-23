@@ -60,10 +60,13 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
   })
   .on('edit', (e, args) => {
     let $table = $(e.currentTarget)
-    $table
+
+    let $selected = $table
       .find('.row.selected')
       .addClass('editing')
       .trigger('edit')
+
+    $selected
       .find('input, select')
       .first()
       .focus()
@@ -80,21 +83,17 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
       target: $table,
       handlers: {
         cancel: args.cancel || (_ => $table.find('>.selected').trigger('resend')),
-        ok: args.ok || (e => {
-          let $selected = $table.find('>.selected')
-
-          $.ajax({
-            url: `/${$table.attr('name')}/${$selected.attr('id')}`,
-            contentType: 'application/json',
-            method: 'PATCH',
-            dataType: 'json',
-            data: data($selected),
-            async: true,
-            success: $selected.trigger('reset'),
-            error: console.log, //$selected.trigger('resend'),
-            ...args,
-          })
-        })
+        ok: args.ok || (e => $.ajax({
+          url: `/${$table.attr('name')}/${$selected.attr('id')}`,
+          contentType: 'application/json',
+          method: 'PATCH',
+          dataType: 'json',
+          data: data($selected),
+          async: true,
+          success: $selected.trigger('reset'),
+          error: console.log, //$selected.trigger('resend'),
+          ...args,
+        }))
       }
     })
   })
@@ -119,6 +118,8 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
       $row.insertBefore($selected)
     }
 
+    $selected = $row
+
     $row.find('input, select')
       .first()
       .focus()
@@ -136,7 +137,7 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
       handlers: {
         cancel: args.cancel || (_ => $table.trigger('remove-selected')),
         ok: args.ok || (e => {
-          let $selected = $table.find('.selected').trigger('reset')
+          $selected.trigger('reset')
 
           $.ajax({
             url: `/${$table.attr('name')}`,

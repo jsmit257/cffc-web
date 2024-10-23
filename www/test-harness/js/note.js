@@ -3,7 +3,7 @@ $((e, $rowtmpl = $('body>.template>.notes>.rows>.row.template')) =>
     .on('refresh', (e, owner) => {
       e.stopPropagation()
 
-      let $n = $(e.currentTarget)
+      let $n = $(e.currentTarget).data('owner', owner)
       let $rows = $n.find('>.rows')
       let selected = $rows.find('>.row.selected').attr('id')
 
@@ -11,12 +11,7 @@ $((e, $rowtmpl = $('body>.template>.notes>.rows>.row.template')) =>
         url: `/notes/${owner}`,
         method: 'GET',
         async: true,
-        success: (result, status, xhr) => {
-          $n
-            .data('owner', owner)
-            .find('>.rows')
-            .trigger('send', result)
-        },
+        success: (result, status, xhr) => $n.find('>.rows').trigger('send', result),
         error: console.log,
         complete: (xhr, status) => {
           if ( // clumsy

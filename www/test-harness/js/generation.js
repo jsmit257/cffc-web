@@ -250,6 +250,7 @@ $(_ => {
     })
     .trigger('subscribe', {
       clazz: 'notes',
+      attrs: { 'hover': 'notes' },
       clicker: e => {
         e.stopPropagation()
 
@@ -265,6 +266,7 @@ $(_ => {
     })
     .trigger('subscribe', {
       clazz: 'report',
+      attrs: { 'hover': 'go to report' },
       clicker: e => {
         e.stopPropagation()
         $('body>.main>.header>.menu-scroll')

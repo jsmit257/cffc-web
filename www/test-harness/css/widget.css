@@ -42,6 +42,56 @@ div[dtime] {
   color: #f0f8ff66;
 }
 
+.hover-text {
+  background-color: blanchedalmond;
+  border-color: darkred;
+  border-radius: 3px;
+  border-width: 1px;
+  color: crimson;
+  font-size: smaller;
+  line-height: 1em;
+  margin-left: -50%;
+  margin-top: -1.5em;
+  padding: .2em;
+  position: absolute;
+  white-space: nowrap;
+}
+
+.adding>.buttonbox>.action>.icon>.hover-text::before,
+.editing>.buttonbox>.action>.icon>.hover-text::before,
+.adding>.action>.icon>.hover-text::before,
+.editing>.action>.icon>.hover-text::before {
+  content: 'cancel'
+}
+
+.buttonbox>.action>.icon>.hover-text::before {
+  margin-top: 2em;
+}
+
+.buttonbox>.button>.icon>.hover-text::before {
+  margin-left: 2em;
+}
+
+.action>.icon>.hover-text::before {
+  content: 'edit'
+}
+
+.row>.action>.icon>.hover-text {
+  left: -1.5em;
+  top: 1.5em;
+}
+
+.adding>.buttonbox>.commit>.icon>.hover-text::before,
+.editing>.buttonbox>.commit>.icon>.hover-text::before,
+.adding>.commit>.icon>.hover-text::before,
+.editing>.commit>.icon>.hover-text::before {
+  content: 'save'
+}
+
+.commit>.icon>.hover-text::before {
+  content: 'delete'
+}
+
 /* scrollbars */
 ::-webkit-scrollbar {
   width: 10px;

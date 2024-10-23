@@ -46,6 +46,7 @@ $(() => {
     .on('subscribe', (e, cfg) => {
       $btntmpl(`${cfg.clazz} active`)
         .appendTo($(e.currentTarget))
+        .attr(cfg.attrs || {})
         .on('click', e => {
           if (!$(e.currentTarget).hasClass('active')) {
             return
@@ -53,12 +54,12 @@ $(() => {
           cfg.clicker(e)
         })
     })
-    .append($btntmpl('remove stdctrl'))
-    .append($btntmpl('cancel stdctrl'))
-    .append($btntmpl('ok stdctrl'))// .html('&#xe013;')
-    .append($btntmpl('add active stdctrl'))
-    .append($btntmpl('edit stdctrl'))// .html('&#x270D;')
-    .append($btntmpl('refresh active'))
+    .append($btntmpl('remove stdctrl').attr('hover', 'remove'))
+    .append($btntmpl('cancel stdctrl').attr('hover', 'cancel'))
+    .append($btntmpl('ok stdctrl').attr('hover', 'ok'))// .html('&#xe013;')
+    .append($btntmpl('add active stdctrl').attr('hover', 'add new'))
+    .append($btntmpl('edit stdctrl').attr('hover', 'edit'))// .html('&#x270D;')
+    .append($btntmpl('refresh active').attr('hover', 'refresh'))
     .append($('<div>')
       .addClass('bumper')
       .html('&nbsp;'))

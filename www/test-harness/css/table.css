@@ -23,7 +23,7 @@ body>.main>.workspace>div .table>.rows {
 body>.main>.workspace>div .table>.rows>.row,
 body>.main>.workspace>div .table>.rows>.row>.field,
 body>.main>.workspace>div .table>.rows>.field {
-  border-radius: 0px;
+  border-radius: 15px;
   float: left;
   position: relative;
   width: 100%;
