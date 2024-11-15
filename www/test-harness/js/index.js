@@ -5,6 +5,21 @@ $(_ => {
     return (curr, dir) => { return rownames[(len + rownames.indexOf(curr) + Number(dir)) % len] }
   })(rownames.length)
 
+  $(document)
+    .on('reload', e => {
+      let hashes = document.location.hash.split('#')
+      if (hashes.length > 1) {
+        hashes.shift()
+      } else {
+        hashes = ['main', 'lifecycle']
+      }
+
+      $('body>.main>.header>.menu-scroll').trigger('select', hashes)
+    })
+    .on('error-message', (e, ...data) => {
+      console.log('data', ...data)
+    })
+
   $('body>.main>.header')
     .on('click', '>.menuitem:not(.selected)', (e, data) => {
       let $t = $(e.currentTarget).addClass('selecting')
@@ -69,10 +84,15 @@ $(_ => {
       $h.find(`>[name="${btn}"]`).click()
     })
 
-  $(document.body)
-    .on('error-message', (e, ...data) => {
-      console.log('data', ...data)
-    })
+  $.ajaxSetup({
+    statusCode: {
+      302: _ => $('body>.login').trigger('activate'),
+      // 400: xhr => $(document).trigger('error-message', 'Error:', xhr.responseText),
+    },
+    error: (xhr, status, err) => {
+      $(document).trigger('error-message', ['Error', xhr.responseText])
+    },
+  })
 
   buildcss = query => {
     console.log($($(query)

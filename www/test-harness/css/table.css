@@ -43,7 +43,6 @@ body>.main>.workspace>div .table>.rows input,
 body>.main>.workspace>div .table>.rows select {
   background-color: inherit;
   border-style: none;
-  color: inherit;
   float: left;
   font-size: inherit;
   /* overflow: hidden; */

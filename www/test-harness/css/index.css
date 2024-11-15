@@ -32,6 +32,13 @@
   padding-left: .5em;
 }
 
+body {
+  margin: 0;
+}
+
+body>.main {
+  margin-top: 2em;
+}
 
 body>.background-image {
   background-image: url(./images/background/image.png);
@@ -98,7 +105,6 @@ body>.main>.header>.menuitem {
 }
 
 body>.main>.header>.menu-scroll {
-  /* background-color: #33333577; */
   background-image: radial-gradient(#6495edaa, transparent 90%);
   color: aliceblue;
   float: right;

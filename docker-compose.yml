@@ -1,7 +1,7 @@
 ---
 services:
   cffc-web:
-    image: cffc-web:latest
+    image: jsmit257/cffc-web:latest
     restart: always
     hostname: cffc-web
     build:
@@ -14,3 +14,5 @@ services:
     environment:
       - CFFC_API_HOST
       - CFFC_API_PORT
+      - AUTHN_HOST
+      - AUTHN_PORT

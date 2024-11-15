@@ -3,13 +3,24 @@
 # https://github.com/jsmit257/cffc-web/master/standalone/README.md
 #
 ---
-x-pg-host: &pghost huautla-standalone
+x-pg-host: &pghost huautla
 x-pg-port: &pgport 5432
 x-pg-user: &pguser postgres
 x-pg-pass: &pgpass root
 x-pg-ssl: &pgssl disable
 x-api-host: &apihost cffc-api
 x-api-port: &apiport 8080
+
+x-mysql-host: &mysql-host percona
+x-mysql-port: &mysql-port 3306
+x-mysql-pwd: &mysql-pwd root
+x-mysql-user: &mysql-user root
+# x-redis-user: &redis-user redis
+# x-redis-pass: &redis-pass redis
+x-redis-host: &redis-host redis
+x-redis-port: &redis-port 6379
+x-authn-host: &authn-host userservice
+x-authn-port: &authn-port 3000
 
 services:
   source:
@@ -45,7 +56,7 @@ services:
       POSTGRES_PASSWORD: *pgpass
     entrypoint: /migration-entrypoint.sh
 
-  huautla-standalone:
+  huautla:
     # usage: docker-compose up --remove-orphans -d huautla-standalone
     #
     # *but* you shouldn't ever really need to run this manually; it gets
@@ -111,6 +122,48 @@ services:
       POSTGRES_PASSWORD: *pgpass
     entrypoint: /restore-entrypoint.sh
 
+  mysql-migration:
+    image: jsmit257/us-db-mysql-mig:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.mysql
+      target: migration
+    volumes:
+      - "./authn-data:/var/lib/mysql"
+    entrypoint: /var/lib/mysql-files/install-userservice.sh mysqld
+    #entrypoint: chown -Rv mysql:mysql /var/lib/mysql
+
+  mysql-persist:
+    image: percona:ps-8.0.36-28
+    restart: always
+    hostname: *mysql-host
+    volumes:
+      - "./authn-data:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: *mysql-pwd
+
+  redis:
+    # handles login token management; there's still no compelling 
+    # argument for saving redis' state, worst case is an extra,
+    # unexpected call to login
+    image: redis:bookworm
+    restart: always
+    hostname: *redis-host
+
+  userservice:
+    depends_on: [ redis, mysql-persist ]
+    image: jsmit257/us-srv-mysql:lkg
+    hostname: *authn-host
+    environment:
+      US_MYSQL_HOST: *mysql-host
+      US_MYSQL_PORT: *mysql-port
+      US_MYSQL_USER: *mysql-user
+      US_MYSQL_PASSWORD: *mysql-pwd
+      US_HTTP_HOST: *authn-host
+      US_HTTP_PORT: *authn-port
+      US_REDIS_HOST: *redis-host
+      US_REDIS_PORT: *redis-port
+
   cffc-api:
     # usage: docker-compose up --remove-orphans -d cffc-api
     #
@@ -124,7 +177,9 @@ services:
     # the normal PSA: please try to shut down cleanly with:
     # $ docker-compose down --remove-orphans
     #
-    depends_on: [ *pghost ]
+    depends_on:
+      - *pghost
+      - *authn-host
     image: jsmit257/cffc:lkg
     restart: always
     hostname: *apihost
@@ -138,6 +193,8 @@ services:
       HUAUTLA_SSL: *pgssl
       HTTP_HOST: *apihost
       HTTP_PORT: *apiport
+      # AUTHN_HOST: *authn-host
+      # AUTHN_PORT: *authn-port
       GOCOVERDIR: /tmp
 
   cffc-standalone:
@@ -148,7 +205,7 @@ services:
     # service, just refresh the page
     #
     depends_on: [ *apihost ]
-    image: cffc-web:latest
+    image: jsmit257/cffc-web:lkg
     restart: always
     hostname: cffc-standalone
     ports: [ 8082:80 ]

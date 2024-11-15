@@ -1,5 +1,5 @@
 body>.main>.workspace>.generation>.table.generation>.notes {
-  height: 11.5em;
+  height: 12.5em;
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows {
@@ -162,9 +162,11 @@ body>.main>.workspace>.generation>.table.events>.columns>.column.full::before {
   display: block !important;
 }
 
+/*
 .source>[name="origin"] {
-  /* display: none; */
-}
+  display: none;
+} 
+ */
 
 .source[source-origin="event"]>[name="type"] {
   display: none;

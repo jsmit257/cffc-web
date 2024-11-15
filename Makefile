@@ -8,5 +8,9 @@ build: down
 
 .PHONY: run
 run: build
-	docker-compose up --remove-orphans -d cffc-web
-	docker tag cffc-web:latest jsmit257/cffc-web:lkg
+	docker-compose up --build --remove-orphans -d cffc-web
+	docker tag jsmit257/cffc-web:latest jsmit257/cffc-web:lkg
+
+.PHONY: push
+push:
+	docker push jsmit257/cffc-web:lkg

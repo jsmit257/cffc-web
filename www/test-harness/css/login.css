@@ -1,0 +1,166 @@
+body>.login {
+  background-color: #07497644;
+  border-color: #074976;
+  border-radius: .5em;
+  border-style: solid;
+  border-width: 1px;
+  font-size: larger;
+  height: 1.5em;
+  left: 0;
+  line-height: 175%;
+  overflow-y: hidden;
+  padding-left: 33%;
+  position: fixed;
+  right: 2px;
+  top: 0;
+  z-index: 1;
+}
+
+body.authing>.login {
+  bottom: 0px;
+  height: auto;
+  background-color: #074976dd;
+}
+
+/* until i know what it does */
+.login>.form>.password>.reset {
+  display: none;
+}
+
+/* 
+.login:not([id])>.login-menu>.commands {
+  display: none !important;
+}
+ */
+
+.login>.form.adding>.no-add,
+.login>.login-menu>.commands,
+.login>.login-menu>.commands>.cancel,
+.login.cancelable>.login-menu>.commands>.change-auth,
+.login>.form>.toggle-change,
+.login[id]>.form>.username>.button,
+.login>.form.editing>.password>.button,
+.login>.form>.edit {
+  display: none;
+}
+
+.login.cancelable>.login-menu>.commands>.cancel,
+.login[id]>.form:not(.adding)>.toggle-change,
+.login>.form.editing>.edit {
+  display: block;
+}
+
+.login>.form {
+  margin-top: 33%;
+}
+
+.login>.form>div {
+  clear: both;
+  float: left;
+}
+
+.login>.login-menu {
+  background-color: #492d6bee;
+  border-radius: 0 0 0 .5em;
+  cursor: pointer;
+  float: right;
+  font-size: initial;
+  line-height: 150%;
+  min-width: 9em;
+  padding-right: .5em;
+  padding-left: 1em;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: min-content;
+}
+
+.login>.form>.toggle-change {
+  cursor: pointer;
+  font-size: 75%;
+  line-height: 100%;
+  margin-bottom: 1.5em;
+  text-align: right;
+  text-decoration: underline;
+  width: 33.5em;
+  color: bisque;
+}
+
+.login>.form>.toggle-change::after {
+  content: 'change password';
+}
+
+.login>.form.editing>.toggle-change::after {
+  content: 'back to login';
+}
+
+.login>.form>.field>label,
+.login>.form>.field>input,
+.login>.form>.field>.button {
+  float: left;
+}
+
+.login>.form>.field>label {
+  padding-right: 1em;
+  text-align: right;
+  width: 9em;
+  line-height: 150%;
+  padding-bottom: 1em;
+}
+
+.login>.form>.field>input {
+  margin-right: 1em;
+  width: 15em;
+  color: black;
+  font-size: 100%;
+  /* background-color: #fff5; */
+  /* background-color: inherit; */
+}
+
+.login>.form.mismatch>.matchable>label {
+  color: #c70505;
+}
+
+.login>.login-menu>.control {
+  text-align: right;
+  white-space: nowrap;
+  float: right;
+  margin-bottom: .33em;
+}
+
+.login>.login-menu>.control::before {
+  content: 'welcome';
+  margin-right: .33em;
+  float: left;
+}
+
+.login>.login-menu>.control::after {
+  content: 'x';
+  margin-left: .3em;
+}
+
+.login>.login-menu:hover>.control::after {
+  content: 'o';
+}
+
+.login>.login-menu>.commands {
+  line-height: 150%;
+}
+
+.login>.login-menu:hover>.commands {
+  display: inline-block;
+}
+
+.login>.login-menu>.commands>div {
+  clear: both;
+  float: right;
+  text-align: right;
+  width: 8em;
+  padding-right: .33em;
+  white-space: nowrap;
+}
+
+.login>.login-menu>.commands>div:hover {
+  background-image: linear-gradient(to right, #ff313122, #ad0255bb 33%);
+  border-radius: .5em 0 0 .5em;
+}

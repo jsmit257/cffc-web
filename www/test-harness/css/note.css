@@ -8,8 +8,8 @@
 body>.main>.workspace .noting>.notes {
   background-image: radial-gradient(#8a2be222 25%, transparent);
   border-radius: 10px;
-  padding-bottom: .5em;
-  padding-top: .5em;
+  /* padding-bottom: .5em; */
+  /* padding-top: .5em; */
   display: block;
 }
 

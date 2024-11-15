@@ -7,8 +7,8 @@
 body>.main>.workspace .table.photoing>.photos {
   background-image: radial-gradient(#bebc1f22 25%, transparent);
   display: block;
-  margin-bottom: .5em;
-  margin-top: .5em;
+  /* margin-bottom: .5em; */
+  /* margin-top: .5em; */
 }
 
 div:not(.buttonbar)>div.photos {

@@ -41,8 +41,8 @@ body>.main>.workspace .table>.buttonbar {
 
 .button>.icon {
   background-image: url(images/button-sprites.png);
-  height: 1.4em;
   width: 1.4em;
+  height: 1.4em;
 }
 
 .buttonbar>.remove.button {
@@ -58,7 +58,7 @@ body>.main>.workspace .table>.buttonbar {
 }
 
 .add.button {
-  background-image: radial-gradient(#8d8df3, transparent);
+  background-image: radial-gradient(#8283ff, transparent);
 }
 
 .back.button {

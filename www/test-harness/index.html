@@ -6,6 +6,7 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <!-- <script src="./jquery-offline.js"></script> -->
+  <script src="./js/login.js" defer></script>
   <script src="./js/widget.js" defer></script>
   <script src="./js/index.js" defer></script>
   <script src="./js/cookiebar.js" defer></script>
@@ -28,6 +29,7 @@
   <script src="./js/reporting.js" defer></script>
 
   <!-- <link href="jquery-ui.min.css" rel="stylesheet"> -->
+  <link href="./css/login.css" rel="stylesheet">
   <link href="./css/widget.css" rel="stylesheet">
   <link href="./css/index.css" rel="stylesheet">
   <link href="./css/cookiebar.css" rel="stylesheet">
@@ -49,11 +51,52 @@
   <link href="./css/reporting.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="authing">
   <div class="background-image"></div>
 
   <div class="imageview">
     <img class="viewport">
+  </div>
+
+  <div class="login">
+    <div class="field login-menu">
+      <div class="control">stranger</div>
+
+      <div class="commands">
+        <div class="cancel">cancel</div>
+        <div class="change-auth">change password</div>
+        <div class="logout">logout</div>
+      </div>
+    </div>
+
+    <div class="form">
+      <div class="field username">
+        <label for="username">username</label>
+        <input id="username" placeholder="(username)">
+        <!-- <input id="username" enter="add" placeholder="(username)"> -->
+        <div class="button add create" hover="new account"></div>
+      </div>
+
+      <div class="field password no-add">
+        <label for="password">password</label>
+        <input id="password" enter="ok" type="password" placeholder="(password)" readonly>
+        <div class="button ok login" hover="login"></div>
+        <div class="button refresh reset no-add" hover="reset password"></div>
+      </div>
+
+      <div class="toggle-change no-add">&nbsp;</div>
+
+      <div class="field newpassword matchable edit">
+        <label for="newpassword">new password</label>
+        <input id="newpassword" type="password" placeholder="(new password)">
+      </div>
+
+      <div class="field newpassword2 matchable edit">
+        <label for="newpassword2">confirm password</label>
+        <input id="newpassword2" enter="chgpwd" type="password" placeholder="(again)">
+        <div class="button ok chgpwd" hover="change password"></div>
+      </div>
+    </div>
   </div>
 
   <div class="main">
@@ -493,18 +536,5 @@
     </div>
   </div>
 </body>
-
-<script defer>
-  let hashes = document.location.hash.split('#')
-  if (hashes.length > 1) {
-    hashes.shift()
-  } else {
-    hashes = ['main', 'lifecycle']
-  }
-  setTimeout(_ => {
-    $('body>.main>.header>.menu-scroll')
-      .trigger('select', hashes)
-  }, 50)
-</script>
 
 </html>

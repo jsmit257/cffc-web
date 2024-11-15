@@ -5,7 +5,7 @@ body>.main>.workspace>.strain>.table {
 body>.main>.workspace .table.strain>.photos>.rows {
   /* background-color: #5f9ea033; */
   border-radius: 10px;
-  height: 11.5em;
+  height: 12.4em;
   /* margin-bottom: 0; */
   padding-right: 10px;
 }
@@ -15,7 +15,7 @@ body>.main>.workspace>.strain>.table.strain>.rows {
 }
 
 body>.main>.workspace>.strain>.table.photoing>.rows[name="strain"] {
-  height: 1.5em;
+  height: 1.6em;
 }
 
 body>.main>.workspace>.strain>.table>.columns>div,
