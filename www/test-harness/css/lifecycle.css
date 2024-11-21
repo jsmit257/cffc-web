@@ -28,7 +28,11 @@ body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.lc {
 
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx {
   float: left;
-  width: 29%;
+  width: 29.5%;
+}
+
+body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx>.row {
+  border-radius: 0 15px 15px 0;
 }
 
 body>.main>.workspace>.lifecycle>.rows.ndx>.field.new>.ctime::before {
@@ -38,6 +42,7 @@ body>.main>.workspace>.lifecycle>.rows.ndx>.field.new>.ctime::before {
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx>.row>div {
   padding-left: 4%;
   width: 44%;
+  text-overflow: ellipsis;
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle {

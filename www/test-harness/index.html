@@ -6,6 +6,7 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <!-- <script src="./jquery-offline.js"></script> -->
+  <!-- begin:minify.js -->
   <script src="./js/login.js" defer></script>
   <script src="./js/widget.js" defer></script>
   <script src="./js/index.js" defer></script>
@@ -27,8 +28,10 @@
   <script src="./js/generation.js" defer></script>
   <script src="./js/album.js" defer></script>
   <script src="./js/reporting.js" defer></script>
+  <!-- end:minify.js -->
 
   <!-- <link href="jquery-ui.min.css" rel="stylesheet"> -->
+  <!-- begin:minify.css -->
   <link href="./css/login.css" rel="stylesheet">
   <link href="./css/widget.css" rel="stylesheet">
   <link href="./css/index.css" rel="stylesheet">
@@ -49,9 +52,10 @@
   <link href="./css/substrate.css" rel="stylesheet">
   <link href="./css/generation.css" rel="stylesheet">
   <link href="./css/reporting.css" rel="stylesheet">
+  <!-- end:minify.css -->
 </head>
 
-<body class="authing">
+<body>
   <div class="background-image"></div>
 
   <div class="imageview">
@@ -72,14 +76,13 @@
     <div class="form">
       <div class="field username">
         <label for="username">username</label>
-        <input id="username" placeholder="(username)">
-        <!-- <input id="username" enter="add" placeholder="(username)"> -->
+        <input id="username" enter="add" minlength="1" placeholder="(username)">
         <div class="button add create" hover="new account"></div>
       </div>
 
       <div class="field password no-add">
         <label for="password">password</label>
-        <input id="password" enter="ok" type="password" placeholder="(password)" readonly>
+        <input id="password" enter="ok" type="password" minlength="1" placeholder="(password)" readonly>
         <div class="button ok login" hover="login"></div>
         <div class="button refresh reset no-add" hover="reset password"></div>
       </div>
@@ -88,12 +91,12 @@
 
       <div class="field newpassword matchable edit">
         <label for="newpassword">new password</label>
-        <input id="newpassword" type="password" placeholder="(new password)">
+        <input id="newpassword" type="password" minlength="8" placeholder="(new password)">
       </div>
 
       <div class="field newpassword2 matchable edit">
         <label for="newpassword2">confirm password</label>
-        <input id="newpassword2" enter="chgpwd" type="password" placeholder="(again)">
+        <input id="newpassword2" type="password" enter="chgpwd" minlength="8" placeholder="(again)">
         <div class="button ok chgpwd" hover="change password"></div>
       </div>
     </div>
@@ -130,6 +133,7 @@
               <span class="title">Placeholder</span>&nbsp;<span class="status"></span>
             </div>
           </div>
+
           <div class="rows ndx" name="lifecycle">
             <div class="row hover template">
               <div class="mtime short-date"></div>
@@ -202,6 +206,7 @@
               </div>
             </div>
           </div>
+
           <div class="buttonbar"></div>
         </div>
       </div>
@@ -475,6 +480,13 @@
               <a href="https://jsmit257.github.io/cffc-web/standalone">(Standalone)</a>
             </div>
           </li>
+          <li>
+            <div class="short-text">Userservice</div>
+            <div class="long-text">
+              <a href="https://github.com/jsmit257/userservice">Userservice</a>
+              <a href="https://jsmit257.github.io/userservice">(README)</a>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -536,5 +548,9 @@
     </div>
   </div>
 </body>
+
+<script defer>
+  setTimeout(_ => $(document).trigger('reload'), 50)
+</script>
 
 </html>

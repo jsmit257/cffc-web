@@ -36,6 +36,7 @@ body.authing>.login {
 .login>.form.adding>.no-add,
 .login>.login-menu>.commands,
 .login>.login-menu>.commands>.cancel,
+/* .login.cancelable>.form>.toggle-change, */
 .login.cancelable>.login-menu>.commands>.change-auth,
 .login>.form>.toggle-change,
 .login[id]>.form>.username>.button,
@@ -45,7 +46,7 @@ body.authing>.login {
 }
 
 .login.cancelable>.login-menu>.commands>.cancel,
-.login[id]>.form:not(.adding)>.toggle-change,
+.login[id]:not(.cancelable)>.form:not(.adding)>.toggle-change,
 .login>.form.editing>.edit {
   display: block;
 }

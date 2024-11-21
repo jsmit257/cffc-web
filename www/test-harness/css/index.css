@@ -44,7 +44,7 @@ body>.background-image {
   background-image: url(./images/background/image.png);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   height: 100%;
   left: 0;
   opacity: .1;
@@ -166,7 +166,7 @@ body>.main>.footer>.powered-by>ul::before {
   content: 'Powered by:';
   float: left;
   font-style: italic;
-  line-height: 3em;
+  line-height: 4.5em;
   margin-left: -7em;
 }
 

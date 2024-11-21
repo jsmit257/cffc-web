@@ -78,7 +78,6 @@ div.notes>div.rows>div.row>div.ctime:before {
 
 div.notes>div.rows>div.row>.button {
   clear: right;
-  display: none;
   float: right;
   margin-left: .5em;
   margin-bottom: .5em;
