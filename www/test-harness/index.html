@@ -64,7 +64,7 @@
 
   <div class="login">
     <div class="field login-menu">
-      <div class="control">stranger</div>
+      <div class="control"></div>
 
       <div class="commands">
         <div class="cancel">cancel</div>
@@ -496,11 +496,13 @@
     <div class="notes">
       <div class="rows">
         <div class="row template">
+          <div class="buttonbox">
+            <div class="action button note-ctl active" hover></div>
+            <div class="commit button note-ctl active" hover></div>
+          </div>
           <textarea class="note" disabled></textarea>
           <div class="mtime short-date"></div>
-          <div class="action button note-ctl active" hover></div>
           <div class="ctime short-date"></div>
-          <div class="commit button note-ctl active" hover></div>
         </div>
       </div>
       <div class="add-note add-ctl">+</div>
@@ -509,13 +511,15 @@
     <div class="photos">
       <div class="rows">
         <div class="row template">
+          <div class="buttonbox">
+            <div class="action photo-ctl button active" hover></div>
+            <div class="commit photo-ctl button active" hover></div>
+            <div class="back photo-ctl button active" hover="back"></div>
+          </div>
           <img class="image">
           <input type="file" class="photo" disabled></textarea>
           <div class="mtime short-date"></div>
           <div class="ctime short-date"></div>
-          <div class="action photo-ctl button active" hover></div>
-          <div class=" commit photo-ctl button active" hover></div>
-          <div class="back photo-ctl button active" hover="back"></div>
         </div>
       </div>
       <div class="add-photo add-ctl">+</div>
@@ -543,8 +547,7 @@
           <div class="ctime short-date"></div>
         </div>
       </div>
-      <div class="buttonbar">
-      </div>
+      <div class="buttonbar"></div>
     </div>
   </div>
 </body>

@@ -11,5 +11,7 @@ RUN /minify.sh /www/index.html
 FROM nginx:bookworm AS deploy
 COPY --from=build /www /www
 COPY ./nginx/cffc.conf /cffc.conf
+COPY ./nginx/certs/cert.key /etc/nginx
+COPY ./nginx/certs/cert.pem /etc/nginx
 # ENTRYPOINT /bin/bash -c "envsubst </cffc.conf >/etc/nginx/nginx.conf && sleep 20m"
 ENTRYPOINT /bin/bash -c "envsubst </cffc.conf >/etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"
