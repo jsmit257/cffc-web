@@ -27,11 +27,9 @@ body.authing>.login {
   display: none;
 }
 
-/* 
 .login:not([id])>.login-menu>.commands {
   display: none !important;
 }
- */
 
 .login>.form.adding>.no-add,
 .login>.login-menu>.commands,

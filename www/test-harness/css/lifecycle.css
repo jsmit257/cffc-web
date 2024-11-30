@@ -78,3 +78,7 @@ select.grain_substrate>option:not([type="grain"]),
 select.bulk_substrate>option:not([type="bulk"]) {
   display: none;
 }
+
+.table.lifecycle input[type="number"] {
+  width: 6em;
+}
