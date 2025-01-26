@@ -1,6 +1,7 @@
 $(_ => {
   let previous = {}
   let rownames = ['main', 'ancillary', 'reporting'/*,'analytics*/]
+  let blacklist = ['/logout', '/valid']
   let changerow = ((len) => {
     return (curr, dir) => { return rownames[(len + rownames.indexOf(curr) + Number(dir)) % len] }
   })(rownames.length)
@@ -33,7 +34,7 @@ $(_ => {
         console.log('opts', opts.url, opts)
       }
     })
-    .on('forbidden', (e, opts) => $(e.delegateTarget)
+    .on('forbidden', (e, opts) => blacklist.includes(opts.url) || $(e.delegateTarget)
       .data('forbidden')
       .push(opts))
     .on('unforbidden', e => $(e.delegateTarget)

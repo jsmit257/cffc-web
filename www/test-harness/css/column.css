@@ -3,6 +3,7 @@ body>.main>.workspace .table>.columns>.column.full {
   opacity: .5;
   padding-bottom: .3em;
   width: 100%;
+  cursor: default;
 }
 
 body>.main>.workspace>div .table>.columns {

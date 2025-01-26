@@ -88,7 +88,8 @@ $(_ => $('body>.login')
       method: "GET",
       async: false,
       statusCode: {
-        302: xhr => $login.attr('id', xhr.responseJSON.id),
+        200: xhr => $login.attr('id', xhr.responseJSON.id),
+        // 302: xhr => $login.attr('id', xhr.responseJSON.id),
       },
       error: _ => $login
         .removeAttr('id')
