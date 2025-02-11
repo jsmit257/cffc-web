@@ -34,6 +34,7 @@
 
 body {
   margin: 0;
+  font-family: sans-serif;
 }
 
 body>.main {
@@ -41,7 +42,7 @@ body>.main {
 }
 
 body>.background-image {
-  background-image: url(./images/background/image.png);
+  background-image: url(./images/background/image.avif);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;

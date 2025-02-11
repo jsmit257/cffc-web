@@ -1,0 +1,82 @@
+    .imgbox>.vidcap {
+      float: left;
+      clear: both;
+      content: 'its probably gonna be hidden soon anyway';
+      display: none;
+      /* visibility: collapse; */
+    }
+
+    .imgbox.capturing>.vidcap {
+      display: block;
+    }
+
+    .imgbox>.viddevs {
+      float: left;
+      padding-bottom: .33em;
+      padding-top: .33em;
+    }
+
+    .viddev {
+      cursor: pointer;
+      padding-left: .33em;
+      border-radius: 10%;
+    }
+
+    .viddev::after {
+      color: red;
+      content: '◉';
+      display: none;
+      float: right;
+      font-size: 150%;
+      margin-right: .5em;
+    }
+
+    .imgbox.capturing>.viddevs>.viddev.selected::after {
+      display: inline-block;
+    }
+
+    .imgbox>.imgedit {
+      border: none;
+      clear: both;
+      float: left;
+      margin-top: 1em;
+      padding: 2px;
+      overflow: auto;
+    }
+
+    .imgbox>.imgedit>label {
+      clear: left;
+      /* font-size: smaller; */
+      width: 3em;
+      display: contents;
+    }
+
+    .imgbox>.imgedit>.viewport {
+      background-attachment: local;
+      background-repeat: no-repeat;
+      background-size: contain;
+      border-width: 2px;
+      border-style: dashed;
+      border-color: transparent;
+      height: 400px;
+      overflow: auto;
+      width: 600px;
+    }
+
+    .imgbox>.imgedit.cropping>.viewport {
+      border-color: orange;
+    }
+
+    .imgbox>.imgedit>.viewport>canvas {
+      border: none;
+      float: left;
+      margin: 0;
+      opacity: 0;
+      padding: 0;
+    }
+
+    .imgbox>.gallery {
+      clear: both;
+      float: left;
+      display: none;
+    }

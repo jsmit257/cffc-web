@@ -31,6 +31,7 @@ body>.main>.footer>.cookie-bar>.list {
 body>.main>.footer>.cookie-bar>.list>li>input {
   clear: left;
   float: left;
+  margin-bottom: .5em;
 }
 
 body>.main>.footer>.cookie-bar>.list>li>label {

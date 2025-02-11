@@ -10,8 +10,16 @@ $(_ => {
         case 'INPUT': return el.value
       }
     },
-    send: function (...data) { // XXX: dangerous! probably not enough stopPropagation
+    send: function (...data) {
       this.each(function () { $(this).trigger('send', ...data) })
+      return $(this)
+    },
+    setClassIf: function (clz, add) {
+      let fn = 'removeClass'
+      if (add) {
+        fn = 'addClass'
+      }
+      this.each(function () { $(this)[fn](clz) })
       return $(this)
     },
     buttonbar: function (el = this.get(0)) {
