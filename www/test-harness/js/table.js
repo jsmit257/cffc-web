@@ -268,22 +268,16 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
     }
 
     $row
+      .buttonbar()
+      .trigger('reset') // FIXME: reset doesn't call cancel function so inputs aren't reset to readonly
       .parents('.table')
       .first()
-      .find('.buttonbar')
-      .trigger('reset')
-
-    $row
-      .parent()
-      .find('.row.selected')
+      .find('.row')
       .removeClass('selected editing')
-
-    $row.addClass('selected')
+      .filter(`#${e.currentTarget.id}`)
+      .addClass('selected')
   })
-  .on('dblclick', '>.row:not(.template)', e => {
-    $(e.currentTarget)
-      .parents('.table')
-      .first()
-      .find('.buttonbar>.edit')
-      .click()
-  }))
+  .on('dblclick', '>.row:not(.template)', e => $(e.currentTarget)
+    .buttonbar()
+    .find('>.edit')
+    .click()))

@@ -78,6 +78,7 @@ div.notes>div.rows>div.row>div.ctime:before {
 
 .notes>.rows>.row>.buttonbox {
   float: left;
+  z-index: 5;
 }
 
 .notes>.rows>.row>.buttonbox>.button {

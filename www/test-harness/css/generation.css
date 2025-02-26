@@ -83,9 +83,9 @@ span body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] se
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] label {
   width: 5em;
   float: left;
-  position: relative;
-  display: inline-block;
-  clear: both;
+  /* position: relative; */
+  display: inline;
+  /* clear: both; */
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].sources>div.source div.caption {
@@ -114,6 +114,7 @@ body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].adding>
 
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] select {
   appearance: none;
+  margin-right: -5em;
   -webkit-appearance: none;
   -moz-appearance: none;
 }

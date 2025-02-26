@@ -1,82 +1,286 @@
-    .imgbox>.vidcap {
-      float: left;
-      clear: both;
-      content: 'its probably gonna be hidden soon anyway';
-      display: none;
-      /* visibility: collapse; */
-    }
+.imgbox>.vidcap {
+  /* clear: both; */
+  display: none;
+  float: left;
+  /* visibility: collapse; */
+}
 
-    .imgbox.capturing>.vidcap {
-      display: block;
-    }
+.imgbox.capturing>.vidcap {
+  display: block;
+  width: 800px;
+}
 
-    .imgbox>.viddevs {
-      float: left;
-      padding-bottom: .33em;
-      padding-top: .33em;
-    }
+.imgbox>.viddevs {
+  float: left;
+  padding-bottom: .33em;
+  padding-top: .33em;
+}
 
-    .viddev {
-      cursor: pointer;
-      padding-left: .33em;
-      border-radius: 10%;
-    }
+.viddev {
+  cursor: pointer;
+  border-radius: 10%;
+  padding-left: .33em;
+}
 
-    .viddev::after {
-      color: red;
-      content: '◉';
-      display: none;
-      float: right;
-      font-size: 150%;
-      margin-right: .5em;
-    }
+.viddev::after {
+  color: red;
+  content: '◉';
+  display: none;
+  float: right;
+  font-size: 150%;
+  margin-right: .5em;
+}
 
-    .imgbox.capturing>.viddevs>.viddev.selected::after {
-      display: inline-block;
-    }
+.imgbox.capturing>.viddevs>.viddev.selected::after {
+  display: inline-block;
+}
 
-    .imgbox>.imgedit {
-      border: none;
-      clear: both;
-      float: left;
-      margin-top: 1em;
-      padding: 2px;
-      overflow: auto;
-    }
+.imgbox>.imgedit {
+  border: none;
+  /* clear: both; */
+  /* float: left; */
+  /* margin-top: 1em; */
+  padding: 2px;
+  overflow: auto;
+}
 
-    .imgbox>.imgedit>label {
-      clear: left;
-      /* font-size: smaller; */
-      width: 3em;
-      display: contents;
-    }
+.imgbox>.imgedit>.viewport {
+  background-attachment: local;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border-width: 2px;
+  border-style: dashed;
+  border-color: transparent;
+  float: left;
+  overflow: auto;
+}
 
-    .imgbox>.imgedit>.viewport {
-      background-attachment: local;
-      background-repeat: no-repeat;
-      background-size: contain;
-      border-width: 2px;
-      border-style: dashed;
-      border-color: transparent;
-      height: 400px;
-      overflow: auto;
-      width: 600px;
-    }
+.imgbox>.imgedit.cropping>.viewport {
+  border-color: chartreuse;
+}
 
-    .imgbox>.imgedit.cropping>.viewport {
-      border-color: orange;
-    }
+.imgbox>.imgedit.resizing>.viewport {
+  border-color: slateblue;
+}
 
-    .imgbox>.imgedit>.viewport>canvas {
-      border: none;
-      float: left;
-      margin: 0;
-      opacity: 0;
-      padding: 0;
-    }
+.imgbox>.imgedit>.viewport>canvas {
+  border: none;
+  margin: 0;
+  opacity: 0;
+  padding: 0;
+}
 
-    .imgbox>.gallery {
-      clear: both;
-      float: left;
-      display: none;
-    }
+.imgbox>.imgedit>.imgstats {
+  float: left;
+  font-size: initial;
+  max-height: 600px;
+  overflow-y: auto;
+  overflow-x: clip;
+}
+
+.imgbox>.imgedit>.imgstats>.row::before {
+  content: 'edit';
+  display: inline-block;
+  text-align: right;
+  width: 4em;
+}
+
+.imgbox>.imgedit>.imgstats>.row:last-child:before {
+  content: 'original';
+}
+
+.imgbox>.imgedit>.imgstats>span::before {
+  margin-right: .25em;
+  font-size: smaller;
+}
+
+.imgbox>.imgedit>.ranges {
+  float: left;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  width: 100%;
+}
+
+.imgbox>.imgedit>.ranges>.row {
+  margin-bottom: 2em;
+}
+
+.imgbox>.imgedit>.ranges>.row>label {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  float: left;
+  margin-right: 3em;
+  width: -webkit-fill-available;
+}
+
+.ranges>.row>.button {
+  margin-left: -3em;
+}
+
+.imgbox>.audit {
+  align-items: baseline;
+  display: none;
+  /* display: inline-flex; */
+  flex-direction: row;
+  flex-wrap: nowrap;
+  float: left;
+  overflow-x: auto;
+  overflow-y: clip;
+  width: 100%;
+}
+
+.imgbox>.audit>div {
+  float: right;
+}
+
+.imgbox>.audit>div>img {
+  height: 150px;
+  margin-right: .3em;
+}
+
+.greymap,
+.colormap {
+  float: left;
+}
+
+.colormap {
+  display: none;
+}
+
+.greymap {
+  border-color: white;
+  border-radius: .5em;
+  border-style: ridge;
+  border-width: 2px;
+  padding-bottom: .5em;
+  padding-right: .33em;
+  width: 50%;
+}
+
+.greymap::before {
+  background-color: #003050;
+  border-radius: .33em;
+  content: 'greyscale distribution';
+  margin-left: 1em;
+  position: relative;
+  padding: .1em;
+  top: -.75em;
+}
+
+.greymap>div {
+  background-color: #d3d3d344;
+  border-radius: 0 .75em .75em 0;
+  text-overflow: clip;
+  margin-bottom: .2em;
+  margin-left: 0em;
+  flex-flow: nowrap;
+  display: flex;
+  font-size: 80%;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  margin-right: .5em;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.greymap>div::before {
+  background-color: #003050;
+  border-radius: 0 .75em .75em 0;
+  color: lightgrey;
+  display: inline-block;
+  font-size: 80%;
+  padding-right: .5em;
+  text-align: right;
+  vertical-align: text-bottom;
+  width: 3.5em;
+}
+
+.props {
+  display: none;
+}
+
+.colormap>div {
+  border: 1px solid;
+  float: left;
+  height: 10px;
+  position: relative;
+  width: 10px;
+}
+
+span.px {
+  width: 4.3em;
+  display: inline-block;
+}
+
+span.kb {
+  width: 4em;
+}
+
+span.px::after {
+  content: 'px';
+}
+
+span.width::before {
+  content: 'w:';
+}
+
+span.height::before {
+  content: 'h:';
+}
+
+span.filesize {
+  margin-left: .33em;
+}
+
+span.filesize::before {
+  content: 'approx. size:';
+}
+
+span.kb::after {
+  content: 'kb';
+}
+
+.greymap>div[tenth="0"]::before {
+  content: '<10%';
+}
+
+.greymap>div[tenth="1"]::before {
+  content: '<20%';
+}
+
+.greymap>div[tenth="2"]::before {
+  content: '<30%';
+}
+
+.greymap>div[tenth="3"]::before {
+  content: '<40%';
+}
+
+.greymap>div[tenth="4"]::before {
+  content: '<50%';
+}
+
+.greymap>div[tenth="5"]::before {
+  content: '<60%';
+}
+
+.greymap>div[tenth="6"]::before {
+  content: '<70%';
+}
+
+.greymap>div[tenth="7"]::before {
+  content: '<80%';
+}
+
+.greymap>div[tenth="8"]::before {
+  content: '<90%';
+}
+
+.greymap>div[tenth="9"]::before {
+  content: '<100%';
+}
+
+.greymap>div[tenth="sum"]::before {
+  content: 'avg';
+}

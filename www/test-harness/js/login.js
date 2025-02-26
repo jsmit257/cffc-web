@@ -14,7 +14,8 @@ $(_ => $('body>.login')
       // - sets login-menu>control text 
       // - re-sets localStorage
       // - if found, sets login ID attr
-      .trigger('change')
+      .trigger('focus')
+      .trigger('test')
 
     $.ajax({
       url: '/valid',
@@ -34,9 +35,7 @@ $(_ => $('body>.login')
     })
   })
   .on('activate', e => {
-    let $login = $(e.delegateTarget)
-
-    $login
+    $(e.delegateTarget)
       .removeClass('cancelable')
       .find('>.form')
       .removeClass('mismatch adding pwding')
@@ -45,7 +44,7 @@ $(_ => $('body>.login')
     $('body')
       .addClass('authing')
       .find('input#username')
-      .trigger('change')
+      .trigger('test')
   })
   .on('deactivate', e => $(document)
     .trigger($(document)
@@ -92,7 +91,7 @@ $(_ => $('body>.login')
     let $uname = $(e.currentTarget)
     $uname.data('search', {
       last: '',
-      timer: setInterval(_ => { $uname.trigger('send') }, 1000),
+      timer: setInterval(_ => { $uname.trigger('test') }, 1000),
       vount: 0,
     })
   })
@@ -114,11 +113,11 @@ $(_ => $('body>.login')
       .find('>.login-menu>.control')
       .text(val)
 
-    if ($uname.data('search').last === val) {
-      return
-    } else if ($uname.data('search').count++ == 12) {
-      $uname.trigger('blur')
-    }
+    // if ($uname.data('search').last === val) {
+    //   return
+    // } else if ($uname.data('search').count++ == 12) {
+    //   $uname.trigger('blur')
+    // }
 
     $.ajax({
       url: `/auth/${val}`,
@@ -142,7 +141,7 @@ $(_ => $('body>.login')
         .prop('readonly', !$login.attr('id')),
     })
 
-    $uname.data('search').last = val
+    // $uname.data('search').last = val
   })
 
   // buttons
@@ -255,18 +254,18 @@ $(_ => $('body>.login')
     let $eml = $(e.currentTarget)
     $eml
       .parent()
-      .setClassIf('invalid', !/^[^@]+@[^.]+\.[A-z]{2,3}$/.test($eml.val()))
+      .withClass('invalid', !/^[^@]+@[^.]+\.[A-z]{2,3}$/.test($eml.val()))
   })
   .on('keyup', '>.form>.mfa>input#cell', e => {
     let $cell = $(e.currentTarget)
     $cell
       .parent()
-      .setClassIf('invalid', !$('#cell').val().replace(/[^0-9]/g, '').length === 10)
+      .withClass('invalid', !$('#cell').val().replace(/[^0-9]/g, '').length === 10)
   })
   .on('keyup', '>.form>.mfa>input', e => {
     let $form = $(e.delegateTarget).find('>.form')
     $form
-      .setClassIf('email-cell-required', $form.find('.mfa.invalid').length > 0)
+      .withClass('email-cell-required', $form.find('.mfa.invalid').length > 0)
   })
 
   // text buttons

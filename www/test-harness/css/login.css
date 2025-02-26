@@ -4,8 +4,9 @@ body>.login {
   border-radius: .5em;
   border-style: solid;
   border-width: 1px;
+  bottom: 0;
   font-size: larger;
-  height: 1.5em;
+  height: auto;
   left: 0;
   line-height: 175%;
   overflow-y: hidden;
@@ -13,12 +14,11 @@ body>.login {
   position: fixed;
   right: 2px;
   top: 0;
-  z-index: 1;
+  z-index: 5;
 }
 
-body.authing>.login {
-  bottom: 0px;
-  height: auto;
+body:not(.authing)>.login {
+  height: 1.5em;
 }
 
 .login>.form .add,
@@ -83,7 +83,12 @@ body.authing>.login {
 }
 
 .login>.form {
+  display: none;
   margin-top: 33%;
+}
+
+body.authing>.login>.form {
+  display: block;
 }
 
 .login>.form>div {
@@ -194,9 +199,11 @@ body.authing>.login {
 
 .login>.login-menu>.control {
   float: right;
-  margin-bottom: .33em;
+  margin-bottom: .5em;
   text-align: right;
   white-space: nowrap;
+  /* line-height: 160%; */
+  vertical-align: baseline;
 }
 
 .login>.login-menu>.control::before {

@@ -1,20 +1,46 @@
 $(_ => {
+  Array.prototype.combinations = function (head = [], result = []) {
+    if (!this.length) {
+      result.push(head)
+    } else {
+      this.forEach((v, i, a) => a.toSpliced(i, 1).combinations(head.concat(v), result))
+    }
+    return result
+  };
+
+  Date.prototype.inputVal = function () {
+    return this.toISOString().slice(0, -1)
+  };
+
+  DOMRect.prototype.timestampCSS = function (ts) {
+    let result = {
+      top: this.y - (ts.height - this.height) * 2 / 3,
+      left: this.x - (ts.width - this.width),
+      // right: this.right,
+      // bottom: this.bottom,
+    }
+    if (result.top < 0) result.top = 0
+    if (result.left < 0) result.left = 0
+
+    return result
+  }
+
   $.fn.extend({
     sortKey: function (el = this.get(0)) {
       // you could check this.length and return short when 0, but then you'd wonder
       // why the code isn't working and isn't throwing errors, either; better to let
       // it bomb when el is null, since it probably means a bad selector
-      switch (el.nodeName) {
-        case 'SELECT': el = el.options[el.selectedIndex] // it's supposed to fall through
-        case 'DIV': return el.innerText
-        case 'INPUT': return el.value
+      switch (el.nodeName.toLowerCase()) {
+        case 'select': el = el.options[el.selectedIndex] // it's supposed to fall through
+        case 'div': return el.innerText
+        case 'input': return el.value
       }
     },
     send: function (...data) {
       this.each(function () { $(this).trigger('send', ...data) })
       return $(this)
     },
-    setClassIf: function (clz, add) {
+    withClass: function (clz, add) {
       let fn = 'removeClass'
       if (add) {
         fn = 'addClass'
@@ -23,7 +49,7 @@ $(_ => {
       return $(this)
     },
     buttonbar: function (el = this.get(0)) {
-      return $(el).parents('.table').find('.buttonbar')
+      return $(el).parents('.table').first().find('.buttonbar')
     },
     click: function (el = this.get(0)) {
       return $(el).trigger('click')
@@ -31,12 +57,42 @@ $(_ => {
   })
 
   $('.short-date, .long-date')
-    .on('reset-date', '.date', e => $(e.currentTarget).trigger('format', $(e.currentTarget).data(value)))
+    .on('reset-date', '.date', e => $(e.currentTarget)
+      .trigger('format', $(e.currentTarget).data(value)))
+
+  // FIXME: do what with it?
+  let dateedit = e => $('.template>.timestamp')
+    .clone(true, true)
+    .appendTo(document.body)
+    .trigger('activate', [
+      $(e.currentTarget).data('value'),
+      $(e.currentTarget).parents('.rows[name]').first().attr('name'),
+      $(e.currentTarget).parents('.row[id]').first().attr('id'),
+      $(e.currentTarget).
+        get(0)
+        .className
+        .split(/\s+/)
+        .filter(v => v.match(/^.time/))
+        .join(' ')])
 
   $('.short-date')
     .on('format', (e, d) => $(e.currentTarget)
       .data('value', d)
       .text(d.replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')))
+    .on('click', e => {
+      if (e.ctrlKey || $(e.currentTarget).parents('.row.selected.editing').length) {
+        e.stopPropagation()
+
+        $(document.body).find('>.timestamp').trigger('deactivate')
+
+        dateedit(e).css(e.currentTarget
+          .getBoundingClientRect()
+          .timestampCSS($(document.body)
+            .find('>.timestamp')
+            .get(0)
+            .getBoundingClientRect()))
+      }
+    })
 
   $('select[url]')
     .on('refresh', (e, params = {}) => {
@@ -71,6 +127,16 @@ $(_ => {
       $list.trigger('sent', data)
     })
 
+  // // EX: using select[url] hooks
+  // $('.test-runner')
+  //   .on('sending', (e, ...data) =>
+  //     console.log('sending:', data.length))
+  //   .on('attrs', '>option', (e, data = {}) =>
+  //     $(e.currentTarget).text(`attrs: ${data.name}`))
+  //   .on('sent', (e, ..._) =>
+  //     console.log('sent:', $(e.currentTarget).children().length))
+  //   .trigger('refresh')
+
   $('select.substrate')
     .on('attrs', '>option', (e, s) => $(e.currentTarget)
       .attr('type', s.type)
@@ -101,13 +167,4 @@ $(_ => {
           }))
     })
     .on('mouseout', '[hover]>div', e => $(e.currentTarget).data('hover-text').remove())
-
-  $('.test-runner')
-    .on('sending', (e, ...data) =>
-      console.log('sending:', data.length))
-    .on('attrs', '>option', (e, data = {}) =>
-      $(e.currentTarget).text(`attrs: ${data.name}`))
-    .on('sent', (e, ..._) =>
-      console.log('sent:', $(e.currentTarget).children().length))
-    .trigger('refresh')
 })

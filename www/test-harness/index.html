@@ -3,19 +3,21 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="watch your fungus grow">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="preload" as="image" href="./css/images/background/image.avif" />
   <link rel="preload" as="image" href="./css/images/button-sprites.avif" />
 
   <title>test harness</title>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js" defer></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <!-- <script src="./js/jquery-offline.js" defer></script> -->
   <!-- begin:minify.js -->
   <script src="./js/login.js" defer></script>
   <script src="./js/widget.js" defer></script>
+  <script src="./js/timestamp.js" defer></script>
   <script src="./js/camera.js" defer></script>
   <script src="./js/index.js" defer></script>
   <script src="./js/cookiebar.js" defer></script>
@@ -44,10 +46,17 @@
   <noscript>
     <link rel="stylesheet" href="./css/login.css">
   </noscript>
-
+  <link rel="preload" href="./css/slider.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/slider.css">
+  </noscript>
   <link rel="preload" href="./css/widget.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
     <link rel="stylesheet" href="./css/widget.css">
+  </noscript>
+  <link rel="preload" href="./css/timestamp.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/timestamp.css">
   </noscript>
   <link rel="preload" href="./css/camera.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
@@ -544,9 +553,6 @@
         </div>
       </div>
 
-      <div class="album">
-      </div>
-
       <div class="history lc gen str sub ev ven">
         <div class="entity collapsed">
           <div class="entity-name"> </div>
@@ -557,28 +563,73 @@
       </div>
 
       <div class="imgbox waiting">
+        <div class="props">
+          <label class="format">
+            format
+            <select>
+              <option selected value="image/webp">webp</option>
+              <option value="image/png">png</option>
+              <option $value="image/jpeg">jpeg</option>
+            </select>
+          </label>
+
+          <label class="quality">
+            quality
+            <input type="range" min="50" max=100 step="5" value="100" tabindex="0">
+          </label>
+        </div>
+
         <div class="table viddevs"></div>
 
         <video class="vidcap" autoplay playsinline tabindex="0"></video>
 
         <div class="imgedit">
-          <div class="viewport">
+          <div hmax=800 vmax=600 class="viewport">
             <canvas tabindex="0"></canvas>
           </div>
 
-          <label for="zoom">zoom</label>
-          <input id="zoom" type="range" min="33" max="330" step="10" value="100" tabindex="0">
+          <div class="imgstats">
+            <div class="row template">
+              <span class="px width"></span>
+              &times;
+              <span class="px height"></span>
+              <span class="kb filesize"></span>
+            </div>
+          </div>
 
-          <label for="resize">resize</label>
-          <input id="resize" type="range" min="25" max="100" step="5" value="100" tabindex="0">
+          <div class="ranges">
+            <div class="row control">
+              <label>
+                zoom
+                <input id="zoom" type="range" min="100" max="500" step="5" value="100" tabindex="0">
+              </label>
+              <div class="crop button active" hover="crop"></div>
+            </div>
 
-          <div class="cancel button active" hover="cancel"></div>
-          <div class="ok button active" hover="ok"></div>
-          <div class="active crop photo-ctl button active" hover="crop"></div>
+            <div class="row control">
+              <label>
+                resize
+                <input id="resize" type="range" min="40" max="100" step="6" value="100" tabindex="0">
+              </label>
+              <div class="resize button active" hover="resize"></div>
+            </div>
+          </div>
         </div>
 
-        <div class="gallery"></div>
+        <div class="greymap"></div>
+
+        <div class="colormap"></div>
+
+        <div class="audit"></div>
+
+        <div class="buttonbox">
+          <div class="cancel button active" hover="cancel"></div>
+          <div class="ok button active" hover="ok"></div>
+          <div class="reset button active" hover="reset"></div>
+        </div>
       </div>
+
+      <div class="album"></div>
     </div>
 
     <div class="footer">
@@ -693,11 +744,65 @@
       </div>
       <div class="buttonbar"></div>
     </div>
-  </div>
-</body>
 
-<script defer>
-  setTimeout(_ => $(document).trigger('reload'), 50)
-</script>
+    <div class="timestamp absolute">
+      <div class="title">
+        <label class="toggle">
+          <input class="relative" type="checkbox" checked>
+        </label>
+        timestamp(s)
+      </div>
+
+      <div class="includes">
+        <label>
+          <input class="include mtime" name="mtime" type="checkbox"> mtime
+        </label>
+        <label>
+          <input class="include ctime" name="ctime" type="checkbox"> ctime
+        </label>
+        <label>
+          <input class="include dtime" name="dtime" type="checkbox"> dtime
+        </label>
+      </div>
+
+      <div class="form">
+        <div class="template relative">
+          <label>
+            <input type="number" class="delta" min="-60" max="60" value="0" tabindex="0">
+          </label>
+
+          <label>
+            <select tabindex="0">
+              <option value="hour" selected>hour</option>
+              <option value="day">day</option>
+              <option value="week">week</option>
+              <option value="month">month</option>
+              <option value="year">year</option>
+            </select>
+          </label>
+
+          <div class="ctrl delete">--</div>
+        </div>
+      </div>
+      <div class="ctrl add">+</div>
+
+      <label class="absolute">
+        <input type="datetime-local" tabindex="0">
+      </label>
+
+      <div class="buttons">
+        <div class="cancel active" tabindex="0">cancel</div>
+        <div class="update active" tabindex="0">update</div>
+        <div class="reset active" tabindex="0">reset</div>
+      </div>
+    </div>
+  </div>
+
+  <script defer>
+    setTimeout(_ => $(document).trigger('reload'), 150)
+    // setTimeout(_ => $('.template>.timestamp').clone(true, true).appendTo('.workspace>.active').trigger('activate', [new Date(), 'events', '123', 'mtime']), 150)
+    // setTimeout(_ => camera(), 150)
+  </script>
+</body>
 
 </html>

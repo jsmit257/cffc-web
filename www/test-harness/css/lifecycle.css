@@ -40,8 +40,8 @@ body>.main>.workspace>.lifecycle>.rows.ndx>.field.new>.ctime::before {
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx>.row>div {
-  padding-left: 4%;
-  width: 44%;
+  padding-left: 5%;
+  width: 50%;
   text-overflow: ellipsis;
 }
 
