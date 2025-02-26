@@ -1,2 +1,5 @@
 /album
 /background
+/minify
+/nginx/certs
+!/nginx/certs/init

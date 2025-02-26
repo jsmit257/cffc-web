@@ -78,7 +78,7 @@ $(_ => {
         .get(0)
         .files = cd.files;
     })
-    .on('click', '>.rows>.row>div.action', e => {
+    .on('click', '>.rows>.row>.buttonbox>.action', e => {
       e.stopPropagation()
 
       let $n = $(e.currentTarget)
@@ -112,7 +112,7 @@ $(_ => {
         $n.find('input.photo').focus()
       }
     })
-    .on('click', '>.rows>.row>div.commit', e => {
+    .on('click', '>.rows>.row>.buttonbox>.commit', e => {
       e.stopPropagation()
 
       let $selected = $(e.currentTarget).parents('.row').first()
@@ -184,15 +184,12 @@ $(_ => {
         ...other
       })
     })
-    .on('click', '>.rows>.row>div.back', e => {
-      // if hasClass('adding') then remove()? removeClass('photoing')?
-      let $row = $(e.currentTarget)
-        .parents('.row')
-        .first()
-        .removeClass('selected noting editing adding')
-        .parents('.photos')
-        .toggleClass('gallery singleton')
-    })
+    .on('click', '>.rows>.row>.buttonbox>.back', e => $(e.currentTarget)
+      .parents('.row')
+      .first()
+      .removeClass('selected noting editing adding')
+      .parents('.photos')
+      .toggleClass('gallery singleton'))
     .on('click', '>.rows>.row>img', e => {
       if ($(e.delegateTarget).hasClass('gallery')) {
         let $row = $(e.currentTarget)

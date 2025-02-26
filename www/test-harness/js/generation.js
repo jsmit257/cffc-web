@@ -48,7 +48,7 @@ $(_ => {
     .on('select', (e, gid) => $ndx.find(`.row#${gid}`).click())
 
   let $ndx = $generation.find('>.table.generation>.rows[name="generation"]')
-    .on('refresh', _ => $gentable.removeClass('editing adding'))
+    .on('refresh', _ => $gentable.removeClass('editing adding')) // ???
     .on('send', '>.row', (e, data = {}) => {
       e.stopPropagation()
 
@@ -82,7 +82,7 @@ $(_ => {
       let $g = $(e.currentTarget)
 
       $g
-        .data('record', data)
+        .data('row', data)
         .attr('id', data.id)
         .parent()
         .addClass('selecting') // gets removed on column.click
@@ -103,7 +103,7 @@ $(_ => {
     .on('resend', e => {
       $(e.currentTarget)
         .removeClass('editing adding')
-        .trigger('send', $(e.currentTarget).data('record'))
+        .trigger('send', $(e.currentTarget).data('row'))
         .find('>.field>select.substrate')
         .prop('disabled', true)
     })
@@ -211,7 +211,7 @@ $(_ => {
           success: data => $gentable
             .removeClass('editing')
             .trigger('send', {
-              ...$gentable.data('record'),
+              ...$gentable.data('row'),
               ...data,
               ctime: $gentable.find('>.field>.ctime').text(),
             }),

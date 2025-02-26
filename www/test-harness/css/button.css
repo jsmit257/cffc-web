@@ -40,7 +40,7 @@ body>.main>.workspace .table>.buttonbar {
 }
 
 .button>.icon {
-  background-image: url(images/button-sprites.png);
+  background-image: url(images/button-sprites.avif);
   width: 1.4em;
   height: 1.4em;
 }
@@ -67,10 +67,13 @@ body>.main>.workspace .table>.buttonbar {
 
 .editing .action.button,
 .cancel.button {
-  background-image: radial-gradient(#ffffff, transparent 80%);
+  background-image: radial-gradient(#ffffff, #486fae 80%);
 }
 
-/*&check;*/
+.crop.button {
+  background-image: radial-gradient(#ffffff 40%, #ff5454 10%);
+}
+
 .edit.button {
   background-image: radial-gradient(#8cf, transparent);
 }
@@ -105,6 +108,14 @@ body>.main>.workspace .table>.buttonbar {
   background-image: radial-gradient(#7ad9ff, transparent);
 }
 
+.reset.button {
+  background-image: radial-gradient(#ffffff99 30%, #47fcffbb 49%);
+}
+
+.resize.button {
+  background-image: radial-gradient(#ffffff, #00ffbd 80%);
+}
+
 /* 
  * icon placements 
  */
@@ -125,6 +136,11 @@ body>.main>.workspace .table>.buttonbar {
   background-position: -725px -193px;
 }
 
+.crop.button>.icon {
+  background-position: -423px -695px;
+}
+
+/*&check;*/
 .edit.button>.icon {
   background-position: -620px -228px;
 }
@@ -146,6 +162,7 @@ body>.main>.workspace .table>.buttonbar {
   background-position: -445px -89px;
 }
 
+.reset.button>.icon,
 .refresh.button>.icon {
   background-position: -724px -54px;
 }
@@ -157,4 +174,14 @@ body>.main>.workspace .table>.buttonbar {
 
 .report.button>.icon {
   background-position: -550px -123px;
+}
+
+/* 
+.reset.button>.icon {
+  background-position: -423px -695px;
+}
+ */
+
+.resize.button>.icon {
+  background-position: -380px -568px;
 }

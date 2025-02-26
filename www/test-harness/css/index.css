@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .template {
   display: none !important;
 }
@@ -34,6 +38,7 @@
 
 body {
   margin: 0;
+  font-family: sans-serif;
 }
 
 body>.main {
@@ -41,16 +46,17 @@ body>.main {
 }
 
 body>.background-image {
-  background-image: url(./images/background/image.png);
+  background-image: url(./images/background/image.avif);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   height: 100%;
   left: 0;
   opacity: .1;
   position: absolute;
   top: 0;
   width: 100%;
+  background-attachment: fixed;
 }
 
 body>.main>div {
@@ -166,7 +172,7 @@ body>.main>.footer>.powered-by>ul::before {
   content: 'Powered by:';
   float: left;
   font-style: italic;
-  line-height: 3em;
+  line-height: 4.5em;
   margin-left: -7em;
 }
 

@@ -25,7 +25,11 @@ body>.main>.workspace>.substrate>.table.substrate.grain>.rows>.row.grain {
   display: revert;
 }
 
-body>.main>.workspace>.substrate>.table.substrate>.columns>.column.type>select.type {
+body>.main>.workspace>.substrate>.table.substrate>.columns>.column.type>label {
+  font-size: initial;
+}
+
+body>.main>.workspace>.substrate>.table.substrate>.columns>.column.type>select {
   line-height: 150%;
   background-color: transparent;
   color: aliceblue;

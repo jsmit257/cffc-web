@@ -28,7 +28,11 @@ body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.lc {
 
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx {
   float: left;
-  width: 29%;
+  width: 29.5%;
+}
+
+body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx>.row {
+  border-radius: 0 15px 15px 0;
 }
 
 body>.main>.workspace>.lifecycle>.rows.ndx>.field.new>.ctime::before {
@@ -36,15 +40,17 @@ body>.main>.workspace>.lifecycle>.rows.ndx>.field.new>.ctime::before {
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx>.row>div {
-  padding-left: 4%;
-  width: 44%;
+  padding-left: 5%;
+  width: 50%;
+  text-overflow: ellipsis;
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle {
   width: 100%;
 }
 
-body>.main>.workspace>.lifecycle>.table.lifecycle>.rows>.row>.field>.label {
+body>.main>.workspace>.lifecycle>.table.lifecycle>.rows>.row>.field>label {
+  float:left;
   padding-left: 1%;
   width: 20%;
 }
@@ -72,4 +78,8 @@ select.liquid>option:not([type="liquid"]),
 select.grain_substrate>option:not([type="grain"]),
 select.bulk_substrate>option:not([type="bulk"]) {
   display: none;
+}
+
+.table.lifecycle input[type="number"] {
+  width: 6em;
 }

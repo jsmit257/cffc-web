@@ -24,8 +24,8 @@ body>.main>.workspace>div .table>.rows>.row,
 body>.main>.workspace>div .table>.rows>.row>.field,
 body>.main>.workspace>div .table>.rows>.field {
   border-radius: 15px;
-  float: left;
-  position: relative;
+  /* float: left; */
+  /* position: relative; */
   width: 100%;
 }
 
@@ -45,7 +45,7 @@ body>.main>.workspace>div .table>.rows select {
   border-style: none;
   float: left;
   font-size: inherit;
-  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
 }
 
 body>.main>.workspace>div .table>.rows>.field option,

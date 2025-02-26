@@ -7,7 +7,9 @@ services:
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
-    ports: [ 8081:80 ]
+    ports:
+      - 8081:80
+      - 8444:443
     volumes:
       - ./background/:/www/css/images/background/
       - ./album:/album
@@ -16,3 +18,5 @@ services:
       - CFFC_API_PORT
       - AUTHN_HOST
       - AUTHN_PORT
+      - SSL_HOST=localhost
+      - SSL_PORT=8444

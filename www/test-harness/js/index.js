@@ -1,11 +1,13 @@
 $(_ => {
   let previous = {}
   let rownames = ['main', 'ancillary', 'reporting'/*,'analytics*/]
+  let blacklist = ['/logout', '/valid']
   let changerow = ((len) => {
     return (curr, dir) => { return rownames[(len + rownames.indexOf(curr) + Number(dir)) % len] }
   })(rownames.length)
 
   $(document)
+    .data('forbidden', [])
     .on('reload', e => {
       let hashes = document.location.hash.split('#')
       if (hashes.length > 1) {
@@ -17,8 +19,28 @@ $(_ => {
       $('body>.main>.header>.menu-scroll').trigger('select', hashes)
     })
     .on('error-message', (e, ...data) => {
-      console.log('data', ...data)
+      console.log('error-message', ...data)
     })
+    .on("ajaxError", (e, xhr, opts, err) => {
+      if (xhr.status == 403) {
+        if (opts.url !== '/valid') {
+          console.log('pushing opts', opts)
+          $(e.delegateTarget).trigger('forbidden', opts)
+        }
+        $('body>.login').trigger('activate')
+      } else {
+        $(e.delegateTarget).trigger('error-message', [err, opts.url])
+        console.log('xhr', opts.url, xhr)
+        console.log('opts', opts.url, opts)
+      }
+    })
+    .on('forbidden', (e, opts) => blacklist.includes(opts.url) || $(e.delegateTarget)
+      .data('forbidden')
+      .push(opts))
+    .on('unforbidden', e => $(e.delegateTarget)
+      .data('forbidden')
+      .splice(0, $(e.delegateTarget).data('forbidden').length)
+      .forEach($.ajax))
 
   $('body>.main>.header')
     .on('click', '>.menuitem:not(.selected)', (e, data) => {
@@ -83,16 +105,6 @@ $(_ => {
 
       $h.find(`>[name="${btn}"]`).click()
     })
-
-  $.ajaxSetup({
-    statusCode: {
-      302: _ => $('body>.login').trigger('activate'),
-      // 400: xhr => $(document).trigger('error-message', 'Error:', xhr.responseText),
-    },
-    error: (xhr, status, err) => {
-      $(document).trigger('error-message', ['Error', xhr.responseText])
-    },
-  })
 
   buildcss = query => {
     console.log($($(query)
