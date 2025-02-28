@@ -1,4 +1,4 @@
-$(function () {
+(_ => {
   let $strain = $('body>.main>.workspace>.strain')
     .on('activate', (e, selected) => {
       if (!selected || selected.constructor.prototype !== String.prototype) {
@@ -39,7 +39,6 @@ $(function () {
       $.ajax({
         url: '/strainattributenames',
         method: 'GET',
-        async: true,
         success: (result, status, xhr) => {
           let $attrlist = $strain
             .find('datalist#strain-attr-names')
@@ -194,4 +193,4 @@ $(function () {
   let $genphotos = $('body>.template>.photos')
     .clone(true, true)
     .insertAfter($('body>.main>.workspace>.strain>.table.strain>.rows'))
-})
+})()

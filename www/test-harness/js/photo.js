@@ -18,7 +18,6 @@ $(_ => {
       $.ajax({
         url: `/photos/${owner}`,
         method: 'GET',
-        async: true,
         success: (result, status, xhr) => {
           $p
             .data('owner', owner)
@@ -166,7 +165,6 @@ $(_ => {
       $.ajax({
         url: url,
         method: 'HEAD',
-        async: true,
         success: (result, status, xhr) => {
           $selected.trigger('send', result[0])
         },

@@ -66,8 +66,14 @@ $(_ => {
     .appendTo(document.body)
     .trigger('activate', [
       $(e.currentTarget).data('value'),
-      $(e.currentTarget).parents('.rows[name]').first().attr('name'),
-      $(e.currentTarget).parents('.row[id]').first().attr('id'),
+      $(e.currentTarget)
+        .parents('.rows[ts], .generation .row[ts]')
+        .first()
+        .attr('ts'),
+      $(e.currentTarget)
+        .parents('.row[id]')
+        .first()
+        .attr('id'),
       $(e.currentTarget).
         get(0)
         .className
@@ -98,14 +104,17 @@ $(_ => {
     .on('refresh', (e, params = {}) => {
       e.stopPropagation()
 
-      let $list = $(e.currentTarget)
+      let url = $(e.currentTarget).attr('url')
 
       $.ajax({
-        url: $list.attr('url'),
+        url: url,
         method: 'GET',
-        async: true,
-        success: data => $list.trigger('send', data),
-        error: console.log,
+        success: data => $(e.currentTarget).trigger('send', data),
+        error: (xhr, status, err) => $('body>.notification').trigger('activate', [
+          xhr.status === 403 ? 'debug' : 'error',
+          `GET - ${url}`,
+          err,
+        ]),
         ...params,
       })
     })

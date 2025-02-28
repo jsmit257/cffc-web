@@ -1,5 +1,5 @@
 .timestamp {
-  background-color: #663558dd;
+  background-color: #260245cc;
   border-color: ghostwhite;
   border-radius: .75em;
   border-style: inset;
@@ -49,15 +49,14 @@
 }
 
 .timestamp.relative>.title>.toggle::after {
-  content: 'relative';
+  content: 'hide';
 }
 
 .timestamp.absolute>.title>.toggle::after {
-  content: 'absolute';
+  content: 'show';
 }
 
 .timestamp>.includes>label {
-  background-color: #663558;
   display: block;
   line-height: 1;
 }

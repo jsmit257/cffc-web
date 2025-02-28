@@ -1,5 +1,4 @@
-$(_ => {
-
+(_ => {
   let fmt = (v, r) => v.toFixed ? v.toFixed(r) : v
 
   let $lifecycle = $('body>.main>.workspace>.lifecycle')
@@ -9,11 +8,14 @@ $(_ => {
       $.ajax({
         url: '/substrates',
         method: 'GET',
-        async: true,
         success: data => $table
           .find('>.row>.field>.substrate')
           .send(data),
-        error: console.log,
+        error: (xhr, status, err) => $('body>.notification').trigger('activate', [
+          'error',
+          `GET - /substrates`,
+          err,
+        ]),
       })
 
       $ndx.trigger('refresh')
@@ -235,4 +237,4 @@ $(_ => {
     })
 
   let fields = ['id', 'location', 'strain_cost', 'grain_cost', 'bulk_cost', 'yield', 'count', 'gross']
-})
+})()

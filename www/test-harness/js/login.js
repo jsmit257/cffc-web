@@ -1,47 +1,34 @@
 $(_ => $('body>.login')
 
   // setup/teardown
-  .on('init', (e, username) => {
-    if (!username) {
-      username = 'stranger'
+  .on('init', (e, username = 'stranger') => $(e.currentTarget)
+    .find('input#username')
+    .val(username)
+    // - sets login-menu>control text 
+    // - re-sets localStorage
+    // - if found, sets login ID attr
+    .trigger('keyup'))
+  .on('check-valid', e => $.ajax({
+    url: '/valid',
+    method: 'GET',
+    statusCode: {
+      302: _ => $(e.currentTarget).trigger('deactivate'),
+      403: _ => $(e.delegateTarget).trigger('activate'),
+    },
+    // error: _ => _,
+  }))
+  .on('activate', e => {
+    if ($('body').hasClass('authing')) {
+      return
     }
 
-    let $login = $(e.delegateTarget)
-
-    $login
-      .find('input#username')
-      .val(username)
-      // - sets login-menu>control text 
-      // - re-sets localStorage
-      // - if found, sets login ID attr
-      .trigger('focus')
-      .trigger('test')
-
-    $.ajax({
-      url: '/valid',
-      method: 'GET',
-      statusCode: {
-        302: _ => $login.trigger('deactivate'),
-        403: _ => $('body')
-          .addClass('authing')
-          .find('>.login')
-          .removeClass('cancelable')
-          .find('>.form')
-          .removeClass('mismatch adding pwding')
-          .find('input#password')
-          .val(''), // $login.trigger('activate'),
-      },
-      // error: _ => _,
-    })
-  })
-  .on('activate', e => {
     $(e.delegateTarget)
       .removeClass('cancelable')
       .find('>.form')
       .removeClass('mismatch adding pwding')
       .find('input[type="password"]').val('')
 
-    $('body')
+    $(document.body)
       .addClass('authing')
       .find('input#username')
       .trigger('test')
@@ -76,72 +63,74 @@ $(_ => $('body>.login')
     .find('>.form')
     .addClass('editing'))
   .on('click', '>.login-menu>.commands>.logout', e => $.ajax({
-    url: '/logout',
+    url: './logout',
     method: 'POST',
     statusCode: {
-      204: _ => alert('logged out'),
-      403: _ => alert('logout failed'),
+      204: _ => $(document.body).find('>.notification').trigger('activate', [
+        'info',
+        'POST - /logout',
+        'logout succeeded',
+        { timeout: 10 },
+      ]),
+      403: _ => $(document.body).find('>.notification').trigger('activate', [
+        'error',
+        'POST - /logout',
+        'logout failed',
+        { timeout: 10 },
+      ]),
     },
     error: console.log,
     complete: _ => $(e.delegateTarget).trigger('activate'),
   }))
 
-  // manage username (broken!!!)
-  .on('focus', '>.form>.username>input', e => {
+  // manage username
+  .on('focus', '>.form>.username>input', e => $(e.currentTarget).trigger('test'))
+  .on('blur', '>.form>.username>input', e => $(e.currentTarget).trigger('test'))
+  .on('keyup', '>.form>.username>input', e => {
+    // FIXME: blacklist buttons like tab, meta-only sequences, etc
     let $uname = $(e.currentTarget)
-    $uname.data('search', {
-      last: '',
-      timer: setInterval(_ => { $uname.trigger('test') }, 1000),
-      vount: 0,
-    })
-  })
-  .on('blur', '>.form>.username>input', e => {
-    let timer = $(e.currentTarget).data('search').timer
-    if (timer > 0) {
-      clearInterval(timer)
-    }
-    $(e.currentTarget)
-      .trigger('test')
-      .data('search', { last: '', timer: -1, count: 0 })
+
+    clearTimeout($uname.data('timeout') || -1)
+
+    $(e.delegateTarget)
+      .find('>.login-menu>.control')
+      .text($uname.val())
+
+    $uname.data('timeout', setTimeout(_ => { $uname.trigger('test') }, 100))
   })
   .on('test', '>.form>.username>input', e => {
     let $login = $(e.delegateTarget)
-    let $uname = $(e.currentTarget)
-    let val = $uname.val()
+    let val = $(e.currentTarget)
+      .removeData('timeout')
+      .val()
 
-    $login
-      .find('>.login-menu>.control')
-      .text(val)
-
-    // if ($uname.data('search').last === val) {
-    //   return
-    // } else if ($uname.data('search').count++ == 12) {
-    //   $uname.trigger('blur')
-    // }
+    // focus/keyup/blur events tend to come in pairs, but only one 
+    // is needed, 50ms seems like a really long time, but probably 
+    // not noticable
+    let now = new Date().getTime()
+    let last = $(e.currentTarget).data('last')
+    if (now - ~~last < 50) {
+      console.log('duplicate')
+      return
+    }
+    $(e.currentTarget).data('last', now) // here, or in success only?
 
     $.ajax({
       url: `/auth/${val}`,
       method: "GET",
-      // async: false,
       success: auth => {
-        $login
-          .attr('id', auth.id)
-          .find('>.form>.password>input')
-          .focus()
+        $login.attr('id', auth.id)
         localStorage.setItem("username", val)
       },
       error: _ => $login
         .removeAttr('id')
-        .find('input#username')
-        .trigger('keyup'),
+        .trigger('activate'),
       complete: _ => $login
         .find('>.form')
         .removeClass('pwding')
         .find('>.password>input')
         .prop('readonly', !$login.attr('id')),
     })
-
-    // $uname.data('search').last = val
   })
 
   // buttons
@@ -186,32 +175,44 @@ $(_ => $('body>.login')
       $.ajax({
         url: "/user",
         method: 'POST',
-        async: false,
         data: JSON.stringify({
           username: $("#username").val(),
           email: $('#email').val() || null,
           cell: $('#cell').val() || null,
         }),
         statusCode: {
-          201: xhr => $login.attr('id', xhr.responseText),
+          201: xhr => $login
+            .attr('id', xhr.responseText)
+            .trigger('update-auth'),
           409: xhr => alert('username not valid')
         },
-        error: _ => {
-          $(e.currentTarget).val('').focus()
-          return
-        },
+        error: err => console.log('.chgpwd::click', err),
       })
+    } else {
+      $login.trigger('update-auth')
     }
-
+  })
+  .on('update-auth', (e, data) => {
+    let $login = $(e.delegateTarget)
+    let url = `/auth/${$login.attr('id')}`
     $.ajax({
-      url: `/auth/${$login.attr('id')}`,
+      url: url,
       method: 'PATCH',
       data: JSON.stringify({
         old: $login.find('>.form>.password>input').val(),
         new: $login.find('>.form>.newpassword2>input').val(),
       }),
-      success: _ => ($login.trigger('deactivate'), alert('password changed')),
-      error: console.log,
+      success: _ => ($login.trigger('deactivate'),
+        $('body>.notification').trigger('activate', [
+          'info',
+          `PATCH - ${url}`,
+          'password changed',
+        ])),
+      error: err => $('body>.notification').trigger('activate', [
+        'info',
+        `PATCH - ${url}`,
+        'password changed',
+      ]),
     })
   })
 
@@ -273,10 +274,6 @@ $(_ => $('body>.login')
     console.log('save user', $('.user, .contact'))
   })
   .on('click', '>.form>.delete-auth', e => {
-    if (1) {
-      console.log('clicked reset')
-      return
-    }
     let $login = $(e.delegateTarget)
 
     $.ajax({
@@ -315,4 +312,4 @@ $(_ => $('body>.login')
     .find('>.form')
     .removeClass('forgetting'))
 
-  .trigger('init', localStorage.getItem('username')))
+  .trigger('init', localStorage.username))

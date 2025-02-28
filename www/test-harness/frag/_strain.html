@@ -1,0 +1,38 @@
+<div class="table strain">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+    <div class="column species" sort-key="species">Species</div>
+    <div class="column vendor" sort-key="vendor">Vendor</div>
+    <div class="column ctime" sort-key="ctime">Created At</div>
+  </div>
+
+  <div class="rows" name="strain" ts="strain">
+    <div class="row hover template">
+      <input class="name" readonly tabindex="0">
+      <input class="species" readonly tabindex="0">
+      <!-- <label></label> -->
+      <select class="vendor" url="vendors" disabled tabindex="0"></select>
+      <div class="ctime short-date"></div>
+    </div>
+  </div>
+
+  <div class="buttonbar"></div>
+</div>
+
+<datalist id="strain-attr-names"></datalist>
+
+<div class="table strainattribute">
+  <div class="columns">
+    <div class="column name" sort-key="name">Attribute Name</div>
+    <div class="column value">Value</div>
+  </div>
+
+  <div class="rows" name="strainattribute">
+    <div class="row hover template">
+      <input class="name" list="strain-attr-names" readonly tabindex="0">
+      <input class="value" readonly tabindex="0">
+    </div>
+  </div>
+
+  <div class="buttonbar"></div>
+</div>

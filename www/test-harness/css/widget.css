@@ -1,5 +1,5 @@
 html {
-  background-color: #003050;
+  background-color: var(--background-color);
   color: aliceblue;
   margin-left: auto;
   margin-right: auto;

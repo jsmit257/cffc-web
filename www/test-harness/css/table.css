@@ -50,5 +50,5 @@ body>.main>.workspace>div .table>.rows select {
 
 body>.main>.workspace>div .table>.rows>.field option,
 body>.main>.workspace>div .table>.rows>.row option {
-  background-color: #004050;
+  background-color: var(--background-color);
 }

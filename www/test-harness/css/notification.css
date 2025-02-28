@@ -1,0 +1,170 @@
+body>.notification {
+  background-color: #3b141482;
+  border-radius: .5em;
+  float: left;
+  margin-top: 2em;
+  padding-top: .5em;
+  padding-bottom: .5em;
+  width: 100%;
+  z-index: 4;
+}
+
+body>.notification.auditing {
+  display: block;
+}
+
+.notification>.fieldnames {
+  font-weight: bold;
+  margin-bottom: .5em;
+  text-align: center;
+}
+
+.notification>.fieldnames,
+.notification>.row {
+  float: left;
+  width: 100%;
+  line-height: 1.4;
+}
+
+.notification>.fieldnames>div,
+.notification>.row>div {
+  float: left;
+  text-decoration: underline;
+  width: 13%;
+}
+
+.notification>.row.error {
+  color: #ffa9a9;
+}
+
+.notification>.row.warn {
+  color: #ffd79f;
+}
+
+.notification>.row.info {
+  color: #aaff9f;
+}
+
+.notification>.row.debug {
+  color: #9fd7ff;
+}
+
+.notification>.row>div {
+  padding-left: .2em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.notification>div>[name="message"] {
+  width: 48%;
+}
+
+/* .notification>.row {} */
+
+body>.alert {
+  border-radius: 1em;
+  z-index: 5;
+  color: #000000;
+  background-color: #c2c2c2ee;
+  position: absolute;
+  min-width: 30em;
+  border-width: 9px;
+  border-style: solid;
+  padding: .5em;
+  font-size: larger;
+  border-color: #0007;
+  width: 35%;
+}
+
+body>.alert::before {
+  background-image: radial-gradient(circle at center, darkgrey 50%, transparent 69%);
+  border-radius: .5em;
+  color: #ffffffb0;
+  content: '?';
+  display: block;
+  float: left;
+  font-size: 400%;
+  height: 1.2em;
+  line-height: 1.2;
+  text-align: center;
+  width: 1.2em;
+  position: absolute;
+}
+
+body>.alert.error::before {
+  background-image: radial-gradient(circle at center, red 50%, transparent 69%);
+  content: '\d7';
+}
+
+body>.alert.warn::before {
+  background-image: radial-gradient(circle at center, #df4a00 50%, transparent 69%);
+  content: '!';
+}
+
+body>.alert.info::before {
+  background-image: radial-gradient(circle at center, green 50%, transparent 69%);
+  content: '!';
+}
+
+body>.alert.ask::before {
+  background-image: radial-gradient(circle at center, blue 50%, transparent 69%);
+  content: '?';
+}
+
+body>.alert>.field {
+  margin-left: 6em;
+  width: 22em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+body>.alert>.dialog-button {
+  align-content: center;
+  background-color: #d1ad6a;
+  border: 2px outset;
+  border-radius: .75em;
+  cursor: pointer;
+  float: right;
+  line-height: 1.5em;
+  margin-left: .5em;
+  text-align: center;
+  width: 4em;
+}
+
+body>.alert>div[name="message"] {
+  margin-bottom: 1em;
+  margin-top: .33em;
+  height: 3em;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+
+body>.alert>div::before {
+  width: 3.3em;
+  display: inline-block;
+}
+
+body>.alert>div[name="when"]::before {
+  content: 'time:';
+}
+
+body>.alert>div[name="severity"]::before {
+  content: 'level:';
+}
+
+body>.alert>div[name="action"]::before {
+  content: 'action:';
+}
+
+body>.alert>.timeout {
+  float: left;
+  line-height: 1.5em;
+  width: 2em;
+  text-align: right;
+}
+
+body>.alert>.timeout::after {
+  content: 's';
+}

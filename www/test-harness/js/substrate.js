@@ -1,4 +1,4 @@
-$(_ => {
+(_ => {
   let $substrate = $('body>.main>.workspace>.substrate')
     .on('activate', e => {
       $('.table.substrate .row.template>select.vendor').trigger('refresh')
@@ -82,7 +82,6 @@ $(_ => {
         contentType: 'application/json',
         method: 'PATCH',
         dataType: 'json',
-        async: true,
         data: JSON.stringify({
           id: $selected.find('>.ingredients').val(),
           name: $selected.find('>.ingredients>option:selected').text(),
@@ -139,4 +138,4 @@ $(_ => {
       }
     })
     .trigger('change')
-})
+})()

@@ -1,3 +1,8 @@
+:root {
+  --background-color: #02000d;
+  --login-background-color: #0f00255c;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -41,11 +46,8 @@ body {
   font-family: sans-serif;
 }
 
-body>.main {
-  margin-top: 2em;
-}
-
 body>.background-image {
+  background-attachment: fixed;
   background-image: url(./images/background/image.avif);
   background-position: center;
   background-repeat: no-repeat;
@@ -56,7 +58,16 @@ body>.background-image {
   position: absolute;
   top: 0;
   width: 100%;
-  background-attachment: fixed;
+}
+
+body>.notification {
+  display: none;
+}
+
+body>.main {
+  margin-top: 2em;
+  float: left;
+  width: 100%;
 }
 
 body>.main>div {
@@ -127,7 +138,7 @@ body>.main>.header>.menu-scroll>div[dir] {
 body>.main>.workspace {
   font-size: larger;
   line-height: 150%;
-  margin-bottom: 4em;
+  margin-bottom: 7em;
 }
 
 body>.main>.workspace>div {
@@ -137,7 +148,7 @@ body>.main>.workspace>div {
   width: 100%;
 }
 
-body>.main>.workspace>.active {
+body:not(.authing)>.main>.workspace>.active {
   display: block;
 }
 
@@ -157,6 +168,9 @@ body>.main>.footer>.powered-by {
   padding-right: 2em;
   position: fixed;
   right: 0;
+  padding-left: 7em;
+  background-image: radial-gradient(ellipse at bottom right, var(--background-color) 70%, transparent);
+  border-radius: 4em 0 0;
 }
 
 body>.main>.footer>.powered-by>div {
@@ -164,8 +178,9 @@ body>.main>.footer>.powered-by>div {
 }
 
 body>.main>.footer>.powered-by>ul {
-  display: inline-block;
+  /* display: inline-block; */
   vertical-align: middle;
+  margin-bottom: .5em;
 }
 
 body>.main>.footer>.powered-by>ul::before {

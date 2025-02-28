@@ -1,13 +1,29 @@
 $(_ => {
   let previous = {}
   let rownames = ['main', 'ancillary', 'reporting'/*,'analytics*/]
-  let blacklist = ['/logout', '/valid']
-  let changerow = ((len) => {
-    return (curr, dir) => { return rownames[(len + rownames.indexOf(curr) + Number(dir)) % len] }
-  })(rownames.length)
+  let blacklist = ['./logout', './valid']
+  let changerow = ((len) => (curr, dir) =>
+    rownames[(len + rownames.indexOf(curr) + Number(dir)) % len])(rownames.length)
+
+  $(window)
+    .on('focus', e => {
+      e.stopPropagation();
+
+      $('body>.login').trigger('check-valid')
+    })
+    .on('blur', e => { // cheap logout function, but unlikely use-case
+      e.stopPropagation();
+
+      $('body>.login').trigger('check-valid')
+    })
+    .trigger('focus')  // someday i'll figure out why both of these are needed
+    .focus()
 
   $(document)
     .data('forbidden', [])
+    .on('keyup', 'body', e => e.ctrlKey
+      && e.key === 'F'
+      && document.body.requestFullscreen())
     .on('reload', e => {
       let hashes = document.location.hash.split('#')
       if (hashes.length > 1) {
@@ -18,20 +34,20 @@ $(_ => {
 
       $('body>.main>.header>.menu-scroll').trigger('select', hashes)
     })
-    .on('error-message', (e, ...data) => {
-      console.log('error-message', ...data)
-    })
     .on("ajaxError", (e, xhr, opts, err) => {
       if (xhr.status == 403) {
-        if (opts.url !== '/valid') {
-          console.log('pushing opts', opts)
-          $(e.delegateTarget).trigger('forbidden', opts)
-        }
-        $('body>.login').trigger('activate')
-      } else {
-        $(e.delegateTarget).trigger('error-message', [err, opts.url])
-        console.log('xhr', opts.url, xhr)
-        console.log('opts', opts.url, opts)
+        $(e.delegateTarget)
+          .trigger('forbidden', opts)
+          .find('body>.login')
+          .trigger('activate')
+      } else if (xhr.status != 302) {
+        $(document.body).find('>.notification').trigger('activate', [
+          'error',
+          `${opts.method} - ${opts.url}`,
+          err,
+        ])
+        // console.log('xhr', opts.url, xhr)
+        // console.log('opts', opts.url, opts)
       }
     })
     .on('forbidden', (e, opts) => blacklist.includes(opts.url) || $(e.delegateTarget)
@@ -105,6 +121,40 @@ $(_ => {
 
       $h.find(`>[name="${btn}"]`).click()
     })
+
+  $('[x-frag]').each((i, n) => $(n)
+    .one('activate', (e, ...data) => $(e.currentTarget)
+      .trigger('fetch', [$(n).attr('x-frag'), ...data])))
+
+  $('[x-frag]')
+    .on('fetch', (e, frag, ...data) => $(e.currentTarget)
+      .trigger('decorate', [
+        e.currentTarget.attributes['x-style'] || `./css/${frag}.css`,
+        e.currentTarget.attributes['x-script'] || `./js/${frag}.js`
+      ])
+      .trigger('activate', data))
+    // ($.ajax({
+    //   url: `./frag/_${frag}.html`,
+    //   method: 'GET',
+    //   success: html => $(e.currentTarget)
+    //     .empty()
+    //     .html(html)
+    //     .trigger('decorate', [
+    //       e.currentTarget.attributes['x-style'] || `./css/${frag}.css`,
+    //       e.currentTarget.attributes['x-script'] || `./js/${frag}.js`
+    //     ])
+    //     .trigger('activate'),
+    //   error: console.log,
+    // }))
+    .on('decorate', (e, link, script) =>
+      $(document.head).append($('<link>').attr({
+        href: link,
+        rel: 'stylesheet',
+        as: 'style',
+      })).append($('<script>').attr({
+        src: script,
+        type: 'text/javascript',
+      })))
 
   buildcss = query => {
     console.log($($(query)

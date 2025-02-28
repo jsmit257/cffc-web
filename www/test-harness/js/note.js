@@ -9,7 +9,6 @@ $((e, $rowtmpl = $('body>.template>.notes>.rows>.row.template')) => $('div.notes
     $.ajax({
       url: `/notes/${owner}`,
       method: 'GET',
-      async: true,
       success: (result, status, xhr) => $n.find('>.rows').trigger('send', result),
       error: console.log,
       complete: (xhr, status) => {
@@ -126,7 +125,6 @@ $((e, $rowtmpl = $('body>.template>.notes>.rows>.row.template')) => $('div.notes
       ...{
         url: url,
         method: 'HEAD',
-        async: true,
         success: (result, status, xhr) => {
           $selected.trigger('send', result[0])
         },

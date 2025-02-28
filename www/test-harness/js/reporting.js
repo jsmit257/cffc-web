@@ -112,7 +112,6 @@ $(_ => {
       $.ajax({
         url: `/${$(e.delegateTarget).attr('name')}s`,
         method: 'GET',
-        async: true,
         success: (data, status, xhr) => {
           $(e.currentTarget)
             .empty()
@@ -243,7 +242,6 @@ $(_ => {
       $.ajax({
         url: $row.data('url') || `/${entityname}/${$row.attr('id')}`,
         method: 'GET',
-        async: true,
         success: data => {
           $entity
             .removeClass('collapsed')

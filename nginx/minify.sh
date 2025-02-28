@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# usage: minify.sh path/to/index.html
+# usage: [MIN_CLEAN=non-empty] minify.sh path/to/index.html
 
 index="${1?index file must be specified}"
 mindir="`pwd`/minify"
@@ -17,9 +17,6 @@ fi
 
 index="${index##*/}"
 
-declare -a jsfiles
-declare -a cssfiles
-
  if cd ./js 2>/dev/null; then 
   sed -n '/<!-- begin:minify.js -->/,/<!-- end:minify.js -->/ { 
     /<!--/ d; { 
@@ -29,6 +26,7 @@ declare -a cssfiles
     }
   }' "../$index" \
   | while read file; do 
+      echo processing $file >&2
       cat "$file"
       echo ';' # just in case
       test -n "$MIN_CLEAN" && rm "$file"
@@ -61,13 +59,15 @@ fi
 
 if cd ./css 2>/dev/null; then 
   sed -n '/<!-- begin:minify.css -->/,/<!-- end:minify.css -->/ { 
-    /<!--/ d; { 
+    /<!--/ d; 
+    /rel="stylesheet"/ { 
       s/^.*href="\.\/css\///
       s/".*$//
       p
     }
   }' "../$index" \
   | while read file; do 
+      echo processing $file >&2
       cat "$file"
       test -n "$MIN_CLEAN" && rm "$file" >&2
     done >cffc-cat.css
@@ -80,7 +80,7 @@ fi
 if test "$?" -ne "0"; then
   echo "failed to parse css header section from ${index}" >&2
   exit 1
-# elif ! ../../minify/bin/minifycss ./css/cffc-cat.css >./css/cffc-min.css; then 
+# elif ! "${mindir}/bin/minifycss" ./css/cffc-cat.css >./css/cffc-min.css; then 
 #   echo "minification failed for css" >&2
 #   exit 1
 elif ! cat >temp.html <<-EOF
