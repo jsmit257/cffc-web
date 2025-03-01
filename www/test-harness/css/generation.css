@@ -72,7 +72,7 @@ body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] {
   padding-left: .5em;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] select {
+span body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] select {
   margin-right: .5em;
   padding-right: 2px;
   padding-top: 3.1px;
@@ -80,9 +80,12 @@ body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] select 
   width: 80%;
 }
 
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"]>.field>.label,
-body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].sources>div.source>div.label {
+body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] label {
   width: 5em;
+  float: left;
+  /* position: relative; */
+  display: inline;
+  /* clear: both; */
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].sources>div.source div.caption {
@@ -111,6 +114,7 @@ body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].adding>
 
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"] select {
   appearance: none;
+  margin-right: -5em;
   -webkit-appearance: none;
   -moz-appearance: none;
 }
@@ -119,7 +123,7 @@ body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].adding 
 body>.main>.workspace>.generation>.table.generation>.rows[name="editor"].editing select:not(.progeny) {
   appearance: initial;
   -webkit-appearance: auto;
-  -webkit-appearance: auto;
+  -moz-appearance: auto;
 }
 
 body>.main>.workspace>.generation>.table.generation>.rows.sources>div.source.removable {

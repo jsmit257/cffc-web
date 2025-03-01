@@ -10,7 +10,6 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
     $.ajax({
       url: args.url || `/${$(e.currentTarget).attr('name')}s`,
       method: 'GET',
-      async: true,
       success: data => {
         $table.trigger('send', (args.xform || (d => d))(data))
 
@@ -23,7 +22,13 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
           .find('.columns>.column[sort-order]')
           .removeAttr('sort-order')
       },
-      error: args.error || console.log
+      error: args.error || ((xhr, status, err) => $('body>.notification')
+        .trigger('activate', [
+          'debug',
+          'GET - ' + (args.url || `/${$(e.currentTarget).attr('name')}s`),
+          err,
+          { timeout: 20 },
+        ]))
     })
   })
   .on('send', (e, ...data) => {
@@ -89,7 +94,6 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
           method: 'PATCH',
           dataType: 'json',
           data: data($selected),
-          async: true,
           success: $selected.trigger('reset'),
           error: console.log, //$selected.trigger('resend'),
           ...args,
@@ -145,7 +149,6 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
             method: 'POST',
             dataType: 'json',
             data: data($selected),
-            async: true,
             success: (result, status, xhr) => {
               (args.success || (_ => 1))(result, status, xhr) // anything to get out of writing an if statement
               args.buttonbar.find('.remove, .edit')[$table.find('>.removable, >.countable').length > 0
@@ -166,7 +169,6 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
       url: url || `/${$table.attr('name')}/${$table.find('.selected').attr('id')}`,
       contentType: 'application/json',
       method: 'DELETE',
-      async: false,
       success: (result, status, xhr) => {
         $table.trigger('remove-selected')
 
@@ -268,22 +270,16 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
     }
 
     $row
+      .buttonbar()
+      .trigger('reset') // FIXME: reset doesn't call cancel function so inputs aren't reset to readonly
       .parents('.table')
       .first()
-      .find('.buttonbar')
-      .trigger('reset')
-
-    $row
-      .parent()
-      .find('.row.selected')
+      .find('.row')
       .removeClass('selected editing')
-
-    $row.addClass('selected')
+      .filter(`#${e.currentTarget.id}`)
+      .addClass('selected')
   })
-  .on('dblclick', '>.row:not(.template)', e => {
-    $(e.currentTarget)
-      .parents('.table')
-      .first()
-      .find('.buttonbar>.edit')
-      .click()
-  }))
+  .on('dblclick', '>.row:not(.template)', e => $(e.currentTarget)
+    .buttonbar()
+    .find('>.edit')
+    .click()))

@@ -1,57 +1,95 @@
 body>.login {
-  background-color: #07497644;
+  background-color: var(--login-background-color);
   border-color: #074976;
   border-radius: .5em;
   border-style: solid;
   border-width: 1px;
+  bottom: 0;
   font-size: larger;
-  height: 1.5em;
+  height: auto;
   left: 0;
   line-height: 175%;
   overflow-y: hidden;
   padding-left: 33%;
   position: fixed;
-  right: 2px;
+  right: 0px;
   top: 0;
-  z-index: 1;
+  z-index: 5;
 }
 
-body.authing>.login {
-  bottom: 0px;
-  height: auto;
-  background-color: #074976dd;
+body:not(.authing)>.login {
+  height: 1.5em;
 }
 
-/* until i know what it does */
-.login>.form>.password>.reset {
-  display: none;
-}
-
-/* 
-.login:not([id])>.login-menu>.commands {
-  display: none !important;
-}
- */
-
+.login>.form .add,
+.login>.form .edit,
+.login>.form .pwd,
+.login>.form .forgot,
+.login>.form.adding .no-add,
+.login>.form.editing .no-edit,
+.login>.form.pwding .no-pwd,
+.login>.form.forgetting .no-forgot,
+/**/
+.login>.form>.user,
+.login>.form>.contact,
+.login>.form>.edit,
+.login>.form>.pwd,
+.login>.form>.reg,
 .login>.form.adding>.no-add,
-.login>.login-menu>.commands,
-.login>.login-menu>.commands>.cancel,
+.login>.form.editing>.no-edit,
+.login>.form.adding>.username>.button,
+.login>.form>.password>.reset,
+.login>.form.pwding>.password>.button,
 .login.cancelable>.login-menu>.commands>.change-auth,
-.login>.form>.toggle-change,
+.login.cancelable>.login-menu>.commands>.edit-user,
 .login[id]>.form>.username>.button,
-.login>.form.editing>.password>.button,
-.login>.form>.edit {
+.login>.login-menu>.commands,
+.login>.login-menu>.commands>.cancel {
   display: none;
 }
 
+.login:not([id])>.form:not(.adding) .button.add,
+.login>.form.adding .add:not(.button),
+.login>.form.editing .edit,
+.login>.form.pwding .pwd,
+.login>.form.forgetting .forgot,
+/**/
+.login>.form.forgetting>.reg,
+.login>.form.adding>.mfa,
+.login>.form.adding>.pwd,
+.login>.form.pwding>.pwd,
+.login>.form.editing>.edit,
 .login.cancelable>.login-menu>.commands>.cancel,
-.login[id]>.form:not(.adding)>.toggle-change,
-.login>.form.editing>.edit {
+.login[id]>.form>.password>.reset {
   display: block;
 }
 
+.login>.form>.field.mfa>label::after {
+  color: orange;
+  content: '*';
+  margin-left: .3em;
+}
+
+.login>.form>.field.mfa.invalid>label::after,
+.login>.form.email-cell-required>.field.mfa>label::after {
+  color: red;
+}
+
+.login>.form>.field.mfa.invalid:hover::after {
+  content: 'this field value is invalid';
+}
+
+.login>.form.email-cell-required>.field.mfa:hover::after {
+  content: 'one of email or cell are required';
+}
+
 .login>.form {
+  display: none;
   margin-top: 33%;
+}
+
+body.authing>.login>.form {
+  display: block;
 }
 
 .login>.form>div {
@@ -60,37 +98,40 @@ body.authing>.login {
 }
 
 .login>.login-menu {
-  background-color: #492d6bee;
+  background-color: #391d49a8;
   border-radius: 0 0 0 .5em;
   cursor: pointer;
   float: right;
-  font-size: initial;
+  /* font-size: initial; */
   line-height: 150%;
   min-width: 9em;
-  padding-right: .5em;
+  padding-right: 0.5em;
   padding-left: 1em;
   position: fixed;
   right: 0;
   top: 0;
-  width: min-content;
+  width: max-content;
+  /* height: 1.5em; */
 }
 
 .login>.form>.toggle-change {
+  color: bisque;
   cursor: pointer;
   font-size: 75%;
   line-height: 100%;
   margin-bottom: 1.5em;
   text-align: right;
   text-decoration: underline;
-  width: 33.5em;
-  color: bisque;
+  width: 32em;
 }
 
 .login>.form>.toggle-change::after {
   content: 'change password';
 }
 
-.login>.form.editing>.toggle-change::after {
+.login>.form.forgetting>.toggle-change::after,
+.login>.form.editing>.toggle-change::after,
+.login>.form.pwding>.toggle-change::after {
   content: 'back to login';
 }
 
@@ -101,37 +142,75 @@ body.authing>.login {
 }
 
 .login>.form>.field>label {
+  line-height: 150%;
+  padding-bottom: 1em;
   padding-right: 1em;
   text-align: right;
   width: 9em;
-  line-height: 150%;
-  padding-bottom: 1em;
 }
 
 .login>.form>.field>input {
-  margin-right: 1em;
-  width: 15em;
   color: black;
   font-size: 100%;
-  /* background-color: #fff5; */
-  /* background-color: inherit; */
+  margin-right: 1em;
+  width: 15em;
 }
 
 .login>.form.mismatch>.matchable>label {
   color: #c70505;
 }
 
+.login>.form>.reset-info {
+  border-top: 3px solid red;
+  border-radius: 5px;
+  line-height: 1.25em;
+  margin-bottom: 1.3em;
+  margin-left: 1em;
+  padding-top: 0.25em;
+  text-align: justify;
+  width: 23em;
+  margin-top: .5em;
+}
+
+.login>.form>.text-button {
+  border-color: transparent;
+  border-radius: .75em;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 1em;
+  margin-left: 14.5em;
+  text-align: center;
+  text-decoration: underline;
+  width: 7em;
+}
+
+.login>.form>.text-button:hover {
+  border-color: aliceblue;
+}
+
+.login>.form>.red-button {
+  background-color: red;
+}
+
+.login>.form>.green-button {
+  background-color: green;
+}
+
 .login>.login-menu>.control {
+  float: right;
+  /* margin-bottom: .5em; */
   text-align: right;
   white-space: nowrap;
-  float: right;
-  margin-bottom: .33em;
+  /* line-height: 160%; */
+  vertical-align: baseline;
 }
 
 .login>.login-menu>.control::before {
   content: 'welcome';
-  margin-right: .33em;
   float: left;
+  margin-right: .33em;
 }
 
 .login>.login-menu>.control::after {
@@ -148,16 +227,16 @@ body.authing>.login {
 }
 
 .login>.login-menu:hover>.commands {
-  display: inline-block;
+  display: block;
 }
 
 .login>.login-menu>.commands>div {
   clear: both;
   float: right;
+  /* padding-right: .33em; */
   text-align: right;
-  width: 8em;
-  padding-right: .33em;
   white-space: nowrap;
+  width: -webkit-fill-available;
 }
 
 .login>.login-menu>.commands>div:hover {

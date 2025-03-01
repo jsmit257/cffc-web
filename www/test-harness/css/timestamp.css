@@ -1,0 +1,146 @@
+.timestamp {
+  background-color: #260245cc;
+  border-color: ghostwhite;
+  border-radius: .75em;
+  border-style: inset;
+  border-width: 2px;
+  font-size: smaller;
+  padding: .5em;
+  position: absolute;
+  width: 375px !important;
+  z-index: 1;
+}
+
+.timestamp>div {
+  float: left;
+}
+
+.timestamp input,
+.timestamp select {
+  background-color: transparent;
+  font-size: initial;
+  line-height: 1;
+  text-align: center;
+}
+
+.timestamp option {
+  background-color: #663558dd;
+}
+
+.timestamp .relative.plural option::after {
+  content: 's';
+  /* background: orange; */
+  /* float: left; */
+  /* display: block; */
+  /* position: absolute; */
+}
+
+.timestamp>.title {
+  font-style: italic;
+  line-height: initial;
+  margin-bottom: 0.3em;
+  opacity: .6;
+  text-align: center;
+  width: 100%;
+}
+
+.timestamp>.includes {
+  font-variant: small-caps;
+}
+
+.timestamp.relative>.title>.toggle::after {
+  content: 'hide';
+}
+
+.timestamp.absolute>.title>.toggle::after {
+  content: 'show';
+}
+
+.timestamp>.includes>label {
+  display: block;
+  line-height: 1;
+}
+
+.timestamp>.ctrl.add,
+.timestamp>.absolute,
+.timestamp>.form {
+  display: none;
+  float: left;
+}
+
+.timestamp.relative>.ctrl.add,
+.timestamp.relative>.form {
+  display: block;
+}
+
+.timestamp.relative>.form {
+  display: block;
+  height: 5em;
+  margin-left: 2em;
+  overflow-y: auto;
+}
+
+.timestamp>.form>.relative {
+  border-bottom: 1px solid white;
+  border-radius: .5em;
+  line-height: 1;
+  width: 100%;
+}
+
+.timestamp>.form>.relative>label>input {
+  text-align: center;
+}
+
+.timestamp>.form>.relative>label>select {
+  text-align: left;
+}
+
+.timestamp .ctrl {
+  background-color: #db0000;
+  border: 2px solid orangered;
+  border-radius: .453em;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1;
+  margin-left: .5em;
+  text-align: center;
+  width: 1em;
+}
+
+.timestamp .ctrl.add {
+  background-color: #0000be;
+  margin-left: 0.5em;
+  margin-top: 3px;
+  border: 2px solid cyan;
+}
+
+.timestamp.absolute>.absolute {
+  display: inline;
+}
+
+.timestamp>.absolute {
+  line-height: 5;
+}
+
+.timestamp>.buttons {
+  line-height: 1;
+  margin-top: .5em;
+  width: 100%;
+}
+
+.timestamp>.buttons>div {
+  border-radius: .5em;
+  border-style: outset;
+  border-width: 3px;
+  cursor: pointer;
+  float: right;
+  font-size: smaller;
+  margin-left: 2%;
+  text-align: center;
+  width: 4em;
+}
+
+.timestamp>.buttons>.reset {
+  float: left;
+}

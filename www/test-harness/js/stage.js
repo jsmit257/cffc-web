@@ -1,4 +1,4 @@
-$(_ => {
+(_ => {
   let $stage = $('body>.main>.workspace>.stage')
     .on('activate', e => $(e.currentTarget)
       .addClass('active')
@@ -24,4 +24,4 @@ $(_ => {
     })
     .on('click', '>.remove.active', e => $table.trigger('delete'))
     .on('click', '>.refresh', e => $table.trigger('refresh'))
-})
+})()

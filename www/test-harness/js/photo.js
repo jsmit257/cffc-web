@@ -18,7 +18,6 @@ $(_ => {
       $.ajax({
         url: `/photos/${owner}`,
         method: 'GET',
-        async: true,
         success: (result, status, xhr) => {
           $p
             .data('owner', owner)
@@ -78,7 +77,7 @@ $(_ => {
         .get(0)
         .files = cd.files;
     })
-    .on('click', '>.rows>.row>div.action', e => {
+    .on('click', '>.rows>.row>.buttonbox>.action', e => {
       e.stopPropagation()
 
       let $n = $(e.currentTarget)
@@ -112,7 +111,7 @@ $(_ => {
         $n.find('input.photo').focus()
       }
     })
-    .on('click', '>.rows>.row>div.commit', e => {
+    .on('click', '>.rows>.row>.buttonbox>.commit', e => {
       e.stopPropagation()
 
       let $selected = $(e.currentTarget).parents('.row').first()
@@ -166,7 +165,6 @@ $(_ => {
       $.ajax({
         url: url,
         method: 'HEAD',
-        async: true,
         success: (result, status, xhr) => {
           $selected.trigger('send', result[0])
         },
@@ -184,15 +182,12 @@ $(_ => {
         ...other
       })
     })
-    .on('click', '>.rows>.row>div.back', e => {
-      // if hasClass('adding') then remove()? removeClass('photoing')?
-      let $row = $(e.currentTarget)
-        .parents('.row')
-        .first()
-        .removeClass('selected noting editing adding')
-        .parents('.photos')
-        .toggleClass('gallery singleton')
-    })
+    .on('click', '>.rows>.row>.buttonbox>.back', e => $(e.currentTarget)
+      .parents('.row')
+      .first()
+      .removeClass('selected noting editing adding')
+      .parents('.photos')
+      .toggleClass('gallery singleton'))
     .on('click', '>.rows>.row>img', e => {
       if ($(e.delegateTarget).hasClass('gallery')) {
         let $row = $(e.currentTarget)

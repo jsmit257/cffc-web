@@ -13,6 +13,12 @@ body>div.imageview {
   z-index: 1;
   right: 0;
   bottom: 0px;
+  /* display: block; */
+}
+
+body>div.imageview>.viewport {
+  width: 90%;
+  width: -webkit-fill-available;
 }
 
 body>div.imageview.active {

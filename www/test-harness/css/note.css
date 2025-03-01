@@ -8,8 +8,6 @@
 body>.main>.workspace .noting>.notes {
   background-image: radial-gradient(#8a2be222 25%, transparent);
   border-radius: 10px;
-  /* padding-bottom: .5em; */
-  /* padding-top: .5em; */
   display: block;
 }
 
@@ -45,7 +43,7 @@ div.notes>div.rows>div.row>.note {
   float: left;
   font-size: inherit;
   height: 4.5em;
-  width: 66.6%;
+  width: 60%;
 }
 
 div.notes>div.rows>div.row.adding>.note,
@@ -55,10 +53,12 @@ div.notes>div.rows>div.row.editing>.note {
   -moz-appearance: auto;
 }
 
+/* 
 div.notes>div.rows>div.row>div.mtime,
 div.notes>div.rows>div.row>div.ctime {
   float: left;
 }
+ */
 
 div.notes>div.rows>div.row>div.mtime:before,
 div.notes>div.rows>div.row>div.ctime:before {
@@ -76,13 +76,15 @@ div.notes>div.rows>div.row>div.ctime:before {
   content: 'Created: ';
 }
 
-div.notes>div.rows>div.row>.button {
+.notes>.rows>.row>.buttonbox {
+  float: left;
+  z-index: 5;
+}
+
+.notes>.rows>.row>.buttonbox>.button {
   clear: right;
-  display: none;
-  float: right;
   margin-left: .5em;
   margin-bottom: .5em;
-  position: relative;
 }
 
 div.notes>div.rows>div.row.selected>.button {

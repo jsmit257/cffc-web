@@ -1,4 +1,4 @@
-$(_ => {
+(_ => {
   let $eventtype = $('body>.main>.workspace>.eventtype')
     .on('activate', e => {
       $('.template>.stages').trigger('refresh')
@@ -47,4 +47,4 @@ $(_ => {
     })
     .on('click', '.remove.active', e => $table.trigger('delete'))
     .on('click', '>.refresh', e => $table.trigger('refresh'))
-})
+})()

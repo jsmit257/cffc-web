@@ -1,4 +1,5 @@
-$(_ => {
+// $(_ => {
+(_ => {
   let $vendor = $('body>.main>.workspace>.vendor')
     .on('activate', e => $vendor
       .addClass('active')
@@ -42,4 +43,4 @@ $(_ => {
     })
     .on('click', '>.remove.active', e => $table.trigger('delete'))
     .on('click', '>.refresh', e => $table.trigger('refresh'))
-})
+})()

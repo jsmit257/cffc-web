@@ -1,13 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="description" content="watch your fungus grow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+
+  <link rel="preload" as="image" href="./css/images/background/image.avif" />
+  <link rel="preload" as="image" href="./css/images/button-sprites.avif" />
+
   <title>test harness</title>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <!-- <script src="./jquery-offline.js"></script> -->
+  <!-- <script src="./js/jquery-offline.js" defer></script> -->
+  <!-- begin:minify.js -->
   <script src="./js/login.js" defer></script>
   <script src="./js/widget.js" defer></script>
+  <script src="./js/timestamp.js" defer></script>
+  <script src="./js/camera.js" defer></script>
   <script src="./js/index.js" defer></script>
   <script src="./js/cookiebar.js" defer></script>
   <script src="./js/imageview.js" defer></script>
@@ -17,41 +28,75 @@
   <script src="./js/column.js" defer></script>
   <script src="./js/button.js" defer></script>
   <script src="./js/event.js" defer></script>
-  <script src="./js/lifecycle.js" defer></script>
-  <script src="./js/vendor.js" defer></script>
-  <script src="./js/ingredient.js" defer></script>
-  <script src="./js/strain.js" defer></script>
-  <script src="./js/stage.js" defer></script>
-  <script src="./js/eventtype.js" defer></script>
-  <script src="./js/substrate.js" defer></script>
-  <script src="./js/generation.js" defer></script>
-  <script src="./js/album.js" defer></script>
   <script src="./js/reporting.js" defer></script>
+  <!-- end:minify.js -->
 
   <!-- <link href="jquery-ui.min.css" rel="stylesheet"> -->
-  <link href="./css/login.css" rel="stylesheet">
-  <link href="./css/widget.css" rel="stylesheet">
-  <link href="./css/index.css" rel="stylesheet">
-  <link href="./css/cookiebar.css" rel="stylesheet">
-  <link href="./css/imageview.css" rel="stylesheet">
-  <link href="./css/note.css" rel="stylesheet">
-  <link href="./css/photo.css" rel="stylesheet">
-  <link href="./css/table.css" rel="stylesheet">
-  <link href="./css/column.css" rel="stylesheet">
-  <link href="./css/button.css" rel="stylesheet">
-  <link href="./css/event.css" rel="stylesheet">
-  <link href="./css/lifecycle.css" rel="stylesheet">
-  <link href="./css/vendor.css" rel="stylesheet">
-  <link href="./css/strain.css" rel="stylesheet">
-  <link href="./css/ingredient.css" rel="stylesheet">
-  <link href="./css/stage.css" rel="stylesheet">
-  <link href="./css/eventtype.css" rel="stylesheet">
-  <link href="./css/substrate.css" rel="stylesheet">
-  <link href="./css/generation.css" rel="stylesheet">
-  <link href="./css/reporting.css" rel="stylesheet">
+  <!-- begin:minify.css -->
+  <link rel="preload" href="./css/login.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/login.css">
+  </noscript>
+  <link rel="preload" href="./css/slider.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/slider.css">
+  </noscript>
+  <link rel="preload" href="./css/widget.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/widget.css">
+  </noscript>
+  <link rel="preload" href="./css/timestamp.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/timestamp.css">
+  </noscript>
+  <link rel="preload" href="./css/camera.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/camera.css">
+  </noscript>
+  <link rel="preload" href="./css/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/index.css">
+  </noscript>
+  <link rel="preload" href="./css/cookiebar.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/cookiebar.css">
+  </noscript>
+  <link rel="preload" href="./css/imageview.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/imageview.css">
+  </noscript>
+  <link rel="preload" href="./css/note.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/note.css">
+  </noscript>
+  <link rel="preload" href="./css/photo.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/photo.css">
+  </noscript>
+  <link rel="preload" href="./css/table.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/table.css">
+  </noscript>
+  <link rel="preload" href="./css/column.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/column.css">
+  </noscript>
+  <link rel="preload" href="./css/button.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/button.css">
+  </noscript>
+  <link rel="preload" href="./css/event.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/event.css">
+  </noscript>
+  <link rel="preload" href="./css/reporting.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/reporting.css">
+  </noscript>
+  <!-- end:minify.css -->
 </head>
 
-<body class="authing">
+<body class="">
   <div class="background-image"></div>
 
   <div class="imageview">
@@ -60,11 +105,12 @@
 
   <div class="login">
     <div class="field login-menu">
-      <div class="control">stranger</div>
+      <div class="control"></div>
 
       <div class="commands">
         <div class="cancel">cancel</div>
         <div class="change-auth">change password</div>
+        <div class="edit-user">edit</div>
         <div class="logout">logout</div>
       </div>
     </div>
@@ -72,30 +118,53 @@
     <div class="form">
       <div class="field username">
         <label for="username">username</label>
-        <input id="username" placeholder="(username)">
-        <!-- <input id="username" enter="add" placeholder="(username)"> -->
+        <input id="username" enter="add" minlength="1" placeholder="(username)" tabindex="0">
         <div class="button add create" hover="new account"></div>
       </div>
 
-      <div class="field password no-add">
+      <div class="field dont-edit-yet contact">
+        <label for="firstname">firstname</label>
+        <input id="firstname" minlength="1" placeholder="(firstname)" tabindex="0">
+      </div>
+      <div class="field dont-edit-yet contact">
+        <label for="lastname">lastname</label>
+        <input id="lastname" minlength="1" placeholder="(lastname)" tabindex="0">
+      </div>
+      <!-- put other contact fields and address management here? another form? -->
+      <div class="reset-info forgot">
+        Enter at least one of email/cell that matches account credentials and
+        we'll send a link to finish the password reset
+      </div>
+      <div class="field edit add forgot user mfa">
+        <label for="email">email</label>
+        <input id="email" type="email" placeholder="(user@example.com)" tabindex="0">
+      </div>
+      <div class="field edit add forgot user mfa">
+        <label for="cell">cell</label>
+        <input id="cell" type="tel" placeholder="(800.505.1212)" tabindex="0">
+      </div>
+
+      <div class="field password no-add no-forgot">
         <label for="password">password</label>
-        <input id="password" enter="ok" type="password" placeholder="(password)" readonly>
-        <div class="button ok login" hover="login"></div>
-        <div class="button refresh reset no-add" hover="reset password"></div>
+        <input id="password" enter="ok" type="password" minlength="1" placeholder="(password)" readonly tabindex="0">
+        <div class="button ok login no-edit" hover="login"></div>
+        <div class="button refresh active reset no-edit no-pwd" hover="forgot password?"></div>
       </div>
 
-      <div class="toggle-change no-add">&nbsp;</div>
-
-      <div class="field newpassword matchable edit">
+      <div class="field newpassword matchable pwd">
         <label for="newpassword">new password</label>
-        <input id="newpassword" type="password" placeholder="(new password)">
+        <input id="newpassword" type="password" minlength="8" placeholder="(new password)" tabindex="0">
       </div>
 
-      <div class="field newpassword2 matchable edit">
+      <div class="field newpassword2 matchable pwd">
         <label for="newpassword2">confirm password</label>
-        <input id="newpassword2" enter="chgpwd" type="password" placeholder="(again)">
+        <input id="newpassword2" type="password" enter="chgpwd" minlength="8" placeholder="(again)" tabindex="0">
         <div class="button ok chgpwd" hover="change password"></div>
       </div>
+
+      <div class="text-button red-button delete-auth forgot">reset</div>
+      <div class="text-button green-button edit save-user">save</div>
+      <div class="toggle-change">&nbsp;</div>
     </div>
   </div>
 
@@ -123,13 +192,14 @@
     </div>
 
     <div class="workspace">
-      <div class="lifecycle">
+      <div class="lifecycle" x-frag="lifecycle">
         <div class="table lifecycle">
           <div class="columns">
             <div class="column full">
               <span class="title">Placeholder</span>&nbsp;<span class="status"></span>
             </div>
           </div>
+
           <div class="rows ndx" name="lifecycle">
             <div class="row hover template">
               <div class="mtime short-date"></div>
@@ -137,75 +207,77 @@
             </div>
           </div>
 
-          <div class="rows lc">
+          <div class="rows lc" ts="lifecycle">
             <div class="row countable">
               <div class="field hover">
-                <div class="label">Location</div>
-                <input class="location" readonly>
+                <label for="lc-location">Location</label>
+                <input id="lc-location" class="location" readonly tabindex="0">
               </div>
 
               <div class="field hover no-add">
-                <div class="label">Yield (g)</div>
-                <input class="yield" type="number" min="0" readonly>
+                <label for="lc-yield">Yield (g)</label>
+                <input id="lc-yield" class="yield" type="number" min="0" readonly tabindex="0">
                 <div class="dry-weight"></div>
               </div>
 
               <div class="field hover no-add">
-                <div class="label">Count</div>
-                <input class="count" type="number" min="0" readonly>
+                <label for="lc-count">Count</label>
+                <input id="lc-count" class="count" type="number" min="0" readonly tabindex="0">
                 <div class="per-kilo"></div>
               </div>
 
               <div class="field hover no-add">
-                <div class="label">Gross (g)</div>
-                <input class="gross" type="number" min="0" readonly>
+                <label for="lc-gross">Gross (g)</label>
+                <input id="lc-gross" class="gross" type="number" min="0" readonly tabindex="0">
               </div>
 
               <div class="field hover">
-                <div class="label">Strain</div>
-                <select class="strains" url="strains" disabled></select>
+                <label for="lc-strains">Strain</label>
+                <select id="lc-strains" class="strains" url="strains" disabled tabindex="0"></select>
               </div>
 
               <div class="field hover">
-                <div class="label">Strain Cost</div>
-                <input class="strain_cost" type="number" readonly>
+                <label for="lc-strain-cost">Strain Cost</label>
+                <input id="lc-strain-cost" class="strain_cost" type="number" readonly tabindex="0">
               </div>
 
               <div class="field hover">
-                <div class="label">Grain</div>
-                <select class="grain_substrate substrate" url disabled></select>
+                <label for="lc-grain-substrate">Grain</label>
+                <select id="lc-grain-substrate" class="grain_substrate substrate" url disabled tabindex="0"></select>
               </div>
 
               <div class="field hover">
-                <div class="label">Grain Cost</div>
-                <input class="grain_cost" type="number" readonly>
+                <label for="lc-grain-cost">Grain Cost</label>
+                <input id="lc-grain-cost" class="grain_cost" type="number" readonly tabindex="0">
               </div>
 
               <div class="field hover">
-                <div class="label">Bulk</div>
-                <select class="bulk_substrate substrate" url disabled></select>
+                <label for="lc-bulk-substrate">Bulk</label>
+                <select id="lc-bulk-substrate" class="bulk_substrate substrate" url disabled tabindex="0"></select>
               </div>
 
               <div class="field hover">
-                <div class="label">Bulk Cost</div>
-                <input class="bulk_cost" type="number" readonly>
+                <label for="lc-bulk-cost">Bulk Cost</label>
+                <input id="lc-bulk-cost" class="bulk_cost" type="number" readonly tabindex="0">
               </div>
 
               <div class="field hover">
-                <div class="label">Modified At</div>
+                <label>Modified At</label>
                 <div class="mtime short-date"></div>
               </div>
 
               <div class="field hover">
-                <div class="label">Created At</div>
+                <label>Created At</label>
                 <div class="ctime short-date"></div>
               </div>
             </div>
           </div>
+
           <div class="buttonbar"></div>
         </div>
       </div>
-      <div class="vendor">
+
+      <div class="vendor" x-frag="vendor">
         <div class="table">
           <div class="columns">
             <div class="column name" sort-key="name">Name</div>
@@ -213,27 +285,29 @@
           </div>
           <div class="rows" name="vendor">
             <div class="row hover template">
-              <input class="name" readonly>
-              <input class="website clickable" readonly>
+              <input class="name" readonly tabindex="0">
+              <input class="website clickable" readonly tabindex="0">
             </div>
           </div>
           <div class="buttonbar"></div>
         </div>
       </div>
-      <div class="ingredient">
+
+      <div class="ingredient" x-frag="ingredient">
         <div class="table">
           <div class="columns">
             <div class="column name" sort-key="name">Name</div>
           </div>
           <div class="rows" name="ingredient">
             <div class="row hover template">
-              <input class="name" readonly>
+              <input class="name" readonly tabindex="0">
             </div>
           </div>
           <div class="buttonbar"></div>
         </div>
       </div>
-      <div class="strain">
+
+      <div class="strain" x-frag="strain">
         <div class="table strain">
           <div class="columns">
             <div class="column name" sort-key="name">Name</div>
@@ -242,11 +316,11 @@
             <div class="column ctime" sort-key="ctime">Created At</div>
           </div>
 
-          <div class="rows" name="strain">
+          <div class="rows" name="strain" ts="strain">
             <div class="row hover template">
-              <input class="name" readonly>
-              <input class="species" readonly>
-              <select class="vendor" url="vendors" disabled></select>
+              <input class="name" readonly tabindex="0">
+              <input class="species" readonly tabindex="0">
+              <select class="vendor" url="vendors" disabled tabindex="0"></select>
               <div class="ctime short-date"></div>
             </div>
           </div>
@@ -264,21 +338,22 @@
 
           <div class="rows" name="strainattribute">
             <div class="row hover template">
-              <input class="name" list="strain-attr-names" readonly>
-              <input class="value" readonly>
+              <input class="name" list="strain-attr-names" readonly tabindex="0">
+              <input class="value" readonly tabindex="0">
             </div>
           </div>
 
           <div class="buttonbar"></div>
         </div>
       </div>
-      <div class="substrate">
+
+      <div class="substrate" x-frag="substrate">
         <div class="table substrate">
           <div class="columns">
             <div class="column name" sort-key="name">Name</div>
             <div class="column type">
-              <span>Type</span>
-              <select class="type">
+              <label for="substrate-type">Type</label>
+              <select id="substrate-type" class="type" tabindex="0">
                 <option value="plating">Plating</option>
                 <option value="liquid">Liquid</option>
                 <option value="grain">Grain</option>
@@ -288,16 +363,19 @@
             </div>
             <div class="column vendor" sort-key="vendor">Vendor</div>
           </div>
+
           <div class="rows" name="substrate">
             <div class="row hover template">
-              <input class="name" readonly>
-              <select class="type" disabled>
+              <input class="name" readonly tabindex="0">
+              <label style="display:none;"></label>
+              <select class="type" disabled tabindex="0">
                 <option value="plating">Plating</option>
                 <option value="liquid">Liquid</option>
                 <option value="grain">Grain</option>
                 <option value="bulk">Bulk</option>
               </select>
-              <select class="vendor" url="vendors" disabled></select>
+              <label style="display:none;"></label>
+              <select class="vendor" url="vendors" disabled tabindex="0"></select>
             </div>
           </div>
           <div class="buttonbar"></div>
@@ -309,36 +387,41 @@
           </div>
           <div class="rows" name="ingredients">
             <div class="row hover template">
-              <select class="ingredients" url="ingredients"></select>
+              <label style="display:none;"></label>
+              <select class="ingredients" url="ingredients" tabindex="0"></select>
             </div>
           </div>
           <div class="buttonbar"></div>
         </div>
       </div>
-      <div class="stage">
+
+      <div class="stage" x-frag="stage">
         <div class="table">
           <div class="columns">
             <div class="column name">Name</div>
           </div>
           <div class="rows" name="stage">
             <div class="row hover template">
-              <input class="name" readonly>
+              <input class="name" readonly tabindex="0">
             </div>
           </div>
           <div class="buttonbar"></div>
         </div>
       </div>
-      <div class="eventtype">
+
+      <div class="eventtype" x-frag="eventtype">
         <div class="table">
           <div class="columns">
             <div class="column name" sort-key="name">Name</div>
             <div class="column severity" sort-key="severity">Severity</div>
             <div class="column stage" sort-key="stage">Stage</div>
           </div>
+
           <div class="rows" name="eventtype">
             <div class="row hover template">
-              <input class="name" readonly>
-              <select class="severity" disabled>
+              <input class="name" readonly tabindex="0">
+              <label style="display:none;"></label>
+              <select class="severity" disabled tabindex="0">
                 <option value=Begin>Begin</option>
                 <option value=Info>Info</option>
                 <option value=Warn>Warn</option>
@@ -347,13 +430,15 @@
                 <option value=RIP>RIP</option>
                 <option value=Generation>Generation</option>
               </select>
-              <select class="stages" url="stages" disabled></select>
+              <label style="display:none"></label>
+              <select class="stages" url="stages" disabled tabindex="0"></select>
             </div>
           </div>
           <div class="buttonbar"></div>
         </div>
       </div>
-      <div class="generation">
+
+      <div class="generation" x-frag="generation">
         <div class="table generation selecting">
           <div class="columns">
             <div class="column full"> </div>
@@ -365,29 +450,29 @@
             </div>
           </div>
 
-          <div class="rows main" name="editor">
+          <div class="rows main" name="editor" ts="generation">
             <div class="field hover countable">
-              <div class="label">Plating</div>
-              <select class="plating substrate" url disabled></select>
+              <label for="plating-substrate">Plating</label>
+              <select id="plating-substrate" class="plating substrate" url disabled tabindex="0"></select>
             </div>
 
             <div class="field hover">
-              <div class="label">Liquid</div>
-              <select class="liquid substrate" url disabled></select>
+              <label for="liquid-substrate">Liquid</label>
+              <select id="liquid-substrate" class="liquid substrate" url disabled tabindex="0"></select>
             </div>
 
             <div class="field no-edit hover" hover="go to strain">
-              <div class="label">Progeny</div>
-              <select class="strains progeny" url="strains"></select>
+              <label for="progeny">Progeny</label>
+              <select id="progeny" class="strains progeny" url="strains" tabindex="0"></select>
             </div>
 
             <div class="field hover">
-              <div class="label">Modified</div>
+              <label>Modified</label>
               <div class="mtime short-date"></div>
             </div>
 
             <div class="field hover">
-              <div class="label">Created</div>
+              <label>Created</label>
               <div class="ctime short-date"></div>
             </div>
           </div>
@@ -399,30 +484,35 @@
                 <div class="button commit active" hover></div>
               </div>
 
-              <select class="type" name="type" disabled>
+              <!-- <label></label> -->
+              <select class="type" name="type" disabled tabindex="0">
                 <option value="spore">Spore</option>
                 <option value="clone">Clone</option>
               </select>
 
-              <select name="origin" class="break" disabled>
+              <!-- <label></label> -->
+              <select name="origin" class="break" disabled tabindex="0">
                 <option value="strain">Strain</option>
                 <option value="event">Lifecycle</option>
               </select>
 
-              <select name="progenitor" disabled></select>
+              <!-- <label></label> -->
+              <select name="progenitor" disabled tabindex="0"></select>
 
-              <select name="lcs" class="lcs break" url="lifecycles" disabled></select>
+              <!-- <label></label> -->
+              <select name="lcs" class="lcs break" url="lifecycles" disabled tabindex="0"></select>
 
-              <select class="strains break" url="strains" disabled></select>
+              <!-- <label></label> -->
+              <select class="strains break" url="strains" disabled tabindex="0"></select>
             </div>
+
             <div class="add-source add-ctl">+</div>
           </div>
 
           <div class="buttonbar"></div>
         </div>
       </div>
-      <div class="album">
-      </div>
+
       <div class="history lc gen str sub ev ven">
         <div class="entity collapsed">
           <div class="entity-name"> </div>
@@ -431,6 +521,75 @@
           <div class="ndx"></div>
         </div>
       </div>
+
+      <div class="imgbox waiting">
+        <div class="props">
+          <label class="format">
+            format
+            <select>
+              <option selected value="image/webp">webp</option>
+              <option value="image/png">png</option>
+              <option $value="image/jpeg">jpeg</option>
+            </select>
+          </label>
+
+          <label class="quality">
+            quality
+            <input type="range" min="50" max=100 step="5" value="100" tabindex="0">
+          </label>
+        </div>
+
+        <div class="table viddevs"></div>
+
+        <video class="vidcap" autoplay playsinline tabindex="0"></video>
+
+        <div class="imgedit">
+          <div hmax=800 vmax=600 class="viewport">
+            <canvas tabindex="0"></canvas>
+          </div>
+
+          <div class="imgstats">
+            <div class="row template">
+              <span class="px width"></span>
+              &times;
+              <span class="px height"></span>
+              <span class="kb filesize"></span>
+            </div>
+          </div>
+
+          <div class="ranges">
+            <div class="row control">
+              <label>
+                zoom
+                <input id="zoom" type="range" min="100" max="500" step="5" value="100" tabindex="0">
+              </label>
+              <div class="crop button active" hover="crop"></div>
+            </div>
+
+            <div class="row control">
+              <label>
+                resize
+                <input id="resize" type="range" min="40" max="100" step="6" value="100" tabindex="0">
+              </label>
+              <div class="resize button active" hover="resize"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="greymap"></div>
+
+        <div class="colormap"></div>
+
+        <div class="audit"></div>
+
+        <div class="buttonbox">
+          <div class="cancel button active" hover="cancel"></div>
+          <div class="ok button active" hover="ok"></div>
+          <div class="reset button active" hover="reset"></div>
+        </div>
+      </div>
+
+      <div class="album" x-frag="album"></div>
     </div>
 
     <div class="footer">
@@ -475,35 +634,64 @@
               <a href="https://jsmit257.github.io/cffc-web/standalone">(Standalone)</a>
             </div>
           </li>
+          <li>
+            <div class="short-text">Userservice</div>
+            <div class="long-text">
+              <a href="https://github.com/jsmit257/userservice">Userservice</a>
+              <a href="https://jsmit257.github.io/userservice">(README)</a>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
   </div>
 
+  <div class="notification" x-frag="notification">
+    <div class="fieldnames">
+      <div name="when">when?</div>
+      <div name="action">doing what?</div>
+      <div name="message">what happened?</div>
+      <div name="severity">how bad?</div>
+      <div name="response">resolved by?</div>
+    </div>
+
+    <div class="template row">
+      <div name="when" class="field"></div>
+      <div name="action" class="field"></div>
+      <div name="message" class="field"></div>
+      <div name="severity" class="field"></div>
+      <div name="response" class="field">&nbsp;</div>
+    </div>
+  </div>
+
   <div class="template">
     <div class="notes">
-      <div class="rows">
+      <div class="rows" ts="note">
         <div class="row template">
-          <textarea class="note" disabled></textarea>
+          <div class="buttonbox">
+            <div class="action button note-ctl active" hover></div>
+            <div class="commit button note-ctl active" hover></div>
+          </div>
+          <textarea class="note" disabled tabindex="0"></textarea>
           <div class="mtime short-date"></div>
-          <div class="action button note-ctl active" hover></div>
           <div class="ctime short-date"></div>
-          <div class="commit button note-ctl active" hover></div>
         </div>
       </div>
       <div class="add-note add-ctl">+</div>
     </div>
 
     <div class="photos">
-      <div class="rows">
+      <div class="rows" ts="photo">
         <div class="row template">
+          <div class="buttonbox">
+            <div class="action photo-ctl button active" hover></div>
+            <div class="commit photo-ctl button active" hover></div>
+            <div class="back photo-ctl button active" hover="back"></div>
+          </div>
           <img class="image">
-          <input type="file" class="photo" disabled></textarea>
+          <input type="file" accept="image/*" class="photo" disabled tabindex="0"></textarea>
           <div class="mtime short-date"></div>
           <div class="ctime short-date"></div>
-          <div class="action photo-ctl button active" hover></div>
-          <div class=" commit photo-ctl button active" hover></div>
-          <div class="back photo-ctl button active" hover="back"></div>
         </div>
       </div>
       <div class="add-photo add-ctl">+</div>
@@ -520,21 +708,79 @@
         <div class="column mtime" sort-key="mtime">Modified</div>
         <div class="column ctime" sort-key="ctime">Created</div>
       </div>
-      <div class="rows" name="event">
+      <div class="rows" name="event" ts="event">
         <div class="row hover template">
-          <select class="eventtype" disabled></select>
+          <!-- <label></label> -->
+          <select class="eventtype" disabled tabindex="0"></select>
           <div class="severity"></div>
           <div class="stage"></div>
-          <input class="temperature" type="number" min="0" readonly>
-          <input class="humidity" type="number" min="0" max="100" readonly>
+          <input class="temperature" type="number" min="0" readonly tabindex="0">
+          <input class="humidity" type="number" min="0" max="100" readonly tabindex="0">
           <div class="mtime short-date"></div>
           <div class="ctime short-date"></div>
         </div>
       </div>
-      <div class="buttonbar">
+      <div class="buttonbar"></div>
+    </div>
+
+    <div class="timestamp absolute">
+      <div class="title">
+        <label class="toggle">
+          <input class="relative" type="checkbox" checked>
+        </label>
+        reference timestamp
+      </div>
+
+      <div class="includes">
+        <label>
+          <input class="include mtime" name="mtime" type="checkbox"> mtime
+        </label>
+        <label>
+          <input class="include ctime" name="ctime" type="checkbox"> ctime
+        </label>
+        <label>
+          <input class="include dtime" name="dtime" type="checkbox"> dtime
+        </label>
+      </div>
+
+      <div class="form">
+        <div class="template relative">
+          <label>
+            <input type="number" class="delta" min="-60" max="60" value="0" tabindex="0">
+          </label>
+
+          <label>
+            <select tabindex="0">
+              <option value="hour" selected>hour</option>
+              <option value="day">day</option>
+              <option value="week">week</option>
+              <option value="month">month</option>
+              <option value="year">year</option>
+            </select>
+          </label>
+
+          <div class="ctrl delete">--</div>
+        </div>
+      </div>
+      <div class="ctrl add">+</div>
+
+      <label class="absolute">
+        <input type="datetime-local" tabindex="0">
+      </label>
+
+      <div class="buttons">
+        <div class="cancel active" tabindex="0">cancel</div>
+        <div class="update active" tabindex="0">update</div>
+        <div class="reset active" tabindex="0">reset</div>
       </div>
     </div>
   </div>
+
+  <script defer>
+    setTimeout(_ => $(document).trigger('reload'), 150)
+    // setTimeout(_ => $('.template>.timestamp').clone(true, true).appendTo('.workspace>.active').trigger('activate', [new Date(), 'events', '123', 'mtime']), 150)
+    // setTimeout(_ => camera(), 150)
+  </script>
 </body>
 
 </html>

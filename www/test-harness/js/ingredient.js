@@ -1,4 +1,5 @@
-$(() => {
+// $(() => {
+(_ => {
   let $ingredient = $('body>.main>.workspace>.ingredient')
     .on('activate', e => $(e.currentTarget)
       .addClass('active')
@@ -24,4 +25,4 @@ $(() => {
     })
     .on('click', '>.remove.active', e => $table.trigger('delete'))
     .on('click', '>.refresh', e => $table.trigger('refresh'))
-})
+})()

@@ -1,104 +1,149 @@
 $(_ => $('body>.login')
-  .on('activate', e => {
-    let $login = $(e.delegateTarget)
-    let username = $login
-      .find('>.login-menu>.control')
-      .text()
 
-    $login
+  // setup/teardown
+  .on('init', (e, username = 'stranger') => $(e.currentTarget)
+    .find('input#username')
+    .val(username)
+    // - sets login-menu>control text 
+    // - re-sets localStorage
+    // - if found, sets login ID attr
+    .trigger('keyup'))
+  .on('check-valid', e => $.ajax({
+    url: '/valid',
+    method: 'GET',
+    statusCode: {
+      302: _ => $(e.currentTarget).trigger('deactivate'),
+      403: _ => $(e.delegateTarget).trigger('activate'),
+    },
+    // error: _ => _,
+  }))
+  .on('activate', e => {
+    if ($('body').hasClass('authing')) {
+      return
+    }
+
+    $(e.delegateTarget)
+      .removeClass('cancelable')
       .find('>.form')
-      .removeClass('mismatch adding editing cancelable')
+      .removeClass('mismatch adding pwding')
       .find('input[type="password"]').val('')
 
-    $('body')
+    $(document.body)
       .addClass('authing')
       .find('input#username')
-      .val(username)
-      .focus()
+      .trigger('test')
   })
-  .on('deactivate', e => {
-    let $login = $(e.currentTarget).removeClass('cancelable')
+  .on('deactivate', e => $(document)
+    .trigger($(document)
+      .data('forbidden').length === 0
+      ? 'reload'
+      : 'unforbidden')
+    .find('body')
+    .removeClass('authing')
+    .find('>.login')
+    .removeClass('cancelable')
+    .find('>.form')
+    .trigger('clear')
+    .find('input[type="password"]')
+    .val(''))
+  .on('clear', '>.form', e => $(e.currentTarget)
+    .removeClass('adding pwding editing forgetting email-cell-required'))
 
-    $login.find('input[type="password"]').val('')
-    $login
-      .find('>.login-menu>.control')
-      .text($login
-        .find('>.form>.username>input')
-        .val())
-
-    $(document).trigger('reload')
-
-    $('body').removeClass('authing')
-  })
+  // menu commands
   .on('click', '>.login-menu>.commands>.cancel', e => $(e.delegateTarget)
     .trigger('deactivate'))
-  .on('click', '>.login-menu>.commands>.change-auth', e => {
-    e.stopPropagation()
-
-    let $login = $(e.delegateTarget)
-      .trigger('activate')
-      .addClass('cancelable')
-
-    $login.find('>.form')[$login.attr('id')
-      ? 'addClass'
-      : 'removeClass']
-      ('editing')
-  })
+  .on('click', '>.login-menu>.commands>.change-auth', e => $(e.delegateTarget)
+    .trigger('activate')
+    .addClass('cancelable')
+    .find('>.form')
+    .addClass('pwding'))
+  .on('click', '>.login-menu>.commands>.edit-user', e => $(e.delegateTarget)
+    .trigger('activate')
+    .addClass('cancelable')
+    .find('>.form')
+    .addClass('editing'))
   .on('click', '>.login-menu>.commands>.logout', e => $.ajax({
-    url: '/logout',
+    url: './logout',
     method: 'POST',
     statusCode: {
-      202: _ => alert('logged out'),
-      403: _ => alert('logout failed'),
+      204: _ => $(document.body).find('>.notification').trigger('activate', [
+        'info',
+        'POST - /logout',
+        'logout succeeded',
+        { timeout: 10 },
+      ]),
+      403: _ => $(document.body).find('>.notification').trigger('activate', [
+        'error',
+        'POST - /logout',
+        'logout failed',
+        { timeout: 10 },
+      ]),
     },
     error: console.log,
     complete: _ => $(e.delegateTarget).trigger('activate'),
   }))
-  .on('change', '>.form>.username>input', e => {
-    let $dt = $(e.delegateTarget)
+
+  // manage username
+  .on('focus', '>.form>.username>input', e => $(e.currentTarget).trigger('test'))
+  .on('blur', '>.form>.username>input', e => $(e.currentTarget).trigger('test'))
+  .on('keyup', '>.form>.username>input', e => {
+    // FIXME: blacklist buttons like tab, meta-only sequences, etc
+    let $uname = $(e.currentTarget)
+
+    clearTimeout($uname.data('timeout') || -1)
+
+    $(e.delegateTarget)
+      .find('>.login-menu>.control')
+      .text($uname.val())
+
+    $uname.data('timeout', setTimeout(_ => { $uname.trigger('test') }, 100))
+  })
+  .on('test', '>.form>.username>input', e => {
+    let $login = $(e.delegateTarget)
+    let val = $(e.currentTarget)
+      .removeData('timeout')
+      .val()
+
+    // focus/keyup/blur events tend to come in pairs, but only one 
+    // is needed, 50ms seems like a really long time, but probably 
+    // not noticable
+    let now = new Date().getTime()
+    let last = $(e.currentTarget).data('last')
+    if (now - ~~last < 50) {
+      console.log('duplicate')
+      return
+    }
+    $(e.currentTarget).data('last', now) // here, or in success only?
 
     $.ajax({
-      url: `/auth/${$(e.currentTarget).val()}`,
+      url: `/auth/${val}`,
       method: "GET",
-      statusCode: {
-        302: xhr => $dt.attr('id', xhr.responseJSON.id),
-        400: _ => $dt.removeAttr('id'),
-        500: _ => $dt.removeAttr('id'),
+      success: auth => {
+        $login.attr('id', auth.id)
+        localStorage.setItem("username", val)
       },
-      complete: _ => $dt
+      error: _ => $login
+        .removeAttr('id')
+        .trigger('activate'),
+      complete: _ => $login
         .find('>.form')
-        .removeClass('editing')
+        .removeClass('pwding')
         .find('>.password>input')
-        .prop('readonly', !$dt.attr('id')),
+        .prop('readonly', !$login.attr('id')),
     })
   })
-  .on('keyup', '>.form>.username>input', e => $(e.currentTarget)
-    .next()[$(e.currentTarget).val()
-      ? 'addClass'
-      : 'removeClass']
-    ('active'))
-  .on('click', '>.form>.username>.create.active', e => $.ajax({
-    url: "/user",
-    method: 'POST',
-    data: JSON.stringify({ username: $(e.currentTarget).prev().val() }),
-    statusCode: {
-      301: xhr => $(e.delegateTarget)
-        .find('>.form')
-        .addClass('adding editing')
-        .find('>.edit>input')
-        .val('')
-        .focus(),
-      409: xhr => alert('username not valid')
-    },
-    error: _ => $(e.currentTarget).val('').focus(),
-  }))
-  .on('keyup', '>.form>.password>input', e => $(e.currentTarget)
-    .parent()
-    .find('>.ok')[$(e.currentTarget).val()
-      ? 'addClass'
-      : 'removeClass']
-    ('active'))
-  .on('click', '>.form:not(.editing)>.password>.login.active', e => {
+
+  // buttons
+  .on('click', '>.form>.username>.create.active', e => {
+    $(e.delegateTarget)
+      .find('>.form')
+      .addClass('adding pwding email-cell-required')
+      .find('>.edit>input, >.user>input')
+      .val('')
+
+    $(e.delegateTarget).find('>.form>.user>#firstname').focus()
+  })
+  .on('click', '>.form:not(.pwding)>.password>.login.active', e => {
     e.stopPropagation()
 
     let $login = $(e.delegateTarget)
@@ -114,26 +159,71 @@ $(_ => $('body>.login')
       error: _ => $login.find('>.form>.password>input').val('').focus(),
     })
   })
-  .on('click', '>.form>.password>.reset.active', e => {
+  .on('click', '>.form>.password>.reset.active', e => $(e.delegateTarget)
+    .find('>.form')
+    .addClass('forgetting'))
+  .on('click', '>.form.pwding>.newpassword2>.chgpwd.active', e => {
     e.stopPropagation()
 
     let $login = $(e.delegateTarget)
+    let $form = $login.find('>.form')
+    if ($form.hasClass('mismatch')) {
+      return
+    }
 
+    if ($form.hasClass('adding')) {
+      $.ajax({
+        url: "/user",
+        method: 'POST',
+        data: JSON.stringify({
+          username: $("#username").val(),
+          email: $('#email').val() || null,
+          cell: $('#cell').val() || null,
+        }),
+        statusCode: {
+          201: xhr => $login
+            .attr('id', xhr.responseText)
+            .trigger('update-auth'),
+          409: xhr => alert('username not valid')
+        },
+        error: err => console.log('.chgpwd::click', err),
+      })
+    } else {
+      $login.trigger('update-auth')
+    }
+  })
+  .on('update-auth', (e, data) => {
+    let $login = $(e.delegateTarget)
+    let url = `/auth/${$login.attr('id')}`
     $.ajax({
-      url: `/auth/${$login.attr('id')}`,
-      method: 'DELETE',
-      success: _ => $(e.delegateTarget)
-        .find('>.form')
-        .addClass('adding editing')
-        .find('>.edit>input')
-        .val('')
-        .focus(),
-      error: _ => $login.find('>.form>.password>input').val('').focus(),
+      url: url,
+      method: 'PATCH',
+      data: JSON.stringify({
+        old: $login.find('>.form>.password>input').val(),
+        new: $login.find('>.form>.newpassword2>input').val(),
+      }),
+      success: _ => ($login.trigger('deactivate'),
+        $('body>.notification').trigger('activate', [
+          'info',
+          `PATCH - ${url}`,
+          'password changed',
+        ])),
+      error: err => $('body>.notification').trigger('activate', [
+        'info',
+        `PATCH - ${url}`,
+        'password changed',
+      ]),
     })
   })
-  .on('click', '>.form>.toggle-change', e => $(e.delegateTarget)
-    .find('>.form')
-    .toggleClass('editing'))
+
+  // input helpers
+  .on('keyup', '>.form>.field>input[enter][minlength]', e => {
+    let $in = $(e.currentTarget)
+    let $btn = `>.${$in.attr('enter')}`
+    let fn = ($in.val().length < $in.attr('minlength') ? 'remove' : 'add') + 'Class'
+
+    $in.parent().find($btn)[fn]('active')
+  })
   .on('keyup', '>.form>.matchable>input', e => {
     e.stopPropagation()
 
@@ -159,28 +249,67 @@ $(_ => $('body>.login')
         .click()
     }
   })
-  .on('click', '>.form.editing>.newpassword2>.chgpwd.active', e => {
-    e.stopPropagation()
 
+  // MFA controls
+  .on('keyup', '>.form>.mfa>input#email', e => {
+    let $eml = $(e.currentTarget)
+    $eml
+      .parent()
+      .withClass('invalid', !/^[^@]+@[^.]+\.[A-z]{2,3}$/.test($eml.val()))
+  })
+  .on('keyup', '>.form>.mfa>input#cell', e => {
+    let $cell = $(e.currentTarget)
+    $cell
+      .parent()
+      .withClass('invalid', !$('#cell').val().replace(/[^0-9]/g, '').length === 10)
+  })
+  .on('keyup', '>.form>.mfa>input', e => {
+    let $form = $(e.delegateTarget).find('>.form')
+    $form
+      .withClass('email-cell-required', $form.find('.mfa.invalid').length > 0)
+  })
+
+  // text buttons
+  .on('click', '>.form>.save-user', e => {
+    console.log('save user', $('.user, .contact'))
+  })
+  .on('click', '>.form>.delete-auth', e => {
     let $login = $(e.delegateTarget)
-    if ($login.find('>.form').hasClass('mismatch')) {
-      return
-    }
 
     $.ajax({
       url: `/auth/${$login.attr('id')}`,
-      method: 'PATCH',
+      method: 'DELETE',
       data: JSON.stringify({
-        old: {
-          id: $login.attr('id'),
-          password: $login.find('>.form>.password>input').val(),
-        },
-        new: {
-          id: $login.attr('id'),
-          password: $login.find('>.form>.newpassword2>input').val(),
-        },
+        id: $login.attr('id'),
+        email: $('#email').val() || null,
+        cell: $('#cell').val().replace(/[^0-9]/, '') || null,
       }),
-      success: _ => ($login.trigger('deactivate'), alert('password changed')),
-      error: console.log,
+      success: _ => $(e.delegateTarget)
+        .find('>.form')
+        .addClass('adding pwding')
+        .find('>.edit>input')
+        .val('')
+        .focus(),
+      error: _ => $login.find('#email').val('').focus(),
     })
-  }))
+  })
+  .on('click', '>.form>.toggle-change', e => {
+    let $form = $(e.delegateTarget).find('>.form')
+    if ($form.get(0).className.trim() === 'form') {
+      $form.addClass('pwding')
+    }
+  })
+  .on('click', '>.form.adding>.toggle-change', e => $(e.delegateTarget)
+    .find('>.form')
+    .removeClass('adding'))
+  .on('click', '>.form.editing>.toggle-change', e => $(e.delegateTarget)
+    .find('>.form')
+    .removeClass('editing'))
+  .on('click', '>.form.pwding>.toggle-change', e => $(e.delegateTarget)
+    .find('>.form')
+    .removeClass('pwding'))
+  .on('click', '>.form.forgetting>.toggle-change', e => $(e.delegateTarget)
+    .find('>.form')
+    .removeClass('forgetting'))
+
+  .trigger('init', localStorage.username))

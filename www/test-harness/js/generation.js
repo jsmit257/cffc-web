@@ -1,5 +1,4 @@
-$(_ => {
-
+(_ => {
   $('.progeny')
     .on('sent', (e, ...data) => $(e.currentTarget)
       .prepend($('<option>')
@@ -20,7 +19,6 @@ $(_ => {
       $.ajax({
         url: '/strains',
         method: 'GET',
-        async: true,
         success: s => $generation
           .find('select.strains')
           .trigger('send', s),
@@ -32,7 +30,6 @@ $(_ => {
       $.ajax({
         url: '/substrates',
         method: 'GET',
-        async: true,
         success: s => $gentable
           .find('select.substrate')
           .trigger('send', s),
@@ -48,7 +45,7 @@ $(_ => {
     .on('select', (e, gid) => $ndx.find(`.row#${gid}`).click())
 
   let $ndx = $generation.find('>.table.generation>.rows[name="generation"]')
-    .on('refresh', _ => $gentable.removeClass('editing adding'))
+    .on('refresh', _ => $gentable.removeClass('editing adding')) // ???
     .on('send', '>.row', (e, data = {}) => {
       e.stopPropagation()
 
@@ -82,7 +79,7 @@ $(_ => {
       let $g = $(e.currentTarget)
 
       $g
-        .data('record', data)
+        .data('row', data)
         .attr('id', data.id)
         .parent()
         .addClass('selecting') // gets removed on column.click
@@ -103,7 +100,7 @@ $(_ => {
     .on('resend', e => {
       $(e.currentTarget)
         .removeClass('editing adding')
-        .trigger('send', $(e.currentTarget).data('record'))
+        .trigger('send', $(e.currentTarget).data('row'))
         .find('>.field>select.substrate')
         .prop('disabled', true)
     })
@@ -117,7 +114,7 @@ $(_ => {
         $.ajax({
           url: `/strain/${curr}/generation`,
           method: 'DELETE',
-          async: false,
+          // async: false,
           success: _ => {
             $p
               .removeAttr('curr-id')
@@ -140,7 +137,6 @@ $(_ => {
       $.ajax({
         url: url,
         method: 'PATCH',
-        async: true,
         success: _ => {
           $p
             .attr('curr-id', val)
@@ -161,7 +157,6 @@ $(_ => {
       $.ajax({
         url: `/strain/${gid}/generation`,
         method: 'GET',
-        async: true,
         success: (strain = { id: '' }, status, xhr) => {
           let $link = $(e.currentTarget)
             .removeAttr('curr-id')
@@ -211,7 +206,7 @@ $(_ => {
           success: data => $gentable
             .removeClass('editing')
             .trigger('send', {
-              ...$gentable.data('record'),
+              ...$gentable.data('row'),
               ...data,
               ctime: $gentable.find('>.field>.ctime').text(),
             }),
@@ -364,7 +359,6 @@ $(_ => {
       $.ajax({
         url: `/lifecycle/${p}`,
         method: 'GET',
-        async: true,
         success: (result = [], status, xhr) => {
           result.events.forEach(v => {
             $e.append($(`<option>`)
@@ -458,7 +452,6 @@ $(_ => {
       $.ajax({
         url: url,
         method: method,
-        async: true,
         success: console.log,
         error: (xhr, status, err) => {
           console.log(status, err, xhr)
@@ -484,4 +477,4 @@ $(_ => {
   let $notes = $('body>.template>.notes')
     .clone(true, true)
     .insertAfter($gentable)
-})
+})()

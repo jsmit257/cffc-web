@@ -8,22 +8,7 @@ $(_ => {
     .insertAfter($('body>.template>.table.events>.rows'))
 
   $('body>.main>.workspace .events>.rows, body>.template>.table.events>.rows')
-    .on('pre-send', e => {
-      e.stopPropagation()
 
-      let $tmpl = $(e.currentTarget).find('>.row.template>.eventtype')
-
-      $.ajax({
-        url: '/eventtypes',
-        method: 'GET',
-        async: false,
-        success: data => $tmpl
-          .trigger('send', data
-            .sort((a, b) => a.name.localeCompare(b.name))
-          ),
-        error: console.log,
-      })
-    })
     .on('send', '>.row', (e, data = { event_type: {}, mtime: 'Now', ctime: 'Now' }) => {
       e.stopPropagation()
 
@@ -71,6 +56,18 @@ $(_ => {
         .first()
         .find('>div.buttonbar')
       let $owner = cfg.$owner
+
+      $.ajax({
+        url: '/eventtypes',
+        method: 'GET',
+        success: data => $(e.currentTarget).find('>.row.template>.eventtype')
+          .trigger('send', data.sort((a, b) => a.name.localeCompare(b.name))),
+        error: (xhr, status, err) => $('body>.notification').trigger('activate', [
+          'error',
+          'GET - /eventtypes',
+          err,
+        ]),
+      })
 
       $events.data('config', { $eventbar: $eventbar })
 

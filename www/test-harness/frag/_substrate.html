@@ -1,0 +1,45 @@
+<div class="table substrate">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+    <div class="column type">
+      <label for="substrate-type">Type</label>
+      <select id="substrate-type" class="type" tabindex="0">
+        <option value="plating">Plating</option>
+        <option value="liquid">Liquid</option>
+        <option value="grain">Grain</option>
+        <option value="bulk">Bulk</option>
+        <option value="all" selected="selected">All</option>
+      </select>
+    </div>
+    <div class="column vendor" sort-key="vendor">Vendor</div>
+  </div>
+
+  <div class="rows" name="substrate">
+    <div class="row hover template">
+      <input class="name" readonly tabindex="0">
+      <!-- <label></label> -->
+      <select class="type" disabled tabindex="0">
+        <option value="plating">Plating</option>
+        <option value="liquid">Liquid</option>
+        <option value="grain">Grain</option>
+        <option value="bulk">Bulk</option>
+      </select>
+      <!-- <label></label> -->
+      <select class="vendor" url="vendors" disabled tabindex="0"></select>
+    </div>
+  </div>
+  <div class="buttonbar"></div>
+</div>
+
+<div class="table ingredients">
+  <div class="columns">
+    <div class="column name" sort-key="ingredients">Ingredients</div>
+  </div>
+  <div class="rows" name="ingredients">
+    <div class="row hover template">
+      <!-- <label></label> -->
+      <select class="ingredients" url="ingredients" tabindex="0"></select>
+    </div>
+  </div>
+  <div class="buttonbar"></div>
+</div>
