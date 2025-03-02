@@ -46,7 +46,7 @@ body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx>.row>div {
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle {
-  width: 100%;
+  /* width: 100%; */
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle>.rows>.row>.field>label {

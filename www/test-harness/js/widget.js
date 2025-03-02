@@ -113,7 +113,7 @@ $(_ => {
         error: (xhr, status, err) => $('body>.notification').trigger('activate', [
           xhr.status === 403 ? 'debug' : 'error',
           `GET - ${url}`,
-          err,
+          `failed to get resource with statusCode: ${xfr.status}, ${err}`,
         ]),
         ...params,
       })
