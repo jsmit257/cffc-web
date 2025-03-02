@@ -6,7 +6,7 @@ body>.notification {
   padding-top: .5em;
   padding-bottom: .5em;
   width: 100%;
-  z-index: 4;
+  /* z-index: -4; */
 }
 
 body>.notification.auditing {
@@ -16,7 +16,7 @@ body>.notification.auditing {
 .notification>.fieldnames {
   font-weight: bold;
   margin-bottom: .5em;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .notification>.fieldnames,
@@ -63,18 +63,19 @@ body>.notification.auditing {
 /* .notification>.row {} */
 
 body>.alert {
-  border-radius: 1em;
-  z-index: 5;
-  color: #000000;
   background-color: #c2c2c2ee;
-  position: absolute;
-  min-width: 30em;
-  border-width: 9px;
-  border-style: solid;
-  padding: .5em;
-  font-size: larger;
   border-color: #0007;
+  border-radius: 1em;
+  border-style: solid;
+  border-width: 9px;
+  color: #000000;
+  font-size: larger;
+  max-width: 35em;
+  min-width: 30em;
+  padding: .5em;
+  position: absolute;
   width: 35%;
+  z-index: 5;
 }
 
 body>.alert::before {
@@ -90,6 +91,7 @@ body>.alert::before {
   text-align: center;
   width: 1.2em;
   position: absolute;
+  margin-top: .5em;
 }
 
 body>.alert.error::before {
@@ -163,6 +165,7 @@ body>.alert>.timeout {
   line-height: 1.5em;
   width: 2em;
   text-align: right;
+  color: slategrey;
 }
 
 body>.alert>.timeout::after {

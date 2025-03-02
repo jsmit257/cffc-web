@@ -13,9 +13,8 @@ $(_ => $('body>.login')
     method: 'GET',
     statusCode: {
       302: _ => $(e.currentTarget).trigger('deactivate'),
-      403: _ => $(e.delegateTarget).trigger('activate'),
+      403: _ => $(e.currentTarget).trigger('activate'),
     },
-    // error: _ => _,
   }))
   .on('activate', e => {
     if ($('body').hasClass('authing')) {

@@ -3,3 +3,6 @@
 /minify
 /nginx/certs
 !/nginx/certs/init
+
+!/www/rc1/
+

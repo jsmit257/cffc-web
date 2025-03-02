@@ -10,16 +10,18 @@
   <link rel="preload" as="image" href="./css/images/background/image.avif" />
   <link rel="preload" as="image" href="./css/images/button-sprites.avif" />
 
+  <link rel="manifest" href="./manifest.json" />
+
   <title>test harness</title>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <!-- <script src="./js/jquery-offline.js" defer></script> -->
   <!-- begin:minify.js -->
+  <script src="./js/index.js" defer></script>
   <script src="./js/login.js" defer></script>
   <script src="./js/widget.js" defer></script>
   <script src="./js/timestamp.js" defer></script>
   <script src="./js/camera.js" defer></script>
-  <script src="./js/index.js" defer></script>
   <script src="./js/cookiebar.js" defer></script>
   <script src="./js/imageview.js" defer></script>
   <script src="./js/note.js" defer></script>
@@ -33,64 +35,36 @@
 
   <!-- <link href="jquery-ui.min.css" rel="stylesheet"> -->
   <!-- begin:minify.css -->
-  <link rel="preload" href="./css/login.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/login.css">
-  </noscript>
-  <link rel="preload" href="./css/slider.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/slider.css">
-  </noscript>
-  <link rel="preload" href="./css/widget.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/widget.css">
-  </noscript>
-  <link rel="preload" href="./css/timestamp.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/timestamp.css">
-  </noscript>
-  <link rel="preload" href="./css/camera.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/camera.css">
-  </noscript>
   <link rel="preload" href="./css/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/index.css">
-  </noscript>
+  <link rel="preload" href="./css/login.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/slider.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/widget.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/timestamp.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/camera.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/cookiebar.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/cookiebar.css">
-  </noscript>
   <link rel="preload" href="./css/imageview.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/imageview.css">
-  </noscript>
   <link rel="preload" href="./css/note.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/note.css">
-  </noscript>
   <link rel="preload" href="./css/photo.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/photo.css">
-  </noscript>
   <link rel="preload" href="./css/table.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/table.css">
-  </noscript>
   <link rel="preload" href="./css/column.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/column.css">
-  </noscript>
   <link rel="preload" href="./css/button.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/button.css">
-  </noscript>
   <link rel="preload" href="./css/event.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="./css/event.css">
-  </noscript>
   <link rel="preload" href="./css/reporting.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="./css/slider.css">
+    <link rel="stylesheet" href="./css/widget.css">
+    <link rel="stylesheet" href="./css/timestamp.css">
+    <link rel="stylesheet" href="./css/camera.css">
+    <link rel="stylesheet" href="./css/cookiebar.css">
+    <link rel="stylesheet" href="./css/imageview.css">
+    <link rel="stylesheet" href="./css/note.css">
+    <link rel="stylesheet" href="./css/photo.css">
+    <link rel="stylesheet" href="./css/table.css">
+    <link rel="stylesheet" href="./css/column.css">
+    <link rel="stylesheet" href="./css/button.css">
+    <link rel="stylesheet" href="./css/event.css">
     <link rel="stylesheet" href="./css/reporting.css">
   </noscript>
   <!-- end:minify.css -->
@@ -656,7 +630,7 @@
     </div>
 
     <div class="template row">
-      <div name="when" class="field"></div>
+      <div name="when" class="field short-date"></div>
       <div name="action" class="field"></div>
       <div name="message" class="field"></div>
       <div name="severity" class="field"></div>
@@ -672,11 +646,14 @@
             <div class="action button note-ctl active" hover></div>
             <div class="commit button note-ctl active" hover></div>
           </div>
+
           <textarea class="note" disabled tabindex="0"></textarea>
+
           <div class="mtime short-date"></div>
           <div class="ctime short-date"></div>
         </div>
       </div>
+
       <div class="add-note add-ctl">+</div>
     </div>
 
@@ -688,12 +665,15 @@
             <div class="commit photo-ctl button active" hover></div>
             <div class="back photo-ctl button active" hover="back"></div>
           </div>
+
           <img class="image">
           <input type="file" accept="image/*" class="photo" disabled tabindex="0"></textarea>
+
           <div class="mtime short-date"></div>
           <div class="ctime short-date"></div>
         </div>
       </div>
+
       <div class="add-photo add-ctl">+</div>
     </div>
 
@@ -708,10 +688,11 @@
         <div class="column mtime" sort-key="mtime">Modified</div>
         <div class="column ctime" sort-key="ctime">Created</div>
       </div>
+
       <div class="rows" name="event" ts="event">
         <div class="row hover template">
           <!-- <label></label> -->
-          <select class="eventtype" disabled tabindex="0"></select>
+          <select class="eventtype" disabled tabindex="0" url="/eventtypes"></select>
           <div class="severity"></div>
           <div class="stage"></div>
           <input class="temperature" type="number" min="0" readonly tabindex="0">
@@ -720,6 +701,7 @@
           <div class="ctime short-date"></div>
         </div>
       </div>
+
       <div class="buttonbar"></div>
     </div>
 
@@ -777,6 +759,17 @@
   </div>
 
   <script defer>
+    // if ('serviceWorker' in navigator) {
+    //   try {
+    //     navigator.serviceWorker.register('./js/sw.js')
+    //   } catch (ex) {
+    //     $('body>.notification').trigger('activate', [
+    //       'debug',
+    //       'register service worker',
+    //       err,
+    //     ])
+    //   }
+    // }
     setTimeout(_ => $(document).trigger('reload'), 150)
     // setTimeout(_ => $('.template>.timestamp').clone(true, true).appendTo('.workspace>.active').trigger('activate', [new Date(), 'events', '123', 'mtime']), 150)
     // setTimeout(_ => camera(), 150)

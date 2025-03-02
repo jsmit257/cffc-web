@@ -40,6 +40,7 @@ $(_ => {
       $table.find('>.row.removable').remove()
 
       data.forEach(v => {
+        // $table.find('>.row.template')
         $rowtmpl
           .clone(true, true)
           .appendTo($table)

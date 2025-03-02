@@ -1,9 +1,6 @@
 body>.login {
   background-color: var(--login-background-color);
-  border-color: #074976;
   border-radius: .5em;
-  border-style: solid;
-  border-width: 1px;
   bottom: 0;
   font-size: larger;
   height: auto;

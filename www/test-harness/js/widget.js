@@ -15,9 +15,7 @@ $(_ => {
   DOMRect.prototype.timestampCSS = function (ts) {
     let result = {
       top: this.y - (ts.height - this.height) * 2 / 3,
-      left: this.x - (ts.width - this.width),
-      // right: this.right,
-      // bottom: this.bottom,
+      left: this.x + this.width - ts.width + 10,
     }
     if (result.top < 0) result.top = 0
     if (result.left < 0) result.left = 0
@@ -56,6 +54,11 @@ $(_ => {
     },
   })
 
+  $.valHooks = {
+    ...$.valHooks,
+    number: { get: (elem) => elem.value * 1 },
+  }
+
   $('.short-date, .long-date')
     .on('reset-date', '.date', e => $(e.currentTarget)
       .trigger('format', $(e.currentTarget).data(value)))
@@ -63,7 +66,8 @@ $(_ => {
   // FIXME: do what with it?
   let dateedit = e => $('.template>.timestamp')
     .clone(true, true)
-    .appendTo(document.body)
+    .appendTo($(document.body)
+      .addClass('date-editing'))
     .trigger('activate', [
       $(e.currentTarget).data('value'),
       $(e.currentTarget)
@@ -82,7 +86,7 @@ $(_ => {
         .join(' ')])
 
   $('.short-date')
-    .on('format', (e, d) => $(e.currentTarget)
+    .on('format', (e, d = 'Now') => $(e.currentTarget)
       .data('value', d)
       .text(d.replace('T', ' ').replace(/:\d{1,2}(\..+)?Z.*/, '')))
     .on('click', e => {
@@ -113,13 +117,15 @@ $(_ => {
         error: (xhr, status, err) => $('body>.notification').trigger('activate', [
           xhr.status === 403 ? 'debug' : 'error',
           `GET - ${url}`,
-          err,
+          `failed to get resource with statusCode: ${xhr.status}, ${err}`,
         ]),
         ...params,
       })
     })
     .on('send', (e, ...data) => {
       e.stopPropagation()
+
+      let val = $(e.currentTarget).val()
 
       let $list = $(e.currentTarget)
         .trigger('sending', data)
@@ -133,7 +139,7 @@ $(_ => {
         .appendTo($list)
         .trigger('attrs', v)) // attrs is anything: props, text, metadata, etc, per option
 
-      $list.trigger('sent', data)
+      $list.val(val).trigger('sent', data)
     })
 
   // // EX: using select[url] hooks
@@ -149,7 +155,7 @@ $(_ => {
   $('select.substrate')
     .on('attrs', '>option', (e, s) => $(e.currentTarget)
       .attr('type', s.type)
-      .text(`${s.name} | Vendor: ${s.vendor.name}`))
+      .text(`${s.name} | Vendor: ${(s.vendor || { name: 'interim' }).name}`))
 
   $('select.strains')
     .on('attrs', '>option', (e, s) => $(e.currentTarget)
@@ -162,7 +168,7 @@ $(_ => {
   $('select.vendor, select.ingredients, select.stages')
     .on('attrs', '>option', (e, v) => $(e.currentTarget).text(v.name))
 
-  $(document.body)
+  $(document)
     .on('mouseover', '[hover]>div', e => {
       let $t = $(e.currentTarget)
       $t
@@ -175,5 +181,27 @@ $(_ => {
             // 'y': e.clientY,
           }))
     })
-    .on('mouseout', '[hover]>div', e => $(e.currentTarget).data('hover-text').remove())
+    .on('mouseout', '[hover]>div', e => $(e.currentTarget)
+      .data('hover-text')
+      .remove())
+    .on('keyup', 'body.alerting', e => {
+      switch (e.which) {
+        case 27: return $(document.body)
+          .find('>.alert')
+          .trigger('deactivate', 'cancel (kbd)')
+        case 13: return $(document.body)
+          .find('>.alert')
+          .trigger('deactivate', 'ok (kbd)')
+      }
+    })
+    .on('keyup', 'body.date-editing', e => {
+      switch (e.which) {
+        case 27: return $(document.body)
+          .find('>.timestamp')
+          .trigger('deactivate')
+        case 13: return $(document.body)
+          .find('>.timestamp>.buttons>.update')
+          .trigger('click')
+      }
+    })
 })

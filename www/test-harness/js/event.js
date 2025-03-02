@@ -7,8 +7,7 @@ $(_ => {
     .clone(true, true)
     .insertAfter($('body>.template>.table.events>.rows'))
 
-  $('body>.main>.workspace .events>.rows, body>.template>.table.events>.rows')
-
+  $('body>.main>.workspace .events>.rows, body>.template>.events>.rows')
     .on('send', '>.row', (e, data = { event_type: {}, mtime: 'Now', ctime: 'Now' }) => {
       e.stopPropagation()
 
@@ -16,6 +15,7 @@ $(_ => {
 
       $e
         .find('>select.eventtype')
+        .trigger('send', data.event_type)
         .val(data.event_type.id)
         .trigger('change')
       $e.find('>input.temperature').val(data.temperature)
@@ -32,42 +32,24 @@ $(_ => {
       $e.find('>.severity').text($opt.attr('severity'))
       $e.find('>.stage').text($opt.attr('stage'))
     })
-    .on('send', '>.row>.eventtype', (e, ...data) => {
+    .on('attrs', '>.row>.eventtype>option', (e, v) => {
       e.stopPropagation()
 
-      let $e = $(e.currentTarget)
-        .empty()
-
-      data.forEach(r => {
-        $e.append($(new Option())
-          .attr('stage', r.stage.name)
-          .attr('severity', r.severity)
-          .val(r.id)
-          .text(r.name))
-      })
+      $(e.currentTarget)
+        .attr({
+          stage: (v.stage || {}).name,
+          severity: v.severity
+        })
+        .val(v.id)
+        .text(v.name)
     })
     .on('initialize', (e, cfg) => {
       let $events = $(e.currentTarget)
       let $parent = $(e.delegateTarget)
         .parents('.table.events')
         .first()
-      let $eventbar = $events
-        .parents('div.table.events')
-        .first()
-        .find('>div.buttonbar')
+      let $eventbar = $events.buttonbar()
       let $owner = cfg.$owner
-
-      $.ajax({
-        url: '/eventtypes',
-        method: 'GET',
-        success: data => $(e.currentTarget).find('>.row.template>.eventtype')
-          .trigger('send', data.sort((a, b) => a.name.localeCompare(b.name))),
-        error: (xhr, status, err) => $('body>.notification').trigger('activate', [
-          'error',
-          'GET - /eventtypes',
-          err,
-        ]),
-      })
 
       $events.data('config', { $eventbar: $eventbar })
 
@@ -113,17 +95,17 @@ $(_ => {
               .trigger('send', data.events[0]),
           })
         })
-        .on('click', '>.remove.active', e => $events.trigger('delete', `${cfg.parent}/${$owner.data('row').id}/events/${$events.find('.selected').attr('id')}`))
+        .on('click', '>.remove.active', e => $events
+          .trigger('delete', `${cfg.parent}/${$owner.data('row').id}/events/${$events.find('.selected').attr('id')}`))
         .trigger('subscribe', {
           clazz: 'notes',
-          attrs: { 'hover': 'notes' },
+          attrs: { hover: 'notes' },
           clicker: e => {
             e.stopPropagation()
 
             if ($parent.toggleClass('noting').hasClass('noting')) {
-              $parent
-                .find('div.notes')
-                .trigger('refresh', $events.find('.selected').attr('id'))
+              $parent.find('div.notes').trigger('refresh',
+                $events.find('.selected').attr('id'))
             }
           },
         })

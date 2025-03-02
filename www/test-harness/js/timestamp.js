@@ -6,16 +6,6 @@ $(_ => $('.timestamp')
     let data = {
       urlParams: `${table}/${id}`,
       srcDate: new Date(init),
-      keyups: e => {
-        switch (e.which) {
-          case 27: return $(document.body)
-            .find('>.timestamp')
-            .trigger('deactivate')
-          case 13: return $(document.body)
-            .find('>.timestamp>.buttons>.update')
-            .trigger('click')
-        }
-      },
     }
     let $edit = $(e.currentTarget).data(data)
 
@@ -35,13 +25,9 @@ $(_ => $('.timestamp')
     $edit.find('>.form').trigger('reset')
 
     $edit.find('>.absolute>input').val(data.srcDate.inputVal())
-
-    $(document).on('keyup', data.keyups)
   })
-  .on('deactivate', e => $(document).off('keyup',
-    $(e.currentTarget)
-      .remove()
-      .data('keyups')))
+  .on('deactivate', e => ($(document.body).removeClass('date-editing'),
+    e.currentTarget.remove()))
 
   //
   .on('change', '>.title>label>.relative', e => $(e.delegateTarget)
@@ -75,9 +61,9 @@ $(_ => $('.timestamp')
     .trigger('deactivate'))
   .on('click', '>.buttons>.update.active', e => {
     let $edit = $(e.delegateTarget)
-
+    let url = `/ts/${$edit.data('urlParams')}`
     $.ajax({
-      url: `/ts/${$edit.data('urlParams')}`,
+      url: url,
       method: 'PATCH',
       data: JSON.stringify({
         fields: ((sel, result = []) => {
@@ -103,10 +89,22 @@ $(_ => $('.timestamp')
       }),
       success: (data, staus, xhr) => {
         $edit.trigger('deactivate')
-        console.log(data, staus, xhr)
+        $('.notification').trigger('activate', [
+          'debug',
+          `PATCH - ${url}`,
+          `status ${xhr.status}`,
+        ])
       },
-      error: console.log,
-      // complete: $edit.trigger('deactivate') // only on success?p
+      error: (xhr, status, err) => $('.notification').trigger('activate', [
+        'error',
+        `PATCH - ${url}`,
+        `status ${xhr.status} with err '${err}`,
+      ]),
+      // complete: (xhr, status) => $('.notification').trigger('activate', [
+      //   xhr.status === 204 ? 'debug' : 'error',
+      //   `PATCH - ${url}`,
+      //   `status ${xhr.status} with err '${err}`,
+      // ]),
     })
   })
   .on('click', '>.buttons>.reset.active', e => $(e.delegateTarget)
@@ -115,12 +113,22 @@ $(_ => $('.timestamp')
 
   // this doesn't belong here
   .on('click', '>.buttons>.undel.active', e => {
+    let url = `/undel/${$(e.delegateTarget).data('urlParams')}`
     $.ajax({
-      url: `/undel/${$(e.delegateTarget).data('urlParams')}`,
+      url: url,
       method: 'DELETE',
-      success: console.log,
-      error: console.log,
+      success: (data, staus, xhr) => {
+        $edit.trigger('deactivate')
+        $('.notification').trigger('activate', [
+          'debug',
+          `PATCH - ${url}`,
+          `status ${xhr.status}`,
+        ])
+      },
+      error: (xhr, status, err) => $('.notification').trigger('activate', [
+        'error',
+        `PATCH - ${url}`,
+        `status ${xhr.status} with err '${err}`,
+      ]),
     })
-  })
-
-)
+  }))
