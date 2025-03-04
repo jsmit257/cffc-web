@@ -1,0 +1,72 @@
+<div class="table generation selecting">
+  <div class="columns">
+    <div class="column full"> </div>
+  </div>
+
+  <div class="rows" name="generation">
+    <div class="row hover template">
+      <div class="lineage"></div>
+    </div>
+  </div>
+
+  <div class="rows main" name="editor" ts="generation">
+    <div class="field hover countable">
+      <label for="plating-substrate">Plating</label>
+      <select id="plating-substrate" class="plating substrate" url disabled tabindex="0"></select>
+    </div>
+
+    <div class="field hover">
+      <label for="liquid-substrate">Liquid</label>
+      <select id="liquid-substrate" class="liquid substrate" url disabled tabindex="0"></select>
+    </div>
+
+    <div class="field no-edit hover" hover="go to strain">
+      <label for="progeny">Progeny</label>
+      <select id="progeny" class="strains progeny" url="strains" tabindex="0"></select>
+    </div>
+
+    <div class="field hover">
+      <label>Modified</label>
+      <div class="mtime short-date"></div>
+    </div>
+
+    <div class="field hover">
+      <label>Created</label>
+      <div class="ctime short-date"></div>
+    </div>
+  </div>
+
+  <div class="rows sources main">
+    <div class="row source countable template">
+      <div class="buttonbox">
+        <div class="button action active" hover></div>
+        <div class="button commit active" hover></div>
+      </div>
+
+      <!-- <label></label> -->
+      <select class="type" name="type" disabled tabindex="0">
+        <option value="spore">Spore</option>
+        <option value="clone">Clone</option>
+      </select>
+
+      <!-- <label></label> -->
+      <select name="origin" class="break" disabled tabindex="0">
+        <option value="strain">Strain</option>
+        <option value="event">Lifecycle</option>
+      </select>
+
+      <!-- <label></label> -->
+      <select name="progenitor" disabled tabindex="0"></select>
+
+      <!-- <label></label> -->
+      <select name="lcs" class="lcs break" url="lifecycles" disabled tabindex="0"></select>
+
+      <!-- <label></label> -->
+      <select class="strains break" url="strains" disabled tabindex="0"></select>
+    </div>
+
+    <div class="add-source add-ctl">+</div>
+  </div>
+
+  <div class="buttonbar"></div>
+</div>

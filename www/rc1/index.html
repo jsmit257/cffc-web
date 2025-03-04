@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>release candidate 1</title>
+
+  <meta charset="UTF-8">
+  <meta name="description" content="watch your fungus grow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
+  <!-- <script src="./js/jquery-slim-min.js"></script> -->
+  <script src="./js/index.js"></script>
+  <script src="./js/util.js"></script>
+  <script src="./js/table.js"></script>
+  <script src="./js/event.js"></script>
+
+  <link rel="manifest" href="./manifest.json" />
+
+  <link rel="preload" href="./css/images/background/image.avif" as="image" />
+  <link rel="preload" href="./css/index.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/table.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/event.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/table.css">
+    <link rel="stylesheet" href="./css/event.css">
+  </noscript>
+</head>
+
+<body>
+  <div class="login"></div>
+
+  <div class="menubar">
+    <div class="menubtn main" x-stub="lifecycle">lifecycle</div>
+    <div class="menubtn main" x-stub="generation">generation</div>
+    <div class="menubtn main" x-stub="strain">strain</div>
+    <div class="menubtn main" x-stub="substrate">substrate</div>
+    <br>
+    <div class="menubtn aux" x-stub="ingredient">ingredient</div>
+    <div class="menubtn aux" x-stub="stage">stage</div>
+    <div class="menubtn aux" x-stub="vendor">vendor</div>
+    <div class="menubtn aux" x-stub="eventtype">eventtype</div>
+  </div>
+
+  <div class="main"></div>
+
+  <div class="footer"></div>
+
+  <div class="notification"></div>
+</body>
+
+</html>

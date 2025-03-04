@@ -1,0 +1,8 @@
+.table.vendor {
+  width: 50%;
+}
+
+.table.vendor>.columns>.column,
+.table.vendor>.rows>.row>.field {
+  width: 49%;
+}

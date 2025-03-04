@@ -1,0 +1,58 @@
+<div class="table substrate" x-fetch="substrates" x-target=">.rows">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+    <div class="column type">
+      <label>
+        Type
+        <select class="type" tabindex="0">
+          <option value="plating">Plating</option>
+          <option value="liquid">Liquid</option>
+          <option value="grain">Grain</option>
+          <option value="bulk">Bulk</option>
+          <option value="all" selected="selected">All</option>
+        </select>
+      </label>
+    </div>
+    <div class="column vendor" sort-key="vendor">Vendor</div>
+  </div>
+
+  <div class="rows">
+    <div class="row hover x-template">
+      <label class="field">
+        <input class="name" name="name" readonly tabindex="0">
+      </label>
+
+      <label class="field" render="x-basic">
+        <select class="type" name="type" readonly tabindex="0">
+          <option value="plating">Plating</option>
+          <option value="liquid">Liquid</option>
+          <option value="grain">Grain</option>
+          <option value="bulk">Bulk</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <select class="vendor" name="vendor" name="vendor" x-fetch="vendors" x-target-this render="vendor" readonly
+          tabindex="0"></select>
+      </label>
+    </div>
+  </div>
+
+  <div class="table ingredients">
+    <div class="columns">
+      <div class="column name" sort-key="ingredients">Ingredients</div>
+    </div>
+
+    <div class="rows">
+      <div class="row hover x-template">
+        <label class="field">
+          <select class="ingredients" url="ingredients" readonly tabindex="0"></select>
+        </label>
+      </div>
+    </div>
+
+    <div class="buttonbar"></div>
+  </div>
+
+  <div class="buttonbar"></div>
+</div>

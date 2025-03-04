@@ -1,0 +1,54 @@
+<div class="table strain" x-fetch="strains" x-target=">.rows">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+    <div class="column species" sort-key="species">Species</div>
+    <div class="column vendor" sort-key="vendor">Vendor</div>
+    <div class="column ctime" sort-key="ctime">Created At</div>
+  </div>
+
+  <div class="rows">
+    <div class="row hover x-template">
+      <label class="field">
+        <input class="name" name="name" readonly tabindex="0">
+      </label>
+
+      <label class="field">
+        <input class="species" name="species" readonly tabindex="0">
+      </label>
+
+      <label class="field">
+        <select class="vendor" name="vendor" x-fetch="vendors" x-target-this render="vendor" readonly
+          tabindex="0"></select>
+      </label>
+
+      <label class="field">
+        <div class="ctime short-date" name="ctime"></div>
+      </label>
+    </div>
+  </div>
+
+  <div class="table strainattribute" x-target=">.rows">
+    <datalist id="strain-attr-names" x-fetch="strainattributenames" x-target-this></datalist>
+
+    <div class="columns">
+      <div class="column name" sort-key="name">Attribute Name</div>
+      <div class="column value">Value</div>
+    </div>
+
+    <div class="rows">
+      <div class="row hover x-template">
+        <label class="field">
+          <input class="name" name="name" list="strain-attr-names" readonly tabindex="0">
+        </label>
+
+        <label class="field">
+          <input class="value" name="value" readonly tabindex="0">
+        </label>
+      </div>
+    </div>
+
+    <div class="buttonbar">what about this buttonbar?</div>
+  </div>
+
+  <div class="buttonbar">main ubtton bar</div>
+</div>

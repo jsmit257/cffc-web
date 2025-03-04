@@ -1,0 +1,83 @@
+:root {
+  --bg-color: #0c0f21db;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.workspace,
+.x-template {
+  display: none;
+}
+
+.workspace.active {
+  display: block;
+}
+
+html {
+  background-color: var(--bg-color);
+  background-image: linear-gradient(var(--bg-color), var(--bg-color)), url(./images/background/image.avif);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  background-blend-mode: hard-light;
+  background-blend-mode: hue;
+  background-blend-mode: luminosity;
+  /* background-blend-mode: screen; */
+  color: aliceblue;
+  font-size: 125%;
+  line-height: 1.25;
+  font-family: system-ui;
+}
+
+body {
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+}
+
+input,
+select {
+  background-color: transparent;
+  border: 0;
+  color: white;
+  font-size: inherit;
+  margin: 0;
+  text-overflow: ellipsis;
+  padding: 0;
+}
+
+body>.login,
+body>.menubar,
+body>.main,
+body>.footer,
+body>.notification {
+  /* display: none; */
+  width: 100%;
+  float: left;
+}
+
+body>.menubar {
+  font-size: larger;
+  text-align: center;
+  margin-top: .5em;
+  margin-bottom: .5em;
+}
+
+body>.menubar>.menubtn {
+  float: left;
+  width: 10%;
+  cursor: pointer;
+  width: 16%;
+}
+
+body>.menubar>.menubtn.selected {
+  cursor: default;
+  background-image: radial-gradient(ellipse at center top, #0000 50%, #fff6), radial-gradient(ellipse at center bottom, #0000 50%, #fff6);
+}
+
+body>.menubar>.menubtn:hover {
+  font-style: italic;
+}
