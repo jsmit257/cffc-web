@@ -1,6 +1,6 @@
 (_ => {
   $(document.body)
-    .on('app-error', 'body>.notification', (e, ...data) => {
-      console.log('app-error', data)
+    .on('app-error', '>.notification', (e, lvl, act, msg, state) => {
+      console.log('app-error', lvl, act, msg, state)
     })
 })()

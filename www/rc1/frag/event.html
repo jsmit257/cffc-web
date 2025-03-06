@@ -1,4 +1,4 @@
-<div class="table events">
+<div class="table events" breadcrumb="event">
   <div class="columns">
     <div class="column full">Events</div>
     <div class="column eventtype" sort-key="eventtype">Event</div>
@@ -9,14 +9,11 @@
     <div class="column mtime" sort-key="mtime">Modified</div>
     <div class="column ctime" sort-key="ctime">Created</div>
   </div>
-  <script>
-    $(document.body)
-      .on('send', 'table.event')
-  </script>
+
   <div class="rows">
     <div class="row hover x-template">
       <label class="field">
-        <select class="eventtype" name="eventtype" x-fetch="eventtypes" x-target-this render="eventtype" readonly
+        <select class="eventtype" name="event_type" x-fetch="eventtypes" x-target-this render-attr="name" readonly
           tabindex="0"></select>
       </label>
 
@@ -24,19 +21,19 @@
       <div class="stage"></div>
 
       <label class="field">
-        <input class="temperature" type="number" min="0" readonly tabindex="0">
+        <input class="temperature" name="temperature" type="number" min="0" readonly tabindex="0">
       </label>
 
       <label class="field">
-        <input class="humidity" type="number" min="0" max="100" readonly tabindex="0">
+        <input class="humidity" name="humidity" type="number" min="0" max="100" readonly tabindex="0">
       </label>
 
       <label class="field">
-        <div class="mtime short-date"></div>
+        <div class="mtime short-date" name="mtime" x-formatter="short-date"></div>
       </label>
 
       <label class="field">
-        <div class="ctime short-date"></div>
+        <div class="ctime short-date" name="ctime" x-formatter="short-date"></div>
       </label>
     </div>
   </div>

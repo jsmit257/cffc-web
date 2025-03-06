@@ -1,0 +1,27 @@
+.singleton.generation>.field,
+.singleton.generation>.table.sources {
+  float: left;
+  width: 50%;
+}
+
+.singleton.generation>.table.sources {
+  float: right;
+}
+
+.table.generation>.rows.ndx>.row.record>div {
+  float: left;
+  width: 50%;
+}
+
+.singleton.generation>.table.sources>.rows>.row.record>.field {
+  display: flex;
+  clear: both;
+}
+
+.singleton.generation>.table.sources>.rows>div:nth-child(4) {
+  display: none;
+}
+
+.singleton.generation>.table.sources>.rows>.row.record>.field>span {
+  width: 5em;
+}

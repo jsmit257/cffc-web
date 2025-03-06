@@ -1,4 +1,4 @@
-<div class="table strain" x-fetch="strains" x-target=">.rows">
+<div class="table strain" x-fetch="strains" x-target=">.rows" breadcrumb="strain">
   <div class="columns">
     <div class="column name" sort-key="name">Name</div>
     <div class="column species" sort-key="species">Species</div>
@@ -17,17 +17,17 @@
       </label>
 
       <label class="field">
-        <select class="vendor" name="vendor" x-fetch="vendors" x-target-this render="vendor" readonly
+        <select class="vendor" name="vendor" x-fetch="vendors" x-target-this render-attr="name" readonly
           tabindex="0"></select>
       </label>
 
       <label class="field">
-        <div class="ctime short-date" name="ctime"></div>
+        <div class="ctime short-date" x-formatter="short-date" name="ctime"></div>
       </label>
     </div>
   </div>
 
-  <div class="table strainattribute" x-target=">.rows">
+  <div class="table strainattributes" x-target=">.rows" breadcrumb="strainattribute">
     <datalist id="strain-attr-names" x-fetch="strainattributenames" x-target-this></datalist>
 
     <div class="columns">

@@ -39,10 +39,7 @@ $(_ => {
       return $(this)
     },
     withClass: function (clz, add) {
-      let fn = 'removeClass'
-      if (add) {
-        fn = 'addClass'
-      }
+      let fn = add ? 'addClass' : 'removeClass'
       this.each(function () { $(this)[fn](clz) })
       return $(this)
     },
@@ -54,10 +51,7 @@ $(_ => {
     },
   })
 
-  $.valHooks = {
-    ...$.valHooks,
-    number: { get: (elem) => elem.value * 1 },
-  }
+  $.valHooks.number = { get: (elem) => elem.value * 1 }
 
   $('.short-date, .long-date')
     .on('reset-date', '.date', e => $(e.currentTarget)

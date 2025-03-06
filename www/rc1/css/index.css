@@ -1,9 +1,16 @@
 :root {
   --bg-color: #0c0f21db;
+  --depth-login: 5;
+  --depth-info: 3;
+  --login-background-color: #0f00255c;
 }
 
 * {
   box-sizing: border-box;
+}
+
+.selected {
+  text-decoration: underline;
 }
 
 .workspace,
@@ -15,38 +22,54 @@
   display: block;
 }
 
+input,
+select {
+  appearance: none;
+  background-color: transparent;
+  border: 0;
+  color: white;
+  display: inline-block;
+  font-size: inherit;
+  margin: 0;
+  padding: 0;
+  text-overflow: ellipsis;
+}
+
+select:read-only,
+input:read-only {
+  appearance: none;
+  cursor: default;
+}
+
+input[type="radio"] {
+  appearance: auto;
+}
+
 html {
+  background-attachment: fixed;
   background-color: var(--bg-color);
   background-image: linear-gradient(var(--bg-color), var(--bg-color)), url(./images/background/image.avif);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
   background-blend-mode: hard-light;
   background-blend-mode: hue;
   background-blend-mode: luminosity;
   /* background-blend-mode: screen; */
   color: aliceblue;
-  font-size: 125%;
-  line-height: 1.25;
   font-family: system-ui;
+  /* font-size: 125%; */
+  /* height: 100%; */
+  line-height: 1.25;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+  min-width: 80em;
 }
 
 body {
   margin-left: auto;
   margin-right: auto;
-  width: 60%;
-}
-
-input,
-select {
-  background-color: transparent;
-  border: 0;
-  color: white;
-  font-size: inherit;
-  margin: 0;
-  text-overflow: ellipsis;
-  padding: 0;
 }
 
 body>.login,
@@ -55,15 +78,25 @@ body>.main,
 body>.footer,
 body>.notification {
   /* display: none; */
-  width: 100%;
   float: left;
+  width: 100%;
 }
 
 body>.menubar {
   font-size: larger;
-  text-align: center;
-  margin-top: .5em;
   margin-bottom: .5em;
+  margin-top: .5em;
+  text-align: center;
+  font-weight: bold;
+  line-height: 3;
+}
+
+body>.menubar::after {
+  content: 'content';
+  float: right;
+  line-height: 2;
+  margin-top: -1em;
+  /* display: inline-block; */
 }
 
 body>.menubar>.menubtn {
@@ -71,13 +104,97 @@ body>.menubar>.menubtn {
   width: 10%;
   cursor: pointer;
   width: 16%;
+  border-radius: 50%;
 }
 
 body>.menubar>.menubtn.selected {
-  cursor: default;
   background-image: radial-gradient(ellipse at center top, #0000 50%, #fff6), radial-gradient(ellipse at center bottom, #0000 50%, #fff6);
+  cursor: default;
 }
 
 body>.menubar>.menubtn:hover {
+  font-weight: bold;
+}
+
+body>.footer {
+  /* background-color: red; */
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  float: left;
+}
+
+body>.footer>ul {
+  float: left;
+}
+
+body>.footer>.cookie-bar {
+  background-image: radial-gradient(ellipse at bottom left, var(--background-color) 70%, transparent);
+  border-radius: 0 4em 0 0;
+  float: left;
+  width: 9em;
+}
+
+body>.footer>.cookie-bar>.list::before {
+  content: 'Hide';
+  font-weight: bolder;
+  line-height: 2em;
+  width: 100%;
+}
+
+body>.footer>.cookie-bar>.list {
+  list-style-type: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body>.footer>.cookie-bar>.list>li>input {
+  clear: left;
+  float: left;
+  margin-bottom: .5em;
+}
+
+body>.footer>.cookie-bar>.list>li>label {
+  clear: right;
+  cursor: pointer;
+  /* display: inline-block; */
+  /* float: left; */
+  /* width: 8em; */
+  /* display: block; */
+}
+
+body>.footer>.powered-by {
+  background-image: radial-gradient(ellipse at bottom right, var(--background-color) 70%, transparent);
+  border-radius: 4em 0 0;
+  bottom: 0;
+  margin-right: 1em;
+  position: relative;
+  float: right;
+  z-index: var(--depth-login);
+}
+
+body>.footer>.powered-by>div {
+  display: inline-block;
+}
+
+body>.footer>.powered-by>ul {
+  vertical-align: middle;
+}
+
+body>.footer>.powered-by>ul::before {
+  content: 'Powered by:';
+  float: left;
   font-style: italic;
+  line-height: 4.5em;
+  margin-left: -7em;
+}
+
+body>.main.footer>.powered-by:hover>ul .long-text {
+  display: block;
+}
+
+body>.footer>.powered-by>ul .long-text,
+body>.main.footer>.powered-by:hover>ul .short-text {
+  display: none;
 }

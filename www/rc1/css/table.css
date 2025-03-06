@@ -4,27 +4,25 @@ label.field {
 
 .field>input,
 .field>select {
-  width: -webkit-fill-available;
+  /* width: -webkit-fill-available; */
+  float: left;
+  font-family: system-ui;
 }
 
-.table {
+.table,
+.table>.columns,
+.table>.rows,
+.table>.buttonbar {
   float: left;
   width: 100%;
 }
 
 .table>.columns {
-  float: left;
   text-align: center;
-  width: 100%;
 }
 
 .table>.columns>.column {
   float: left;
-}
-
-.table>.rows {
-  float: left;
-  width: 100%;
 }
 
 .table>.rows>.row {
@@ -33,11 +31,28 @@ label.field {
   width: 100%;
 }
 
+.table>.rows>.row>.static,
 .table>.rows>.row>.field {
+  cursor: default;
   float: left;
 }
 
-.table>.buttonbar {
+.singleton>.field {
+  text-align: left;
   float: left;
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: baseline;
+}
+
+.singleton>.field>span {
+  width: 7em;
+}
+
+.singleton>.field>div,
+.singleton>.field>select,
+.singleton>.field>input {
+  float: left;
 }

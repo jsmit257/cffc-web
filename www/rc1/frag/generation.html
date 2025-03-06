@@ -1,72 +1,81 @@
-<div class="table generation selecting">
-  <div class="columns">
-    <div class="column full"> </div>
-  </div>
-
-  <div class="rows" name="generation">
-    <div class="row hover template">
-      <div class="lineage"></div>
+<div class="table generation" x-fetch="generations" x-target=">.rows.ndx" breadcrumb="generation">
+  <div class="rows ndx">
+    <div class="row hover x-template">
+      <div class="ctime" name="ctime" x-formatter="long-date"></div>
+      <div class="sources" name="sources" x-formatter="sources"></div>
     </div>
   </div>
 
-  <div class="rows main" name="editor" ts="generation">
-    <div class="field hover countable">
-      <label for="plating-substrate">Plating</label>
-      <select id="plating-substrate" class="plating substrate" url disabled tabindex="0"></select>
-    </div>
+  <div class="singleton generation">
+    <div class="table sources" name="sources" x-formatter="sources">
+      <div class="rows">
+        <div class="row x-template">
+          <label class="field">
+            <span>Type</span>
+            <select class="type static" name="type" readonly tabindex="0">
+              <option value="Spore">Spore</option>
+              <option value="Clone">Clone</option>
+            </select>
+          </label>
 
-    <div class="field hover">
-      <label for="liquid-substrate">Liquid</label>
-      <select id="liquid-substrate" class="liquid substrate" url disabled tabindex="0"></select>
-    </div>
+          <label class="field">
+            <span>Origin</span>
+            <select name="post-param" readonly tabindex="0">
+              <option value="strain">Strain</option>
+              <option value="event">Lifecycle</option>
+            </select>
+          </label>
 
-    <div class="field no-edit hover" hover="go to strain">
-      <label for="progeny">Progeny</label>
-      <select id="progeny" class="strains progeny" url="strains" tabindex="0"></select>
-    </div>
+          <label class="field">
+            <span>Lifecycle</span>
+            <select name="lifecycle" x-fetch="lifecycles" x-target-this render="lifecycle" readonly
+              tabindex="0"></select>
+          </label>
 
-    <div class="field hover">
-      <label>Modified</label>
-      <div class="mtime short-date"></div>
-    </div>
+          <label class="field">
+            <span>Event</span>
+            <select name="event" name="events" x-fetch-multi render="event" readonly tabindex="0"></select>
+          </label>
 
-    <div class="field hover">
-      <label>Created</label>
-      <div class="ctime short-date"></div>
-    </div>
-  </div>
+          <label class="field">
+            <span>Strain</span>
+            <select name="strain" x-fetch="strains" x-target-this render="strain" readonly tabindex="0"></select>
+          </label>
+        </div>
 
-  <div class="rows sources main">
-    <div class="row source countable template">
-      <div class="buttonbox">
-        <div class="button action active" hover></div>
-        <div class="button commit active" hover></div>
+        <div class="buttonbar" style="font-size:larger;">buttonbar</div>
       </div>
-
-      <!-- <label></label> -->
-      <select class="type" name="type" disabled tabindex="0">
-        <option value="spore">Spore</option>
-        <option value="clone">Clone</option>
-      </select>
-
-      <!-- <label></label> -->
-      <select name="origin" class="break" disabled tabindex="0">
-        <option value="strain">Strain</option>
-        <option value="event">Lifecycle</option>
-      </select>
-
-      <!-- <label></label> -->
-      <select name="progenitor" disabled tabindex="0"></select>
-
-      <!-- <label></label> -->
-      <select name="lcs" class="lcs break" url="lifecycles" disabled tabindex="0"></select>
-
-      <!-- <label></label> -->
-      <select class="strains break" url="strains" disabled tabindex="0"></select>
     </div>
 
-    <div class="add-source add-ctl">+</div>
+    <label class="field hover">
+      <span>Plating</span>
+      <select class="plating substrate" name="plating_substrate" x-fetch-multi="substrate" render="substrate" readonly
+        tabindex="0"></select>
+    </label>
+
+    <label class="field hover">
+      <span>Liquid</span>
+      <select class="liquid substrate" name="liquid_substrate" x-fetch-multi="substrate" render="substrate" readonly
+        tabindex="0"></select>
+    </label>
+
+    <label class="field no-edit hover" hover="go to strain">
+      <span>Progeny</span>
+      <select class="strains progeny" x-fetch="strains" x-target-self tabindex="0"></select>
+    </label>
+
+    <label class="field hover">
+      <span>Modified</span>
+      <div class="mtime short-date" name="mtime" x-formatter="short-date"></div>
+    </label>
+
+    <label class="field hover">
+      <span>Created</span>
+      <div class="ctime short-date" name="ctime" x-formatter="short-date"></div>
+    </label>
   </div>
+
+  <div class="child-table events" x-child="event"></div>
 
   <div class="buttonbar"></div>
 </div>

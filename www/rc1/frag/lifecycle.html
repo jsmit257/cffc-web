@@ -1,4 +1,4 @@
-<div class="table lifecycle" x-fetch="lifecycles" x-target=">.rows.ndx">
+<div class="table lifecycle" x-fetch="lifecycles" x-target=">.rows.ndx" breadcrumb="lifecycle">
   <div class="columns">
     <div class="column full">
       <span class="title">Placeholder</span>&nbsp;<span class="status"></span>
@@ -7,76 +7,80 @@
 
   <div class="rows ndx">
     <div class="row hover x-template">
+      <div class="static mtime" name="mtime" x-formatter="short-date"></div>
+      <div class="static location" name="location"></div>
+    </div>
+  </div>
+
+  <div class="singleton lifecycle">
+    <label class="field hover">
+      <span>Location</span>
+      <input class="location" name="location" readonly tabindex="0">
+    </label>
+
+    <label class="field hover no-add">
+      <span>Yield (g)</span>
+      <input class="yield" name="yield" type="number" min="0" step="0.01" value="0.00" readonly tabindex="0">
+      <div class="dry-weight" x-formatter="fixed">dry weight</div>
+    </label>
+
+    <label class="field hover no-add">
+      <span>Count</span>
+      <input class="count" name="count" type="number" min="0" step="0.01" value="0.00" readonly tabindex="0">
+      <div class="per-kilo" x-formatter="fixed">per kilo</div>
+    </label>
+
+    <label class="field hover no-add">
+      <span>Gross (g)</span>
+      <input class="gross" name="gross" type="number" min="0" step="0.01" value="0.00" readonly tabindex="0">
+    </label>
+
+    <label class="field hover">
+      <span>Strain</span>
+      <select class="strains" name="strain" x-fetch="strains" x-target-this render="strain" readonly
+        tabindex="0"></select>
+    </label>
+
+    <label class="field hover">
+      <span>Strain Cost</span>
+      <input class="strain_cost" name="strain_cost" type="number" min="0" step="0.01" value="0.00" readonly
+        tabindex="0">
+    </label>
+
+    <label class="field hover">
+      <span>Grain</span>
+      <select class="grain_substrate" name="grain_substrate" x-fetch-multi="substrate" render="substrate" readonly
+        tabindex="0"></select>
+    </label>
+
+    <label class="field hover">
+      <span>Grain Cost</span>
+      <input class="grain_cost" name="grain_cost" type="number" min="0" step="0.01" value="0.00" readonly tabindex="0">
+    </label>
+
+    <label class="field hover">
+      <span>Bulk</span>
+      <select class="bulk_substrate" name="bulk_substrate" x-fetch-multi="substrate" render="substrate" readonly
+        tabindex="0"></select>
+    </label>
+
+    <label class="field hover">
+      <span>Bulk Cost</span>
+      <input class="bulk_cost" name="bulk_cost" type="number" min="0" step="0.01" value="0.00" readonly tabindex="0">
+    </label>
+
+    <label class="field hover">
+      <span>Modified</span>
       <div class="mtime short-date" name="mtime"></div>
-      <div class="location" name="location"></div>
-    </div>
+    </label>
+
+    <label class="field hover">
+      <span>Created</span>
+      <div class="ctime short-date" name="ctime"></div>
+    </label>
   </div>
 
-  <div class="rows lc" ts="lifecycle">
-    <div class="row countable">
-      <div class="field hover">
-        <label for="lc-location">Location</label>
-        <input id="lc-location" class="location" readonly tabindex="0">
-      </div>
-
-      <div class="field hover no-add">
-        <label for="lc-yield">Yield (g)</label>
-        <input id="lc-yield" class="yield" type="number" min="0" readonly tabindex="0">
-        <div class="dry-weight"></div>
-      </div>
-
-      <div class="field hover no-add">
-        <label for="lc-count">Count</label>
-        <input id="lc-count" class="count" type="number" min="0" readonly tabindex="0">
-        <div class="per-kilo"></div>
-      </div>
-
-      <div class="field hover no-add">
-        <label for="lc-gross">Gross (g)</label>
-        <input id="lc-gross" class="gross" type="number" min="0" readonly tabindex="0">
-      </div>
-
-      <div class="field hover">
-        <label for="lc-strains">Strain</label>
-        <select id="lc-strains" class="strains" url="strains" disabled tabindex="0"></select>
-      </div>
-
-      <div class="field hover">
-        <label for="lc-strain-cost">Strain Cost</label>
-        <input id="lc-strain-cost" class="strain_cost" type="number" readonly tabindex="0">
-      </div>
-
-      <div class="field hover">
-        <label for="lc-grain-substrate">Grain</label>
-        <select id="lc-grain-substrate" class="grain_substrate substrate" url disabled tabindex="0"></select>
-      </div>
-
-      <div class="field hover">
-        <label for="lc-grain-cost">Grain Cost</label>
-        <input id="lc-grain-cost" class="grain_cost" type="number" readonly tabindex="0">
-      </div>
-
-      <div class="field hover">
-        <label for="lc-bulk-substrate">Bulk</label>
-        <select id="lc-bulk-substrate" class="bulk_substrate substrate" url disabled tabindex="0"></select>
-      </div>
-
-      <div class="field hover">
-        <label for="lc-bulk-cost">Bulk Cost</label>
-        <input id="lc-bulk-cost" class="bulk_cost" type="number" readonly tabindex="0">
-      </div>
-
-      <div class="field hover">
-        <label>Modified At</label>
-        <div class="mtime short-date"></div>
-      </div>
-
-      <div class="field hover">
-        <label>Created At</label>
-        <div class="ctime short-date"></div>
-      </div>
-    </div>
-  </div>
+  <div class="child-table events" x-child="event"></div>
 
   <div class="buttonbar"></div>
 </div>

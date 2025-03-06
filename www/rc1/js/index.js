@@ -1,11 +1,12 @@
 $(_ => {
-  let spaces = 'body>.main>.workspace'
-  let notify = 'body>.notification'
+  let spaces = '.main>.workspace'
+  let notify = '.notification'
 
   $(document.body)
-    // .on('activate', `${spaces}`, (e, stub) => {
-    .on('activate', `.workspace`, (e, stub) => {
+    .on('activate', `>${spaces}`, (e, stub) => {
       e.stopPropagation()
+
+      localStorage.active = stub
 
       let $table = $(e.currentTarget)
         .addClass('active')
@@ -22,8 +23,8 @@ $(_ => {
         .addClass('selected')
         .attr('x-stub')
 
-      $(`${spaces}.active`).removeClass('active')
-      if ($(`${spaces}.${stub}`).trigger('activate', stub).length) {
+      $(`body>${spaces}.active`).removeClass('active')
+      if ($(`body>${spaces}.${stub}`).trigger('activate', stub).length) {
         return
       }
 
@@ -56,12 +57,11 @@ $(_ => {
           ex,
         ]))
     })
-    .on('add-events', '.workspace>.table', e => {
-      fetch(`./frag/event.html`)
-        .then(async resp => $('<div>')
-          .html(await resp.text())
-          .appendTo(e.currentTarget))
-        .then(workspace => workspace.trigger('activate', stub))
+    .on('add-child', '[x-child]', e => {
+      fetch(`./frag/${e.currentTarget.attributes['x-child'].value}.html`)
+        .then(async resp => $(await resp.text())
+          .appendTo($(e.currentTarget)
+            .removeAttr('x-child'))) // once is enough
         .catch(ex => $(`.notification`).trigger('app-error', [
           `loading event fragment ${stub}`,
           ex,

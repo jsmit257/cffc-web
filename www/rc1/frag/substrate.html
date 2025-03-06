@@ -1,4 +1,4 @@
-<div class="table substrate" x-fetch="substrates" x-target=">.rows">
+<div class="table substrate" x-fetch="substrates" x-target=">.rows" breadcrumb="substrate">
   <div class="columns">
     <div class="column name" sort-key="name">Name</div>
     <div class="column type">
@@ -32,13 +32,13 @@
       </label>
 
       <label class="field">
-        <select class="vendor" name="vendor" name="vendor" x-fetch="vendors" x-target-this render="vendor" readonly
+        <select class="vendor" name="vendor" x-fetch="vendors" x-target-this render-attr="name" readonly
           tabindex="0"></select>
       </label>
     </div>
   </div>
 
-  <div class="table ingredients">
+  <div class="table ingredients" breadcrumb="ingredient">
     <div class="columns">
       <div class="column name" sort-key="ingredients">Ingredients</div>
     </div>

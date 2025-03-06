@@ -11,14 +11,15 @@
 
   <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
   <!-- <script src="./js/jquery-slim-min.js"></script> -->
-  <script src="./js/index.js"></script>
-  <script src="./js/util.js"></script>
-  <script src="./js/table.js"></script>
-  <script src="./js/event.js"></script>
+  <script src="./js/index.js" defer></script>
+  <script src="./js/util.js" defer></script>
+  <script src="./js/table.js" defer></script>
+  <script src="./js/event.js" defer></script>
+  <script src="./js/notification.js" defer></script>
 
-  <link rel="manifest" href="./manifest.json" />
+  <link rel="manifest" href="./manifest.json">
 
-  <link rel="preload" href="./css/images/background/image.avif" as="image" />
+  <link rel="preload" href="./css/images/background/image.avif" as="image">
   <link rel="preload" href="./css/index.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/table.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/event.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
@@ -37,7 +38,7 @@
     <div class="menubtn main" x-stub="generation">generation</div>
     <div class="menubtn main" x-stub="strain">strain</div>
     <div class="menubtn main" x-stub="substrate">substrate</div>
-    <br>
+
     <div class="menubtn aux" x-stub="ingredient">ingredient</div>
     <div class="menubtn aux" x-stub="stage">stage</div>
     <div class="menubtn aux" x-stub="vendor">vendor</div>
@@ -46,7 +47,70 @@
 
   <div class="main"></div>
 
-  <div class="footer"></div>
+  <div class="footer">
+    <div class="cookie-bar">
+      <ul class="list">
+        <li>
+          <label>
+            <input type="checkbox">
+            <span>deleted</span>
+          </label>
+        </li>
+
+        <li>
+
+          <label>
+            <input type="checkbox">
+            <span>ID</span>
+          </label>
+        </li>
+
+        <li>
+          <label for="hide-timestamps">
+            <input type="checkbox" id="hide-timestamps">
+            <span>timestamps</span>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <div class="powered-by">
+      <ul>
+        <li>
+          <div class="short-text">Huautla</div>
+          <div class="long-text">
+            <a href="https://github.com/jsmit257/huautla">Huautla</a>
+            <a href="https://jsmit257.github.io/huautla">(README)</a>
+          </div>
+        </li>
+
+        <li>
+          <div class="short-text">CFFC</div>
+          <div class="long-text">
+            <a href="https://github.com/jsmit257/centerforfunguscontrol">CFFC</a>
+            <a href="https://jsmit257.github.io/centerforfunguscontrol">(README)</a>
+          </div>
+        </li>
+
+        <li>
+          <div class="short-text">CFFC-Web</div>
+          <div class="long-text">
+            <a href="https://github.com/jsmit257/cffc-web">CFFC-Web</a>
+            <a href="https://jsmit257.github.io/cffc-web">(README)</a>
+            <a href="https://jsmit257.github.io/cffc-web/standalone">(Standalone)</a>
+          </div>
+        </li>
+
+        <li>
+          <div class="short-text">Userservice</div>
+          <div class="long-text">
+            <a href="https://github.com/jsmit257/userservice">Userservice</a>
+            <a href="https://jsmit257.github.io/userservice">(README)</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
 
   <div class="notification"></div>
 </body>

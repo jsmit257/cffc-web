@@ -80,6 +80,7 @@ fi
 if test "$?" -ne "0"; then
   echo "failed to parse css header section from ${index}" >&2
   exit 1
+  # cat /www/css/cffc-cat.css | tr '$[\n]' ' ' | sed -e 's/\s\s*/ /g' | wc
 # elif ! "${mindir}/bin/minifycss" ./css/cffc-cat.css >./css/cffc-min.css; then 
 #   echo "minification failed for css" >&2
 #   exit 1
