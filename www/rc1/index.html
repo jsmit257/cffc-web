@@ -14,19 +14,18 @@
   <script src="./js/index.js" defer></script>
   <script src="./js/util.js" defer></script>
   <script src="./js/table.js" defer></script>
-  <script src="./js/event.js" defer></script>
-  <script src="./js/notification.js" defer></script>
+  <script src="./js/alert.js" defer></script>
 
   <link rel="manifest" href="./manifest.json">
 
   <link rel="preload" href="./css/images/background/image.avif" as="image">
   <link rel="preload" href="./css/index.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/table.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
-  <link rel="preload" href="./css/event.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/alert.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <noscript>
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/table.css">
-    <link rel="stylesheet" href="./css/event.css">
+    <link rel="stylesheet" href="./css/alert.css">
   </noscript>
 </head>
 
@@ -56,15 +55,12 @@
             <span>deleted</span>
           </label>
         </li>
-
         <li>
-
           <label>
             <input type="checkbox">
             <span>ID</span>
           </label>
         </li>
-
         <li>
           <label for="hide-timestamps">
             <input type="checkbox" id="hide-timestamps">
@@ -83,7 +79,6 @@
             <a href="https://jsmit257.github.io/huautla">(README)</a>
           </div>
         </li>
-
         <li>
           <div class="short-text">CFFC</div>
           <div class="long-text">
@@ -91,7 +86,6 @@
             <a href="https://jsmit257.github.io/centerforfunguscontrol">(README)</a>
           </div>
         </li>
-
         <li>
           <div class="short-text">CFFC-Web</div>
           <div class="long-text">
@@ -100,7 +94,6 @@
             <a href="https://jsmit257.github.io/cffc-web/standalone">(Standalone)</a>
           </div>
         </li>
-
         <li>
           <div class="short-text">Userservice</div>
           <div class="long-text">
@@ -112,7 +105,50 @@
     </div>
   </div>
 
-  <div class="notification"></div>
+  <div class="table alert">
+    <div class="fieldnames">
+      <div name="when">when?</div>
+      <div name="action">doing what?</div>
+      <div name="message">what happened?</div>
+      <div name="severity">how bad?</div>
+      <div name="response">resolved by?</div>
+    </div>
+
+    <div class="rows">
+      <div class="row x-template">
+        <div name="when" class="field short-date" x-formatter="short-date"></div>
+        <div name="action" class="field"></div>
+        <div name="message" class="field" x-formatter="html"></div>
+        <div name="severity" class="field"></div>
+        <div name="response" class="field">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" defer>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register("./js/sw.js").then(
+        (reg) => {
+          console.log("Service worker registration succeeded:", reg);
+        },
+        (err) => {
+          console.error(`Service worker registration failed: ${err}`);
+        },
+      )
+      // try {
+      //   navigator.serviceWorker.register('./js/sw.js')
+      // } catch (ex) {
+      //   $('body>.notification').trigger('activate', [
+      //     'debug',
+      //     'register service worker',
+      //     err,
+      //   ])
+      // }
+    }
+    let stub = localStorage.active || 'lifecycle'
+    setTimeout(_ => $(`body>.menubar>.menubtn[x-stub="${stub}"]`).click(), 150)
+    // $(document).on('ready', _ => $(`body>.menubar>.menubtn[x-stub="${stub}"]`).click())
+  </script>
 </body>
 
 </html>

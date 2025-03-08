@@ -1,5 +1,8 @@
 :root {
-  --bg-color: #0c0f21db;
+  --bg-color: #060617db;
+  --fg-color: aliceblie;
+  /* --bg-color: #2a2d41db; */
+  /* --bg-color: #02000d; */
   --depth-login: 5;
   --depth-info: 3;
   --login-background-color: #0f00255c;
@@ -7,19 +10,24 @@
 
 * {
   box-sizing: border-box;
+  font-variant: slashed-zero;
 }
 
 .selected {
-  text-decoration: underline;
+  background-image: linear-gradient(0deg, transparent, #fff2, transparent);
 }
 
 .workspace,
 .x-template {
   display: none;
+  float: left;
 }
 
 .workspace.active {
   display: block;
+  margin-top: 1em;
+  border-top: 1px solid #5cc0ff8c;
+  padding-top: 1em;
 }
 
 input,
@@ -29,8 +37,9 @@ select {
   border: 0;
   color: white;
   display: inline-block;
-  font-size: inherit;
+  font-size: large;
   margin: 0;
+  outline: none;
   padding: 0;
   text-overflow: ellipsis;
 }
@@ -52,10 +61,9 @@ html {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-blend-mode: hard-light;
+  background-blend-mode: saturation;
   background-blend-mode: hue;
   background-blend-mode: luminosity;
-  /* background-blend-mode: screen; */
   color: aliceblue;
   font-family: system-ui;
   /* font-size: 125%; */
@@ -75,11 +83,11 @@ body {
 body>.login,
 body>.menubar,
 body>.main,
-body>.footer,
-body>.notification {
+body>.footer {
   /* display: none; */
   float: left;
   width: 100%;
+  /* background-color: #fff2; */
 }
 
 body>.menubar {
@@ -94,8 +102,8 @@ body>.menubar {
 body>.menubar::after {
   content: 'content';
   float: right;
-  line-height: 2;
-  margin-top: -1em;
+  /* line-height: 2; */
+  /* margin-top: -1em; */
   /* display: inline-block; */
 }
 
@@ -104,11 +112,11 @@ body>.menubar>.menubtn {
   width: 10%;
   cursor: pointer;
   width: 16%;
-  border-radius: 50%;
+  border-radius: 1em;
 }
 
 body>.menubar>.menubtn.selected {
-  background-image: radial-gradient(ellipse at center top, #0000 50%, #fff6), radial-gradient(ellipse at center bottom, #0000 50%, #fff6);
+  background-image: linear-gradient(0deg, transparent, #fff3 50%, transparent);
   cursor: default;
 }
 
@@ -133,6 +141,10 @@ body>.footer>.cookie-bar {
   border-radius: 0 4em 0 0;
   float: left;
   width: 9em;
+}
+
+body>.footer>.cookie-bar input[type="checkbox"] {
+  appearance: auto;
 }
 
 body>.footer>.cookie-bar>.list::before {
@@ -197,4 +209,11 @@ body>.main.footer>.powered-by:hover>ul .long-text {
 body>.footer>.powered-by>ul .long-text,
 body>.main.footer>.powered-by:hover>ul .short-text {
   display: none;
+}
+
+.rows.ndx {
+  float: left;
+  z-index: 1;
+  /* position: fixed; */
+  /* display: none; */
 }

@@ -31,10 +31,16 @@ $(_ => {
   })
 
   $(document.body)
+    // different ways to format text in a div
     .on('text', 'div', (e, t) => {
       e.stopPropagation()
 
       $(e.currentTarget).text(t)
+    })
+    .on('html', 'div', (e, t) => { // html injection??
+      e.stopPropagation()
+
+      $(e.currentTarget).html(t)
     })
     .on('fixed', 'div', (e, v, r = 2) => {
       e.stopPropagation()
@@ -55,6 +61,29 @@ $(_ => {
       e.stopPropagation()
 
       let $fld = $(e.currentTarget).data('original', v)
-      $fld.trigger($fld.attr('x-formatter') || 'text', v)
+      $fld.trigger($fld.attr('x-formatter') ?? 'text', v)
     })
+
+    // custom select/render options per-entity type
+    .on('extend', 'select[render="x-basic"]>option', (e, data) => $(e.currentTarget)
+      .text(data))
+    .on('extend', 'select[render-attr]>option', (e, data) => $(e.currentTarget)
+      .text(data[$(e.currentTarget).parent().attr('render-attr')]))
+    .on('extend', 'select[render="strain"]>option', (e, data) => $(e.currentTarget)
+      .text(`${data.name} | ${data.species} | ${data.vendor.name} | ${data.ctime
+        .replace('T', ' ')
+        .slice(0, 16)}`))
+    .on('extend', 'select[render="substrate"]>option', (e, data) => $(e.currentTarget)
+      .text(`${data.name} | Vendor: ${(data.vendor || { name: 'interim' }).name}`))
+    .on('extend', 'select[render="lifecycle"]>option', (e, data) => $(e.currentTarget)
+      .text(data.location))
+    .on('extend', 'select[render="event"]>option', (e, data) => $(e.currentTarget)
+      .html(`${data.event_type.name} &bull; ${data.mtime.slice(0, 19).replace(/T/, ' ')}`))
+    .on('extend', 'select[render="eventtype"]>option', (e, data) => $(e.currentTarget)
+      .attr({
+        severity: data.severity,
+        stage: data.stage.name,
+      })
+      .text(data.name))
+
 })

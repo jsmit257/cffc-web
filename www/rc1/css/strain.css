@@ -1,0 +1,53 @@
+:root {
+  --strain-rows-width: 66%;
+  /* --attr-table-width: calc(100% - var(--strain-rows-width)); not working right */
+  --attr-table-width: 34%;
+}
+
+.workspace.strain>.table.strain>.rows {
+  width: var(--strain-rows-width);
+  float: left;
+}
+
+.table.strain>.columns>.name,
+.table.strain>.rows>.row>.field.name {
+  --width: 23%;
+}
+
+.table.strain>.columns>.species,
+.table.strain>.rows>.row>.field.species {
+  --width: 23%;
+}
+
+.table.strain>.columns>.vendor,
+.table.strain>.rows>.row>.field.vendor {
+  --width: 30%;
+}
+
+.table.strain>.columns>.ctime,
+.table.strain>.rows>.row>.field.ctime {
+  --width: 22%;
+  text-align: center;
+}
+
+.table.strain>.columns>.column {
+  width: calc(var(--width) *2 / 3);
+}
+
+.table.strain>.rows>.row>.field {
+  width: calc(var(--width) * 1.01);
+}
+
+.table.strain>.columns>.saheader {
+  width: var(--attr-table-width);
+}
+
+.table.strain>.table.strainattributes {
+  float: right;
+  width: var(--attr-table-width);
+}
+
+.table.strain>.table.strainattributes>.columns>.column,
+.table.strain>.table.strainattributes>.rows>.row>.field {
+  width: 50%;
+}

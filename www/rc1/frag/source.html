@@ -1,0 +1,43 @@
+<div class="table sources" name="sources" x-formatter="sources" breadcrumb="source">
+  <div class="rows">
+    <div class="row origin-filter">
+      <label class="field">
+        <span>Type</span>
+        <select class="type static" name="type" tabindex="0">
+          <option value="Spore">Spore</option>
+          <option value="Clone">Clone</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row x-template">
+      <div class="buttonbar rowbar">edit<br>del</div>
+
+      <label class="field origin">
+        <input type="radio" radio-group="origin" name="origin" value="strain" tabindex="0">
+        <span>Vendor</span>
+      </label>
+      <label class="field origin">
+        <input type="radio" radio-group="origin" name="origin" value="event" tabindex="0">
+        <span>Local</span>
+      </label>
+
+      <label class="field lifecycle">
+        <span>Lifecycle</span>
+        <select name="lifecycle" x-fetch="lifecycles" x-target-this render="lifecycle" tabindex="0"></select>
+      </label>
+
+      <label class="field event">
+        <span>Event</span>
+        <select name="event" name="events" x-fetch-multi render="event" tabindex="0"></select>
+      </label>
+
+      <label class="field strain">
+        <span>Strain</span>
+        <select name="strain" x-fetch="strains" x-target-this render="strain" tabindex="0"></select>
+      </label>
+    </div>
+
+    <div class="buttonbar" style="font-size:larger;">buttonbar</div>
+  </div>
+</div>

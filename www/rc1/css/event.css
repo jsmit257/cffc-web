@@ -1,0 +1,64 @@
+.child-table {
+  float: left;
+  width: 100%;
+}
+
+.table.events>.columns>.full {
+  width: 100%;
+}
+
+.table.events>.columns>.eventtype,
+.table.events>.rows>.row>.eventtype {
+  /* background-color: #f883; */
+  width: 23%;
+}
+
+.table.events>.columns>.eventattrs,
+.table.events>.rows>.row>.eventattrs {
+  /* background-color: #8f83; */
+  display: inline-block;
+  width: 16%;
+  float: left;
+  text-align: center;
+}
+
+.table.events>.columns>.severity::after,
+.table.events>.rows>.row>.severity::after {
+  content: '/';
+}
+
+.table.events>.columns>.stage,
+.table.events>.rows>.row>.stage {
+  /* background-color: #88f3; */
+  display: inline-block;
+  width: 8%;
+  float: left;
+  /* padding-left: .25em; */
+  text-align: left;
+}
+
+.table.events>.columns>.temperature,
+.table.events>.rows>.row>.temperature {
+  /* background-color: #f8f3; */
+  width: 7%;
+}
+
+.table.events>.columns>.humidity,
+.table.events>.rows>.row>.humidity {
+  /* background-color: #ff83; */
+  width: 7%;
+}
+
+.table.events>.columns>.mtime,
+.table.events>.rows>.row>.mtime {
+  background-color: #ff83;
+  display: none;
+  width: 10%;
+}
+
+.table.events>.columns>.ctime,
+.table.events>.rows>.row>.ctime {
+  /* background-color: #fff3; */
+  width: 15%;
+  text-align: center;
+}

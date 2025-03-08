@@ -4,16 +4,23 @@ label.field {
 
 .field>input,
 .field>select {
-  /* width: -webkit-fill-available; */
   float: left;
   font-family: system-ui;
+  line-height: inherit;
+  margin: 0;
+  position: relative;
+  width: 100%;
+  z-index: -1;
 }
 
-.table,
-.table>.columns,
-.table>.rows,
-.table>.buttonbar {
+.editing .field>input,
+.editing .field>select {
+  z-index: initial;
+}
+
+.table>* {
   float: left;
+  line-height: 2;
   width: 100%;
 }
 
@@ -26,33 +33,38 @@ label.field {
 }
 
 .table>.rows>.row {
-  line-height: 1.5;
+  border-radius: 1em;
+  /* line-height: 1.5; */
   float: left;
   width: 100%;
+  position: relative;
 }
 
 .table>.rows>.row>.static,
 .table>.rows>.row>.field {
   cursor: default;
   float: left;
+  padding-left: .5em;
 }
 
 .singleton>.field {
-  text-align: left;
-  float: left;
-  width: 100%;
+  clear: both;
   display: flex;
-  flex-direction: row;
   flex-wrap: nowrap;
-  align-items: baseline;
+  text-align: left;
+  width: 100%;
 }
 
 .singleton>.field>span {
+  display: inline-block;
+  float: none;
   width: 7em;
 }
 
 .singleton>.field>div,
 .singleton>.field>select,
 .singleton>.field>input {
-  float: left;
+  display: inline-block;
+  /* float: left; */
+  width: auto;
 }

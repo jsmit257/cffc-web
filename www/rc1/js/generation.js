@@ -4,8 +4,9 @@
   let ndx = `${table}>.rows.ndx`
   let ndxrows = `${ndx}>.row`
   let gen = `${table}>.singleton.generation`
-  let gensrc = `${gen}>.table.sources`
-  let gensrcrows = `${gensrc}>.rows>.row.record`
+  let progeny = `${gen}>.field>.progeny`
+  let srctable = `${table}>.workspace.sources>.table.sources`
+  let srcrows = `${srctable}>.rows>.row.record`
   let events = `${table}>.child-table>.events>.rows`
   let eventrows = `${events}>.row.record`
 
@@ -13,43 +14,97 @@
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget) // create events
-        .find('>.table.generation>.events')
+      $(`body>${progeny}`)
+        // .attr('x-fetch', 'strains')
+        .trigger('fetch')
+      // .removeAttr('x-fetch')
+
+      $(e.currentTarget)
+        .find('>.table.generation>.child-table.sources')
         .trigger('add-child')
+
+      $(e.currentTarget)
+        .find('>.table.generation>.child-table.events')
+        .trigger('add-child')
+    })
+    .on('fetch', `>${progeny}`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget)
+        .prepend($('<option>')
+          .addClass('permanent')
+          .val('#')
+          .text('none'))
     })
     .on('click', `>${ndxrows}:not(.selected)`, e => {
       e.stopPropagation()
 
       let url = `generation/${$(e.currentTarget).data('id')}`
-      fetch(url)
-        .then(async resp => await resp.json())
-        .then(json => $(`body>${gen}`)
+      fetch(url).then(async resp => {
+        if (resp.status !== 200) throw {
+          status: resp.status,
+          msg: await resp.text()
+        }
+        return resp.json()
+      }).then(json => {
+        return {
+          plating_substrate: {
+            id: '#',
+            name: 'n/a',
+            severity: 'n/a',
+            stage: {
+              name: 'n/a',
+            }
+          },
+          events: [],
+          ...json,
+        }
+      }).then(json => {
+        $(`body>${eventrows}`).remove()
+
+        // console.log('im adding more records in main', json)
+        $(`body>${gen}`)
           .data(json)
           .trigger('render-record', json)
-          .data('events') || [])
-        .then(evts => {
-          $(`body>${eventrows}`).remove()
-          $(`body>${events}`).trigger('send', evts)
-        })
-        .catch(ex => $('.notification').trigger('app-error', [
-          `fetching index rows '${url}`,
-          ex,
-        ]))
+          .data('events')
+        return json.events
+      }).then(evts => {
+        console.log('im adding more records', evts)
+        $(`body>${events}`).trigger('send', evts)
+      }).catch(ex => $('.alert').trigger('app-error', [
+        'error',
+        `fetching index rows '${url} statusCode: ${ex.status}`,
+        ex.message ?? ex,
+      ]))
     })
 
-    .on('render-record', `>${gensrcrows}`, (e, data) => {
+    .on('render-record', `>${gen}`, (e, data) => {
       e.stopPropagation()
 
-      if ($('[name="post-param"]')
-        .val(data.lifecycle ? 'event' : 'strain')
-        .val() === 'event') $(e.currentTarget)
-          .find('>label>select[name="event"]')
-          .trigger('send', data.lifecycle.events)
-          .val(data.lifecycle.events[0].id)
+      let url = `/strain/${data.id}/generation`
+      fetch(url).then(async resp => {
+        switch (resp.status) {
+          case 200: return await resp.json()
+          case 204: return { id: '#' }
+          default: throw {
+            status: resp.status,
+            message: await resp.text(),
+          }
+        }
+      }).then(json => {
+        $(`body>${progeny}`).val(json?.id)
+      }).catch(ex => $('.alert').trigger('app-error', [
+        'error',
+        `GET ${url} statusCode: ${ex.status}`,
+        ex.message ?? ex,
+      ]))
 
-      // $(e.currentTarget)
-      //   .find('>label>input, >label>select')
-      //   .trigger('change')
+      $(`body>${srcrows}`).remove()
+
+      $(`body>${srctable}>.rows`)
+        .send(data.sources)
+        .find('.row:not(.x-template) input, .row:not(.x-template) select')
+        .trigger('change')
     })
 
     // called from tablejs's render-record: div.trigger(format, v) when render=sources
@@ -60,16 +115,5 @@
         .map((_, v) => v.strain.name)
         .get()
         .join(' + ') || 'None')
-    })
-    .on('sources', `>${gen}>.sources`, (e, ...sources) => {
-      e.stopPropagation()
-
-      $(`body>${gensrcrows}`).remove()
-
-      $(e.currentTarget)
-        .find('>.rows')
-        .send(sources)
-        .find('.row:not(.x-template) input, .row:not(.x-template) select')
-        .trigger('change')
     })
 })()

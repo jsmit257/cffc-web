@@ -68,7 +68,7 @@ body>.background-image {
 }
 
 body>.notification {
-  /* display: none; */
+  display: none;
 }
 
 body>.main {

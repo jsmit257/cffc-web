@@ -1,4 +1,5 @@
-<div class="table lifecycle" x-fetch="lifecycles" x-target=">.rows.ndx" breadcrumb="lifecycle">
+<div class="table lifecycle" x-fetch="lifecycles" x-target=">.rows.ndx" breadcrumb="lifecycle
+  ">
   <div class="columns">
     <div class="column full">
       <span class="title">Placeholder</span>&nbsp;<span class="status"></span>
@@ -49,7 +50,7 @@
 
     <label class="field hover">
       <span>Grain</span>
-      <select class="grain_substrate" name="grain_substrate" x-fetch-multi="substrate" render="substrate" readonly
+      <select class="grain_substrate" name="grain_substrate" x-fetch-multi="substrates" render="substrate" readonly
         tabindex="0"></select>
     </label>
 
@@ -60,7 +61,7 @@
 
     <label class="field hover">
       <span>Bulk</span>
-      <select class="bulk_substrate" name="bulk_substrate" x-fetch-multi="substrate" render="substrate" readonly
+      <select class="bulk_substrate" name="bulk_substrate" x-fetch-multi="substrates" render="substrate" readonly
         tabindex="0"></select>
     </label>
 
@@ -80,7 +81,7 @@
     </label>
   </div>
 
-  <div class="child-table events" x-child="event"></div>
-
   <div class="buttonbar"></div>
+
+  <div class="child-table events" x-child="event"></div>
 </div>

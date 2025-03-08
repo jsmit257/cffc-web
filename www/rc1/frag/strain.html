@@ -4,24 +4,25 @@
     <div class="column species" sort-key="species">Species</div>
     <div class="column vendor" sort-key="vendor">Vendor</div>
     <div class="column ctime" sort-key="ctime">Created At</div>
+    <div class="column saheader">Strain Attributes</div>
   </div>
 
   <div class="rows">
     <div class="row hover x-template">
-      <label class="field">
+      <label class="field name">
         <input class="name" name="name" readonly tabindex="0">
       </label>
 
-      <label class="field">
+      <label class="field species">
         <input class="species" name="species" readonly tabindex="0">
       </label>
 
-      <label class="field">
+      <label class="field vendor">
         <select class="vendor" name="vendor" x-fetch="vendors" x-target-this render-attr="name" readonly
           tabindex="0"></select>
       </label>
 
-      <label class="field">
+      <label class="field ctime">
         <div class="ctime short-date" x-formatter="short-date" name="ctime"></div>
       </label>
     </div>

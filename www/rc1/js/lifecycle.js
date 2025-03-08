@@ -19,36 +19,44 @@
         .find('>.table.lifecycle>.events')
         .trigger('add-child')
     })
-    .on('click', `>${ndxrows}`, e => {
+    .on('click', `>${ndxrows}:not(.selected)`, e => {
       e.stopPropagation()
 
       let url = `lifecycle/${$(e.currentTarget).data('id')}`
-      fetch(url)
-        .then(async resp => await resp.json())
-        .then(lc => {
-          return {
-            yield: 0,
-            count: 0,
-            gross: 0,
-            bulk_cost: 0,
-            strain_cost: 0,
-            grain_cost: 0,
-            ...lc,
-          }
-        })
-        .then(lc => $(`body>${lifecycle}`)
+      fetch(url).then(async resp => {
+        if (resp.status !== 200) throw {
+          status: resp.status,
+          msg: await resp.text()
+        }
+        return resp.json()
+      }).then(lc => {
+        return {
+          yield: 0,
+          count: 0,
+          gross: 0,
+          bulk_cost: 0,
+          strain_cost: 0,
+          grain_cost: 0,
+          events: [],
+          ...lc,
+        }
+      }).then(lc => {
+        $(`body>${eventrows}`).remove()
+
+        return $(`body>${lifecycle}`)
           .data(lc)
           .trigger('render-record', lc)
-          .data('events'))
-        .then(evts => {
-          $(`body>${eventrows}`).remove()
-          $(`body>${events}`).trigger('send', evts)
-        })
-        .catch(ex => $('.notification').trigger('app-error', [
-          `fetching index rows '${url}`,
-          ex,
-        ]))
+          .data('events')
+      }).then(evts => {
+        console.log('im adding more records', evts)
+        $(`body>${events}`).trigger('send', evts)
+      }).catch(ex => $('.alert').trigger('app-error', [
+        'error',
+        `fetching index rows '${url} statusCode: ${ex.status}`,
+        ex.message || ex,
+      ]))
     })
+    .on('clear', `>${ndx}`, e => $(`body>${lifecycle}`).trigger('clear'))
 
     .on('change', `>${yield}, >${count}, >${gross}`, e => {
       let $fields = $(`body>${lifecycle}`).find('>label')

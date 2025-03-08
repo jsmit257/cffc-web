@@ -27,7 +27,7 @@
       fetch(url)
         .then(async resp => await resp.json())
         .then(json => $(`body>${attrs}`).trigger('send', json.attributes))
-        .catch(ex => $('.notification')
+        .catch(ex => $('.alert')
           .trigger('app-error', [`fetching index rows '${url}`, ex]))
     })
 })()
