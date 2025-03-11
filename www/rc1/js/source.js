@@ -51,7 +51,7 @@
       //   .find('>label>input, >label>select')
       //   .trigger('change')
     })
-    .on('post-data', `${srcrows}.selected`, (e, data) => {
+    .on('post-data', `${srcrows}.selected`, (e, cfg) => {
       e.stopPropagation()
 
       let endpoint = $(e.currentTarget)
@@ -63,16 +63,21 @@
         .first()
         .prev('.singleton')
         .attr('id')
-      data._url = `generatation/${genid}/${endpoint}`
 
-      $(e.currentTarget).trigger('marshal', data)
-      delete data.lifecycle
-      delete data[e.currentTarget.id]
+      cfg._url = `generatation/${genid}/sources/${endpoint}`
+      cfg.data = {
+        type: $(e.currentTarget.parentNode)
+          .find('>.origin-filter>label>[name="type"]').val(),
+      }
+
+      $(e.currentTarget).trigger('marshal', cfg.data)
+      delete cfg.data.lifecycle
+      delete cfg.data[e.currentTarget.id]
 
       if (endpoint === 'event') {
-        delete data.strain
+        delete cfg.data.strain
       } else {
-        delete data.event
+        delete cfg.data.event
       }
     })
 })()

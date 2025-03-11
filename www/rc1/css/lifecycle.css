@@ -1,0 +1,17 @@
+.table.lifecycle {
+
+  &>.rows.ndx>.row {
+    &>.mtime {
+      text-align: center;
+      width: 20%;
+    }
+
+    &>.location {
+      width: 50%;
+    }
+  }
+
+  &>.singleton.lifecycle {
+    width: 70%;
+  }
+}

@@ -1,0 +1,36 @@
+.buttonbar {
+  &>.button {
+    border-radius: .75em;
+    background-image: radial-gradient(circle at center, #0f09, transparent);
+    width: 2em;
+    height: 2em;
+    float: left;
+    margin-left: 1em;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  &>.button.delete::before {
+    content: 'del';
+  }
+
+  &>.button.add::before {
+    content: 'add';
+  }
+
+  &>.button.update::before {
+    content: 'upd';
+  }
+
+  &>.button.refresh::before {
+    content: 'ref';
+  }
+
+  &>.button.ok::before {
+    content: 'ok';
+  }
+
+  &>.button.cancel::before {
+    content: 'can';
+  }
+}

@@ -1,3 +1,130 @@
-.child-table>.table.ingredient .no-sub {
-  display: none;
+:root {
+  --ingredients-width: 32%;
+  --substrates-width: 68%;
+  /* --name-color: red; */
+  /* --type-color: blue; */
+  /* --vendor-color: green; */
+}
+
+.workspace.substrate>.table.substrate {
+  & :is(.columns, .rows>.row) {
+    &>.name {
+      background-color: var(--name-color);
+    }
+
+    &>.type {
+      background-color: var(--type-color);
+    }
+
+    &>.vendor {
+      background-color: var(--vendor-color);
+    }
+  }
+
+  &>.columns {
+    &>.name {
+      width: calc(var(--substrates-width) * .5);
+    }
+
+    &>.type {
+      width: calc(var(--substrates-width) * .25);
+    }
+
+    &>.vendor {
+      width: calc(var(--substrates-width) * .25);
+    }
+
+    &>.ingredient {
+      width: var(--ingredients-width);
+    }
+  }
+
+  &>.rows,
+  &>.workspace.ingredients {
+    float: left;
+    height: 20em;
+  }
+
+  &>.rows {
+    width: var(--substrates-width);
+
+    &>.row.record {
+      &>.name {
+        width: 50%;
+      }
+
+      &>.type {
+        width: 25%;
+      }
+
+      &>.vendor {
+        width: 25%;
+      }
+    }
+  }
+
+  &>.workspace.ingredients {
+    border: 0;
+    /* margin-top: 0; */
+    /* padding-top: 0; */
+    width: var(--ingredients-width);
+
+    &>.table.ingredient {
+      /* background-color: #f001; */
+      height: 100%;
+      width: 100%;
+
+      &>.columns {
+        &>.name {
+          width: 100%;
+        }
+      }
+
+      &>.rows {
+        /* height: -webkit-fill-available; */
+
+        &>.row.record {
+          display: none;
+
+          &>.name {
+            width: 100%;
+          }
+        }
+
+        &>.row.record.selected {
+          display: revert;
+        }
+      }
+
+      &>.buttonbar {
+        font-weight: bolder;
+        width: 100%;
+        text-align: center;
+
+        &>.collapse {
+          background-image: radial-gradient(circle at center, #f00b, transparent);
+          display: none;
+          font-family: sans-serif;
+        }
+      }
+    }
+
+    &>.table.selecting>.rows>.row.record {
+      display: revert;
+    }
+
+    &>.table.ingredient:not(.selecting) .row.record.selected {
+      background-image: none;
+    }
+
+    &>.table.ingredient.selecting>.buttonbar {
+      &>.collapse {
+        display: block;
+      }
+
+      &>.expand {
+        display: none;
+      }
+    }
+  }
 }

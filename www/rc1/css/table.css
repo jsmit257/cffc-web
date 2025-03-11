@@ -5,7 +5,6 @@ label.field {
 .field>input,
 .field>select {
   float: left;
-  font-family: system-ui;
   line-height: inherit;
   margin: 0;
   position: relative;
@@ -30,6 +29,18 @@ label.field {
 
 .table>.columns>.column {
   float: left;
+  text-decoration: underline;
+}
+
+.table>.rows {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.rows.ndx {
+  float: left;
+  overflow-x: clip;
+  overflow-y: auto;
 }
 
 .table>.rows>.row {
@@ -55,16 +66,21 @@ label.field {
   width: 100%;
 }
 
-.singleton>.field>span {
-  display: inline-block;
-  float: none;
-  width: 7em;
-}
-
-.singleton>.field>div,
+.singleton>.field>div:is(.dry-weight, .per-kilo),
 .singleton>.field>select,
 .singleton>.field>input {
   display: inline-block;
-  /* float: left; */
   width: auto;
+}
+
+.singleton>.field>div.label {
+  display: inline-block;
+  width: 7em;
+  padding-left: 1em;
+}
+
+.singleton>.field>.short-date {
+  /* display: inline-block; */
+  width: auto;
+  /* font-size: initial; */
 }

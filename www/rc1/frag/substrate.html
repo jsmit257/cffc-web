@@ -14,16 +14,17 @@
       </label>
     </div>
     <div class="column vendor" sort-key="vendor">Vendor</div>
+    <div class="column ingredient">Ingredients</div>
   </div>
 
   <div class="rows">
     <div class="row hover x-template">
-      <label class="field">
+      <label class="field name">
         <input class="name" name="name" tabindex="0">
       </label>
 
-      <label class="field" render="x-basic">
-        <select class="type" name="type" tabindex="0">
+      <label class="field type" render="x-basic">
+        <select class="type static" name="type" tabindex="0">
           <option value="plating">Plating</option>
           <option value="liquid">Liquid</option>
           <option value="grain">Grain</option>
@@ -31,13 +32,18 @@
         </select>
       </label>
 
-      <label class="field">
+      <label class="field vendor">
         <select class="vendor" name="vendor" x-fetch="vendors" x-target-this render-attr="name" tabindex="0"></select>
       </label>
     </div>
   </div>
 
-  <div class="workspace ingredients" x-child="ingredient"></div>
+  <div class="child-table workspace active ingredients" x-child="ingredient"></div>
 
-  <div class="buttonbar"></div>
+  <div class="buttonbar">
+    <div class="button default delete icon">&nbsp;</div>
+    <div class="button default add icon">&nbsp;</div>
+    <div class="button default ok icon">&nbsp;</div>
+    <div class="button default cancel icon">&nbsp;</div>
+  </div>
 </div>

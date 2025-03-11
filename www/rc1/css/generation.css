@@ -1,6 +1,9 @@
 .table.generation>.rows.ndx>.row.record>div {
   float: left;
   width: 50%;
+  z-index: -1;
+  position: relative;
+  padding-left: 1em;
 }
 
 .table.generation>.singleton.generation,

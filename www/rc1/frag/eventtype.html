@@ -1,4 +1,4 @@
-<div class="table eventtype" x-fetch="eventtypes" x-target=".rows">
+<div class="table eventtype" x-fetch="eventtypes" x-target=".rows" breadcrumb="eventtype">
   <div class="columns">
     <div class="column name" sort-key="name">Name</div>
     <div class="column severity" sort-key="severity">Severity</div>
@@ -7,11 +7,11 @@
 
   <div class="rows">
     <div class="row hover x-template">
-      <label class="field">
+      <label class="field name">
         <input class="name" name="name" readonly tabindex="0">
       </label>
 
-      <label class="field">
+      <label class="field severity">
         <select class="severity" name="severity" render="x-basic" readonly tabindex="0">
           <option value=Begin>Begin</option>
           <option value=Info>Info</option>
@@ -23,7 +23,7 @@
         </select>
       </label>
 
-      <label class="field">
+      <label class="field stage">
         <select class="stages" name="stage" x-fetch="stages" x-target-this render-attr="name" readonly
           tabindex="0"></select>
       </label>

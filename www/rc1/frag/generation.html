@@ -8,29 +8,29 @@
 
   <div class="singleton generation">
     <label class="field hover">
-      <span>Plating</span>
+      <div class="label">Plating</div>
       <select class="plating substrate" name="plating_substrate" x-fetch-multi="substrates" render="substrate"
         tabindex="0"></select>
     </label>
 
     <label class="field hover">
-      <span>Liquid</span>
+      <div class="label">Liquid</div>
       <select class="liquid substrate" name="liquid_substrate" x-fetch-multi="substrates" render="substrate"
         tabindex="0"></select>
     </label>
 
     <label class="field no-edit hover" hover="go to strain">
-      <span>Progeny</span>
+      <div class="label">Progeny</div>
       <select class="strains progeny" x-fetch="strains" x-target-self render="strain" tabindex="0"></select>
     </label>
 
     <label class="field hover">
-      <span>Modified</span>
+      <div class="label">Modified</div>
       <div class="mtime short-date" name="mtime" x-formatter="short-date"></div>
     </label>
 
     <label class="field hover">
-      <span>Created</span>
+      <div class="label">Created</div>
       <div class="ctime short-date" name="ctime" x-formatter="short-date"></div>
     </label>
   </div>

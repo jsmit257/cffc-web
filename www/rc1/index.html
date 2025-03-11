@@ -15,6 +15,7 @@
   <script src="./js/util.js" defer></script>
   <script src="./js/table.js" defer></script>
   <script src="./js/alert.js" defer></script>
+  <script src="./js/button.js" defer></script>
 
   <link rel="manifest" href="./manifest.json">
 
@@ -22,10 +23,12 @@
   <link rel="preload" href="./css/index.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/table.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/alert.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/button.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <noscript>
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/table.css">
     <link rel="stylesheet" href="./css/alert.css">
+    <link rel="stylesheet" href="./css/button.css">
   </noscript>
 </head>
 
@@ -128,26 +131,11 @@
   <script type="text/javascript" defer>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register("./js/sw.js").then(
-        (reg) => {
-          console.log("Service worker registration succeeded:", reg);
-        },
-        (err) => {
-          console.error(`Service worker registration failed: ${err}`);
-        },
-      )
-      // try {
-      //   navigator.serviceWorker.register('./js/sw.js')
-      // } catch (ex) {
-      //   $('body>.notification').trigger('activate', [
-      //     'debug',
-      //     'register service worker',
-      //     err,
-      //   ])
-      // }
+        (reg) => console.log("Service worker registered:", reg),
+        (err) => console.error(`Service worker registration failed: ${err}`))
     }
-    let stub = localStorage.active || 'lifecycle'
-    setTimeout(_ => $(`body>.menubar>.menubtn[x-stub="${stub}"]`).click(), 150)
-    // $(document).on('ready', _ => $(`body>.menubar>.menubtn[x-stub="${stub}"]`).click())
+    let slug = localStorage.active || 'lifecycle'
+    setTimeout(_ => $(`body>.menubar>.menubtn[x-stub="${slug}"]`).click(), 150)
   </script>
 </body>
 

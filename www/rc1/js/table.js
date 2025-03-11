@@ -23,7 +23,7 @@ $(_ => {
       $(e.currentTarget).removeData().find('.per-kilo, .dry-weight, div[name]')
         .text('')
     })
-    .on('fetch', '.table[x-fetch], select[x-fetch]', (e, id) => {
+    .on('fetch', '.table[x-fetch], select[x-fetch]', (e, resolve = _ => _) => {
       e.stopPropagation()
 
       let url = e.currentTarget.attributes['x-fetch'].value
@@ -43,12 +43,9 @@ $(_ => {
           }
 
           $target.trigger('clear')
-          $target
-            .trigger('send', resp)
-            .find(`#${id}`)
-            .click()
+          resolve($target.trigger('send', resp))
         })
-        .catch(ex => $('.alert').trigger('alert', [
+        .catch(ex => $('.alert').trigger('app-error', [
           'error',
           `fetching table data: '${url}' statusCode: ${ex.status}`,
           ex.message ?? ex,
@@ -159,7 +156,13 @@ $(_ => {
 
 
     // update actions
-    .on('new-row', '.table .rows', e => {
+    .on('remove-record', '.table .rows>.row.selected', e => {
+      if ($(e.currentTarget).prev('.row.record').click().length === 0) {
+        $(e.currentTarget).next('.row.record').click()
+      }
+      $(e.currentTarget).remove()
+    })
+    .on('new-row', '.table>.rows', e => {
       e.stopPropagation()
 
       localStorage.lastid = $(e.currentTarget)
@@ -167,29 +170,21 @@ $(_ => {
         .removeClass('selected')
         .attr('id')
 
+      $(e.currentTarget.parentNode).addClass('adding')
+
       $(e.currentTarget)
         .find('>.row.x-template')
         .clone(true, true)
-        .toggleClass('x-template record selected adding editing')
+        .toggleClass('x-template record selected adding')
         .prependTo(e.currentTarget)
-        .trigger('enable-row')
+        .trigger('enable-record')
     })
-    .on('enable-row', '.singleton', e => {
+    .on('enable-record', '.table>.rows>.selected, .table>.singleton', e => {
       e.stopPropagation()
 
-      $(e.currentTarget).trigger('init-inputs', $(e.currentTarget))
-    })
-    .on('enable-row', '.table .rows', e => {
-      e.stopPropagation()
+      let $row = $(e.currentTarget).addClass('editing')
 
-      $(e.currentTarget).trigger('init-inputs', $(e.currentTarget)
-        .find('>.row.selected')
-        .addClass('editing'))
-    })
-    .on('init-inputs', '.table .rows, .singleton', (e, row) => {
-      $(e.currentTarget).parents('.table').first().addClass('editing')
-
-      let $row = $(row)
+      $row.parents('.table').first().addClass('editing')
 
       $row.find('[x-fetch]').trigger('fetch')
 
@@ -199,88 +194,47 @@ $(_ => {
         .get()
         .filter((v, i, a) => a.lastIndexOf(v) <= i)
         .forEach(url => $row.trigger('fetch-multi', url))
+
+      $row.find('input, select')
+        .first()
+        .focus()
     })
-    .on('disable-row', '.table.editing .rows', e => {
+    .on('end-edit', '.table.editing', (e, data) => {
       e.stopPropagation()
 
       $(e.currentTarget)
-        .parents('.editing')
-        .first()
-        .removeClass('adding editing')
+        .removeClass('editing adding')
+        .find('.row.editing')
+        .removeClass('editing adding')
+        .trigger('render-record', data)
     })
-    .on('disable-row', '.table.adding .rows', e => {
+    .on('default-update', '.table>.rows>.row.editing', (e, url, params) => {
       e.stopPropagation()
-
-      // something about localStorage.lastid, but it seems dangerous
-      // $(e.currentTarget).find(`#${???}`).trigger('select')
-
-      $(e.currentTarget).find('>.row.selected').remove()
-    })
-    .on('disable-row', '.table.editing:not(.adding) .rows', e => {
-      e.stopPropagation()
-
-      let $row = $(e.currentTarget)
-        .find('>.row.editing')
-        .removeClass('adding editing')
-
-      $row.trigger('render-record', $row.data())
-    })
-    .on('update-row', '.table .rows>.row.editing:not(.adding)', e => {
-      e.stopPropagation()
-
-      let $row = $(e.currentTarget)
-        .find('>.row.selected')
-
-      let url = `'foobar'`
-      let data = { ...$row.data() }
-      // 1/render-row
-
-      $(e.currentTarget).trigger('private-update', [url, {
-        method: 'POST',
-        data,
-      }])
-    })
-    .on('update-row', '.table .rows>.row.adding', e => {
-      e.stopPropagation()
-
-      let $row = $(e.currentTarget)
-        .find('>.row.selected')
-
-      let url = `selected ${$row.attr('id')}`
-      let data = {}
-      // 1/render-row
-
-      $(e.currentTarget).trigger('private-update', [url, {
-        method: 'POST',
-        data,
-      }])
-    })
-    .on('private-update', '.table .rows>.row.editing', (e, url, params) => {
-      e.stopPropagation()
-
-      let $row = $(e.currentTarget).find('>.row.selected')
 
       fetch(url, params).then(async resp => {
         switch (resp.status) {
           case 200:
-            $row.data(data).trigger('update-response', await resp.json())
+          case 201:
+            $(e.currentTarget).trigger('end-edit', await resp.json())
           case 204:
-            // $(e.currentTarget).trigger('disable-row')
             break
-          default:
-            throw {
-              status: resp.status,
-              message: await resp.text(),
-            }
+          default: throw {
+            status: resp.status,
+            message: await resp.text(),
+          }
         }
-      }).catch(ex => $('.alert').trigger('app-error', [
-        'error',
-        `POST ${url} statusCode: ${ex.status || 'unsent'}`,
-        ex.message ?? ex,
-        params,
-      ])).finally(_ => $(e.currentTarget).trigger('disable-row'))
+      }).catch(ex => {
+        $(e.currentTarget).trigger('end-edit', $(e.currentTarget).data())
+
+        $('.alert').trigger('app-error', [
+          'error',
+          `POST ${url} statusCode: ${ex.status || 'unsent'}`,
+          ex.message ?? ex,
+          params,
+        ])
+      }).finally(_ => $(e.currentTarget).trigger('disable-row'))
     })
-    .on('private-remove', '.table .rows>.row.record.selected', (e, url) => {
+    .on('default-remove', '.table .rows>.row.record.selected', (e, url) => {
       e.stopPropagation()
 
       fetch(url, { method: 'DELETE' })
@@ -289,6 +243,7 @@ $(_ => {
             status: resp.status,
             message: await resp.text(),
           }
+          $(e.currentTarget).trigger('remove-record')
         })
         .catch(ex => $('.alert').trigger('app-error', [
           'error',
@@ -296,17 +251,21 @@ $(_ => {
           ex.message ?? ex,
         ]))
     })
-    .on('marshal', (e, data) => {
+    .on('marshal', '.row, .singleton', (e, data) => {
       e.stopPropagation()
 
       $(e.target)
-        .find('input[name], select[name]')
+        .find('>label>input[name], >label>select[name].static')
         .each((_, v) => data[v.name] = v.value)
+
+      $(e.target)
+        .find('>label>select[name]:not(.static)>option:selected')
+        .each((_, v) => data[v.parentNode.name] = $(v).data())
     })
 
 
     // UI actions
-    .on('select', '.row.record', e => {
+    .on('select', '.table:not(.editing, .adding) .row.record:not(.managed)', e => {
       e.stopPropagation()
 
       $(e.currentTarget.parentNode)

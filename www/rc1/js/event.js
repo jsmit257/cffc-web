@@ -7,7 +7,6 @@
       e.stopPropagation()
 
       let $selected = $(e.currentTarget).find('option:selected')
-
       $(e.currentTarget)
         .parents('.row')
         .first()
@@ -19,5 +18,4 @@
 
       $(e.currentTarget).trigger('marshal', data)
     })
-  // .on('render-record', `${datarows}`, e => { })
 })()

@@ -74,6 +74,7 @@ $(_ => {
         .replace('T', ' ')
         .slice(0, 16)}`))
     .on('extend', 'select[render="substrate"]>option', (e, data) => $(e.currentTarget)
+      .attr('type', data.type)
       .text(`${data.name} | Vendor: ${(data.vendor || { name: 'interim' }).name}`))
     .on('extend', 'select[render="lifecycle"]>option', (e, data) => $(e.currentTarget)
       .text(data.location))

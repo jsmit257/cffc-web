@@ -2,6 +2,10 @@
   float: right;
 }
 
+.sources .row.record {
+  height: 7em;
+}
+
 .workspace.sources>.table.sources>.rows>.row.selected {
   background-image: radial-gradient(ellipse at top right, #fff3 00%, #fff1 20%, #0000 50%);
 }

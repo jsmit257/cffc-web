@@ -1,8 +1,7 @@
-.table.vendor {
-  width: 50%;
-}
+.workspace.vendor>.table.vendor {
+  /* width: 50%; */
 
-.table.vendor>.columns>.column,
-.table.vendor>.rows>.row>.field {
-  width: 49%;
+  & :is(.columns, .rows>.row)>:is(.column, .field) {
+    width: 49%;
+  }
 }

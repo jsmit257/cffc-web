@@ -1,0 +1,17 @@
+.table.eventtype {
+
+  &>.columns,
+  &>.rows>.row {
+    &>.name {
+      width: 34%;
+    }
+
+    &>.severity {
+      width: 33%;
+    }
+
+    &>.stage {
+      width: 33%;
+    }
+  }
+}

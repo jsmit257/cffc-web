@@ -48,7 +48,9 @@ $(_ => {
       $(e.currentTarget)
         .addClass('active')
         .find(`>.table.${slug}`)
-        .trigger('fetch', localStorage[slug])
+        .trigger('fetch', $table => $table
+          .find(`.row#${localStorage[slug]}`)
+          .click())
     })
     .on('click', '.menubtn[x-stub]:not(.selected)', e => {
       $('[x-stub].selected').removeClass('selected')
@@ -86,7 +88,7 @@ $(_ => {
           ex.message ?? ex,
         ]))
     })
-    .on('add-child', '[x-child]', e => {
+    .on('add-child', '[x-child]', (e, resolve = _ => _) => {
       let slug = e.currentTarget.attributes['x-child'].value
       $(document.head).trigger('add-resource', {
         src: slug,
@@ -99,7 +101,7 @@ $(_ => {
           status: resp.status,
           message: await resp.text(),
         }
-        $(await resp.text()).appendTo($(e.currentTarget).removeAttr('x-child')) // once is enough
+        resolve($(await resp.text()).appendTo($(e.currentTarget).removeAttr('x-child'))) // once is enough
       }).catch(ex => $(`.alert`).trigger('app-error', [
         'error',
         `loading fragment ${url} statusCode: ${ex.status}`,

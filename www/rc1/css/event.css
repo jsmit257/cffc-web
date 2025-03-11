@@ -1,10 +1,16 @@
-.child-table {
+.child-table>.table {
   float: left;
   width: 100%;
 }
 
+.table.events input.temperature,
+.table.events input.humidity {
+  text-align: center;
+}
+
 .table.events>.columns>.full {
   width: 100%;
+  visibility: hidden;
 }
 
 .table.events>.columns>.eventtype,
