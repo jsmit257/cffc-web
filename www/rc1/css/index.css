@@ -11,6 +11,7 @@
 * {
   box-sizing: border-box;
   font-variant: slashed-zero;
+  font-family: system-ui;
 }
 
 .selected {
@@ -25,15 +26,31 @@
 
 .workspace.active {
   display: block;
-  margin-top: 2em;
+  /* margin-top: 2em; */
 }
 
 .workspace>.table {
   border-left: 1px solid #faf0ff4f;
-  border-radius: 1em 0;
+  border-radius: 1em;
   border-top: 1px solid #faf0ff4f;
   float: left;
+  border-bottom: 1px solid #faf0ff4f;
   position: relative;
+}
+
+.table.substrate {}
+
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(0, transparent, #bbb3, transparent);
+  border-radius: 10px;
 }
 
 input,
@@ -43,7 +60,7 @@ select {
   border: 0;
   color: white;
   display: inline-block;
-  font-family: system-ui;
+  /* font-family: system-ui; */
   font-size: large;
   margin: 0;
   outline: none;
@@ -66,7 +83,6 @@ html {
   background-blend-mode: hue;
   background-blend-mode: luminosity;
   color: aliceblue;
-  font-family: system-ui;
   /* font-size: 125%; */
   /* height: 100%; */
   line-height: 1.25;
@@ -88,28 +104,26 @@ body {
     width: 100%;
   }
 
-  &>.menubar::after {
-    content: 'content';
-    float: right;
-    /* line-height: 2; */
-    /* margin-top: -1em; */
-    /* display: inline-block; */
-  }
-
   &>.menubar {
     font-size: larger;
     margin-bottom: .5em;
-    margin-top: .5em;
-    text-align: center;
+    /* margin-top: .5em; */
+    text-align: left;
     font-weight: bold;
     line-height: 3;
+    width: 20%;
+    position: fixed;
+    
+    
+    
+
+
 
     &>.menubtn {
-      float: left;
-      width: 10%;
       cursor: pointer;
-      width: 16%;
       border-radius: 1em;
+      margin-right: 2em;
+      padding-left: 1em;
     }
 
     &>.menubtn:hover {
@@ -121,6 +135,13 @@ body {
       background-image: linear-gradient(0deg, transparent, #fff3 50%, transparent);
       cursor: default;
     }
+  }
+
+  &>.main {
+    width: 80%;
+    margin-bottom: 7em;
+    /* margin-top: 2em; */
+    margin-left: 24%;
   }
 }
 

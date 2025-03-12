@@ -16,7 +16,7 @@
 
 .table.strain>.columns>.species,
 .table.strain>.rows>.row>.field.species {
-  --width: 23%;
+  --width: 20%;
 }
 
 .table.strain>.columns>.vendor,
@@ -26,7 +26,7 @@
 
 .table.strain>.columns>.ctime,
 .table.strain>.rows>.row>.field.ctime {
-  --width: 22%;
+  --width: 26%;
   text-align: center;
 }
 

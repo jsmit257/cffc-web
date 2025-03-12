@@ -27,7 +27,26 @@ $(_ => {
     //   click: function (el = this.get(0)) {
     //     return $(el).trigger('click')
     //   },
-    alert: function (lvl, action, msg, state) { },
+    alert: function (lvl, action, msg, state) {
+      this.each(function () {
+        $('body>.alert').trigger('app-error', [lvl, action, msg, state, this])
+      })
+      return $(this)
+    },
+    selected: function (...ids) {
+      let $table = $(this)
+      if (!$table.attr('x-target')) {
+        $table = $table.parents('[x-target]').first()
+      }
+      let root = $table.attr('x-target')
+      // should we clear first, and what would that mean if unselecting is 
+      // tied to an event? 
+      ids.forEach((i, id) => $table
+        .find(`${root}>#${id}`)
+        .trigger('select'))
+
+      return $table.find(`${root}>.selected`)
+    }
   })
 
   $(document.body)

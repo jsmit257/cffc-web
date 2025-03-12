@@ -31,8 +31,7 @@
 
     <label class="field hover">
       <div class="label">Strain</div>
-      <select class="strains" name="strain" x-fetch="strains" x-target-this render="strain" readonly
-        tabindex="0"></select>
+      <select class="strains" name="strain" x-fetch="strains" render="strain" readonly tabindex="0"></select>
     </label>
 
     <label class="field hover">
@@ -74,7 +73,14 @@
     </label>
   </div>
 
-  <div class="buttonbar">&nbsp;</div>
+  <div class="buttonbar">
+    <div class="button default cancel icon">&nbsp;</div>
+    <div class="button default ok icon">&nbsp;</div>
+    <div class="button default refresh icon">&nbsp;</div>
+    <div class="button default add icon">&nbsp;</div>
+    <div class="button default update icon">&nbsp;</div>
+    <div class="button default delete icon">&nbsp;</div>
+  </div>
 
-  <div class="child-table events" x-child="event"></div>
+  <div class="child-table workspace active events" x-child="event"></div>
 </div>

@@ -25,6 +25,7 @@ label.field {
 
 .table>.columns {
   text-align: center;
+  line-height: 3;
 }
 
 .table>.columns>.column {

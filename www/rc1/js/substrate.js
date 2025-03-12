@@ -7,6 +7,8 @@
   let ing = `${child}>.rows`
   let ingrows = `${ing}>.row.record`
 
+  let selecting = `.substrate .table.ingredient.selecting>.rows>.record`
+
   $(document.body)
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
@@ -21,10 +23,11 @@
         })
         .find('>.table.ingredient')
         .trigger('fetch')
+    })
+    .on('unmarshal', subrows, (e, data) => {
+      e.stopPropagation()
 
-      $(e.currentTarget)
-        .find('>.table.substrate>.buttonbar')
-        .trigger('register-target', `${subrows}.selected`)
+      $(e.currentTarget).addClass(data.type)
     })
     .on('click', `>${subrows}:not(.selected)`, e => {
       e.stopPropagation()
@@ -34,7 +37,7 @@
       $(e.currentTarget).data('ingredients')?.forEach(v =>
         $(`body>${ingrows}#${v.id}`).addClass('selected'))
     })
-    .on('click', `.substrate .table.ingredient.selecting>.rows>.row.record:not(.selected)`, e => {
+    .on('click', `${selecting}:not(.selected)`, e => {
       e.stopPropagation()
 
       if (e.target.nodeName !== 'LABEL') {
@@ -50,7 +53,7 @@
         201,
       ])
     })
-    .on('click', `.substrate .table.ingredient.selecting>.rows>.row.record.selected`, e => {
+    .on('click', `${selecting}.selected`, e => {
       e.stopPropagation()
 
       if (e.target.nodeName !== 'LABEL') {
@@ -63,7 +66,7 @@
         200,
       ])
     })
-    .on('update-children', `.substrate .table.ingredient.selecting>.rows>.row.record`, (e, url, args, ok = 201) => {
+    .on('update-children', selecting, (e, url, args, ok = 201) => {
       e.stopPropagation()
 
       fetch(url, args).then(async resp => {
@@ -85,4 +88,12 @@
     })
     .on('click', `.substrate .table.ingredient>.buttonbar`, e => $(e.currentTarget.parentNode)
       .toggleClass('selecting'))
+    .on('change', `${table}>.columns>.type>label>select`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget)
+        .parents('.table.substrate')
+        .first()
+        .attr('type-filter', e.currentTarget.value)
+    })
 })()

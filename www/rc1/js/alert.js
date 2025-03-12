@@ -1,6 +1,6 @@
 (_ => {
   $(document.body)
-    .on('app-error', '>.alert', (e, severity, action, message, state) => {
+    .on('app-error', '>.alert', (e, severity, action, message, ...state) => {
       $(e.currentTarget).find('>.rows').trigger('send', {
         severity,
         action,

@@ -36,6 +36,12 @@
           .val('#')
           .text('none'))
     })
+    .on('click', `>${ndxrows}.selected`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget.parentNode.parentNode)
+        .toggleClass('seeking')
+    })
     .on('click', `>${ndxrows}:not(.selected)`, e => {
       e.stopPropagation()
 
@@ -47,6 +53,9 @@
         }
         return resp.json()
       }).then(json => {
+        $(e.currentTarget.parentNode.parentNode)
+          .removeClass('seeking')
+
         return {
           plating_substrate: {
             id: '#',
@@ -65,7 +74,7 @@
         // console.log('im adding more records in main', json)
         $(`body>${gen}`)
           .data(json)
-          .trigger('render-record', json)
+          .trigger('unmarshal', json)
           .data('events')
         return json.events
       }).then(evts => {
@@ -78,7 +87,7 @@
       ]))
     })
 
-    .on('render-record', `>${gen}`, (e, data) => {
+    .on('unmarshal', `>${gen}`, (e, data) => {
       e.stopPropagation()
 
       let url = `/strain/${data.id}/generation`

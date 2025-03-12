@@ -1,17 +1,44 @@
-.buttonbar {
-  &>.button {
-    border-radius: .75em;
-    background-image: radial-gradient(circle at center, #0f09, transparent);
-    width: 2em;
-    height: 2em;
-    float: left;
-    margin-left: 1em;
-    text-align: center;
+.table:is(.editing, .adding) .buttonbar {
+
+  &>.button.default.add,
+  &>.button.default.update,
+  &>.button.default.delete,
+  &>.button.default.refresh {
+    cursor: not-allowed;
+  }
+
+  &>.button.default.ok,
+  &>.button.default.cancel {
     cursor: pointer;
+  }
+}
+
+.buttonbar {
+  float: left;
+
+  &>.button {
+    cursor: pointer;
+    text-align: center;
+  }
+
+  &>.button.default {
+    border-radius: 1em 1em 1em 1em;
+    float: right;
+    /* height: 2em; */
+    margin-bottom: 1em;
+    line-height: 2em;
+    margin-left: 2em;
+    margin-top: 1em;
+    width: 5em;
+  }
+
+  &>.button.default.ok,
+  &>.button.default.cancel {
+    cursor: not-allowed;
   }
 
   &>.button.delete::before {
-    content: 'del';
+    content: 'delete';
   }
 
   &>.button.add::before {
@@ -19,11 +46,11 @@
   }
 
   &>.button.update::before {
-    content: 'upd';
+    content: 'update';
   }
 
   &>.button.refresh::before {
-    content: 'ref';
+    content: 'refresh';
   }
 
   &>.button.ok::before {
@@ -31,6 +58,30 @@
   }
 
   &>.button.cancel::before {
-    content: 'can';
+    content: 'cancel';
+  }
+
+  &>.button.delete {
+    background-image: radial-gradient(ellipse at 50% -1em, #ff00005c, transparent);
+  }
+
+  &>.button.add {
+    background-image: radial-gradient(ellipse at 50% -1em, #e100e169, transparent);
+  }
+
+  &>.button.update {
+    background-image: radial-gradient(ellipse at 50% -1em, #00dfdf70, transparent);
+  }
+
+  &>.button.refresh {
+    background-image: radial-gradient(ellipse at 50% -1em, #e3e30078, transparent);
+  }
+
+  &>.button.ok {
+    background-image: radial-gradient(ellipse at 50% -1em, #0f05, transparent);
+  }
+
+  &>.button.cancel {
+    background-image: radial-gradient(ellipse at 50% -1em, #ff6c0087, transparent);
   }
 }

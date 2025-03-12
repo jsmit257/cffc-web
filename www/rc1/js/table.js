@@ -1,4 +1,6 @@
 $(_ => {
+  let record = '.table>.rows>.row.record, .singleton'
+
   $(document.body)
     // initialize tables
     .on('clear', '.table .rows', e => {
@@ -23,7 +25,7 @@ $(_ => {
       $(e.currentTarget).removeData().find('.per-kilo, .dry-weight, div[name]')
         .text('')
     })
-    .on('fetch', '.table[x-fetch], select[x-fetch]', (e, resolve = _ => _) => {
+    .on('fetch', '.table[x-fetch]', (e, resolve = _ => _) => {
       e.stopPropagation()
 
       let url = e.currentTarget.attributes['x-fetch'].value
@@ -35,23 +37,14 @@ $(_ => {
           }
           return resp.json()
         })
-        .then(resp => {
-          let $target = $(e.currentTarget)
-          if ($target.get(0).nodeName !== 'SELECT') {
-            $target = $target
-              .find(e.currentTarget.attributes['x-target'].value)
-          }
-
-          $target.trigger('clear')
-          resolve($target.trigger('send', resp))
-        })
-        .catch(ex => $('.alert').trigger('app-error', [
-          'error',
-          `fetching table data: '${url}' statusCode: ${ex.status}`,
-          ex.message ?? ex,
-        ]))
+        .then(resp => resolve($(e.currentTarget)
+          .find(e.currentTarget.attributes['x-target'].value)
+          .trigger('clear')
+          .trigger('send', resp)))
+        .catch(ex => $(e.currentTarget)
+          .alert('error', `GET '${url}' statusCode: ${ex.status}`, ex.message ?? ex))
     })
-    .on('fetch-multi', '.table .rows>.row, .table .singleton', (e, url) => {
+    .on('fetch-multi', '.table>.rows>.row.record, .table>.singleton', (e, url) => {
       fetch(url).then(async resp => {
         if (resp.status !== 200) throw {
           status: resp.status,
@@ -60,11 +53,8 @@ $(_ => {
         $(e.currentTarget)
           .find(`[x-fetch-multi="${url}"]`)
           .send(await resp.json())
-      }).catch(ex => $('.alert').trigger('app-error', [
-        'error',
-        `GET ${url} statusCode: ${ex.status}`,
-        ex.message ?? ex,
-      ]))
+      }).catch(ex => $(e.currentTarget)
+        .alert('error', `GET ${url} statusCode: ${ex.status}`, ex.message ?? ex))
     })
     .on('send', '.table .rows', (e, ...data) => {
       e.stopPropagation()
@@ -76,9 +66,9 @@ $(_ => {
         .toggleClass('x-template record')
         .data(record)
         .insertBefore($tmpl)
-        .trigger('render-record', record))
+        .trigger('unmarshal', record))
     })
-    .on('render-record', '.table>.rows>.row.record, .singleton', (e, data) => {
+    .on('unmarshal', record, (e, data) => {
       let $row = $(e.currentTarget).attr({
         id: data.id,
         dtime: data.dtime,
@@ -113,17 +103,37 @@ $(_ => {
 
       $row.find('input, select').trigger('change')
     })
+    .on('marshal', record, (e, data) => {
+      e.stopPropagation()
+
+      data.id = e.currentTarget.id
+
+      $(e.target)
+        .find('>label>input[name], >label>select[name].static')
+        .each((_, v) => data[v.name] = v.value)
+
+      $(e.target)
+        .find('>label>select[name]:not(.static)>option:selected')
+        .each((_, v) => data[v.parentNode.name] = $(v).data())
+    })
 
 
     // initialize other lists
     .on('fetch', 'datalist[x-fetch], select[x-fetch]', e => {
       e.stopPropagation()
 
-      fetch(e.currentTarget.attributes['x-fetch'].value)
+      let url = e.currentTarget.attributes['x-fetch'].value
+      fetch(url)
         .then(async resp => {
-          $(e.currentTarget).trigger('send', await resp.json())
+          if (resp.status !== 200) throw {
+            status: resp.status,
+            message: await resp.text(),
+          }
+          return resp.json()
         })
-        .catch(ex => $('').trigger('alert'))
+        .then(json => $(e.currentTarget).trigger('send', json))
+        .catch(ex => $(e.currentTarget)
+          .alert('error', `GET ${url} statusCode: ${ex.status}`, ex.message ?? ex))
     })
     .on('send', 'datalist', (e, ...data) => {
       e.stopPropagation()
@@ -156,13 +166,13 @@ $(_ => {
 
 
     // update actions
-    .on('remove-record', '.table .rows>.row.selected', e => {
+    .on('remove-record', '.table>.rows>.row.selected', e => {
       if ($(e.currentTarget).prev('.row.record').click().length === 0) {
         $(e.currentTarget).next('.row.record').click()
       }
       $(e.currentTarget).remove()
     })
-    .on('new-row', '.table>.rows', e => {
+    .on('new-record', '.table>.rows', e => {
       e.stopPropagation()
 
       localStorage.lastid = $(e.currentTarget)
@@ -196,43 +206,52 @@ $(_ => {
         .forEach(url => $row.trigger('fetch-multi', url))
 
       $row.find('input, select')
+        // .val('')
         .first()
         .focus()
     })
-    .on('end-edit', '.table.editing', (e, data) => {
+    .on('disable-record', '.table.editing', e => {
       e.stopPropagation()
 
-      $(e.currentTarget)
+      let $row = $(e.currentTarget)
         .removeClass('editing adding')
         .find('.row.editing')
         .removeClass('editing adding')
-        .trigger('render-record', data)
+
+      $row.trigger('unmarshal', $row.data())
     })
     .on('default-update', '.table>.rows>.row.editing', (e, url, params) => {
       e.stopPropagation()
 
-      fetch(url, params).then(async resp => {
+      let $table = $(e.currentTarget)
+        .parents('.editing')
+        .first()
+
+      fetch(url, {
+        ...params,
+        body: JSON.stringify(params.body),
+      }).then(async resp => {
         switch (resp.status) {
           case 200:
           case 201:
-            $(e.currentTarget).trigger('end-edit', await resp.json())
+            $(e.currentTarget).data(await resp.json())
+            break
           case 204:
+            $(e.currentTarget).data({
+              ...$(e.currentTarget).data(),
+              ...params.body
+            })
             break
           default: throw {
             status: resp.status,
             message: await resp.text(),
           }
         }
-      }).catch(ex => {
-        $(e.currentTarget).trigger('end-edit', $(e.currentTarget).data())
-
-        $('.alert').trigger('app-error', [
-          'error',
-          `POST ${url} statusCode: ${ex.status || 'unsent'}`,
-          ex.message ?? ex,
-          params,
-        ])
-      }).finally(_ => $(e.currentTarget).trigger('disable-row'))
+      }).catch(ex => $(e.currentTarget).alert('error',
+        `POST ${url} statusCode: ${ex.status || 'unsent'}`,
+        ex.message ?? ex,
+        params)
+      ).finally(_ => { $table.trigger('disable-record') })
     })
     .on('default-remove', '.table .rows>.row.record.selected', (e, url) => {
       e.stopPropagation()
@@ -251,26 +270,13 @@ $(_ => {
           ex.message ?? ex,
         ]))
     })
-    .on('marshal', '.row, .singleton', (e, data) => {
-      e.stopPropagation()
-
-      $(e.target)
-        .find('>label>input[name], >label>select[name].static')
-        .each((_, v) => data[v.name] = v.value)
-
-      $(e.target)
-        .find('>label>select[name]:not(.static)>option:selected')
-        .each((_, v) => data[v.parentNode.name] = $(v).data())
-    })
 
 
     // UI actions
     .on('select', '.table:not(.editing, .adding) .row.record:not(.managed)', e => {
       e.stopPropagation()
 
-      $(e.currentTarget.parentNode)
-        .find('>.selected')
-        .removeClass('selected')
+      $(e.currentTarget).selected().removeClass('selected')
 
       $(e.currentTarget).addClass('selected')
 
@@ -278,7 +284,6 @@ $(_ => {
       // other one's history console.log(new Error())
       localStorage[$(e.currentTarget).parents('[breadcrumb]').first().attr('breadcrumb')] = e.currentTarget.id
     })
-    .on('click', '.row.record:not(.selected)', e => $(e.currentTarget)
-      .trigger('select'))
-    .on('sort', '.table', e => { })
+    .on('click', '.row.record:not(.selected)', e => $(e.currentTarget).trigger('select'))
+    .on('sort', '.table', (e, keys) => { })
 })

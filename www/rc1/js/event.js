@@ -13,9 +13,4 @@
         .find('>.eventattrs')
         .text(`${$selected.attr('severity')}/${$selected.attr('stage')}`)
     })
-    .on('post-data', `>${1}`, (e, data) => {
-      e.stopPropagation()
-
-      $(e.currentTarget).trigger('marshal', data)
-    })
 })()

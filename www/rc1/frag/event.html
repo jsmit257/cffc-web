@@ -12,18 +12,17 @@
   <div class="rows">
     <div class="row hover x-template">
       <label class="field eventtype">
-        <select class="eventtype" name="event_type" x-fetch="eventtypes" x-target-this render="eventtype" readonly
-          tabindex="0"></select>
+        <select class="eventtype" name="event_type" x-fetch="eventtypes" render="eventtype" tabindex="0"></select>
       </label>
 
       <div class="eventattrs"></div>
 
       <label class="field temperature">
-        <input class="temperature" name="temperature" type="number" min="0" readonly tabindex="0">
+        <input class="temperature" name="temperature" type="number" min="0" tabindex="0">
       </label>
 
       <label class="field humidity">
-        <input class="humidity" name="humidity" type="number" min="0" max="100" readonly tabindex="0">
+        <input class="humidity" name="humidity" type="number" min="0" max="100" tabindex="0">
       </label>
 
       <label class="field mtime">
@@ -36,5 +35,12 @@
     </div>
   </div>
 
-  <div class="buttonbar"></div>
+  <div class="buttonbar">
+    <div class="button default cancel icon">&nbsp;</div>
+    <div class="button default ok icon">&nbsp;</div>
+    <div class="button default refresh icon">&nbsp;</div>
+    <div class="button default add icon">&nbsp;</div>
+    <div class="button default update icon">&nbsp;</div>
+    <div class="button default delete icon">&nbsp;</div>
+  </div>
 </div>

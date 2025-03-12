@@ -23,7 +23,7 @@
 
       console.log('will i ever get it in one?', e.currentTarget.checked, e.currentTarget.value)
     })
-    .on('render-record', `${srcrows}`, (e, data) => {
+    .on('unmarshal', `${srcrows}`, (e, data) => {
       e.stopPropagation()
 
       $(e.currentTarget.parentNode)

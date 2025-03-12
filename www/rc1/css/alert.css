@@ -7,7 +7,7 @@ body>.alert {
   padding-bottom: .5em;
   width: 100%;
   z-index: -4;
-  display: none;
+  /* display: none; */
   position: relative;
 }
 

@@ -1,24 +1,43 @@
-.table.generation>.rows.ndx>.row.record>div {
-  float: left;
-  width: 50%;
-  z-index: -1;
-  position: relative;
-  padding-left: 1em;
+.workspace.generation>.table.generation {
+  &>.rows.ndx {
+    &>.row.record {
+      display: none;
+
+      &>div {
+        float: left;
+        width: 50%;
+        z-index: -1;
+        position: relative;
+        padding-left: 1em;
+      }
+    }
+
+    &>.row.record.selected {
+      display: block;
+    }
+  }
+
+  &>.singleton.generation,
+  &>.workspace.sources {
+    float: left;
+    margin-top: 1em;
+  }
+
+  &>.singleton.generation>label>.progeny {
+    margin-left: -7em;
+    padding-left: 7em;
+    width: 100%;
+  }
 }
 
-.table.generation>.singleton.generation,
-.table.generation>.workspace.sources {
-  border: 0;
-  width: 50%;
-}
+.workspace.generation>.table.generation.seeking {
+  &>.rows.ndx {
+    &>.row.record {
+      display: block;
+    }
+  }
 
-.table.generation>.singleton.generation {
-  float: left;
-  padding-top: 2em;
-}
-
-.table.generation>.singleton.generation>label>.progeny {
-  margin-left: -7em;
-  padding-left: 7em;
-  width: 100%;
+  &>.singleton.generation {
+    display: none;
+  }
 }

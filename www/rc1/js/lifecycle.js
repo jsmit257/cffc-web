@@ -19,6 +19,12 @@
         .find('>.table.lifecycle>.events')
         .trigger('add-child')
     })
+    .on('click', `>${ndxrows}.selected`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget.parentNode.parentNode)
+        .toggleClass('seeking')
+    })
     .on('click', `>${ndxrows}:not(.selected)`, e => {
       e.stopPropagation()
 
@@ -30,6 +36,9 @@
         }
         return resp.json()
       }).then(lc => {
+        $(e.currentTarget.parentNode.parentNode)
+          .toggleClass('seeking')
+
         return {
           yield: 0,
           count: 0,
@@ -45,7 +54,7 @@
 
         return $(`body>${lifecycle}`)
           .data(lc)
-          .trigger('render-record', lc)
+          .trigger('unmarshal', lc)
           .data('events')
       }).then(evts => {
         console.log('im adding more records', evts)

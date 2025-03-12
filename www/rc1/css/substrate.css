@@ -1,9 +1,19 @@
 :root {
-  --ingredients-width: 32%;
+  --ingredients-width: 31%;
   --substrates-width: 68%;
   /* --name-color: red; */
   /* --type-color: blue; */
   /* --vendor-color: green; */
+}
+
+.workspace.substrate {
+
+  &>.table.substrate[type-filter="liquid"] .row:not(.liquid),
+  &>.table.substrate[type-filter="grain"] .row:not(.grain),
+  &>.table.substrate[type-filter="bulk"] .row:not(.bulk),
+  &>.table.substrate[type-filter="plating"] .row:not(.plating) {
+    display: none;
+  }
 }
 
 .workspace.substrate>.table.substrate {
@@ -23,15 +33,20 @@
 
   &>.columns {
     &>.name {
-      width: calc(var(--substrates-width) * .5);
+      width: calc(var(--substrates-width) * .3955);
     }
 
     &>.type {
-      width: calc(var(--substrates-width) * .25);
+      width: calc(var(--substrates-width) * .247);
+
+      &>label>select {
+        text-align: center;
+        margin-left: .5em;
+      }
     }
 
     &>.vendor {
-      width: calc(var(--substrates-width) * .25);
+      width: calc(var(--substrates-width) * .347);
     }
 
     &>.ingredient {
@@ -46,11 +61,12 @@
   }
 
   &>.rows {
+    margin-right: 1%;
     width: var(--substrates-width);
 
     &>.row.record {
       &>.name {
-        width: 50%;
+        width: 40%;
       }
 
       &>.type {
@@ -58,15 +74,15 @@
       }
 
       &>.vendor {
-        width: 25%;
+        width: 35%;
       }
     }
   }
 
   &>.workspace.ingredients {
     border: 0;
-    /* margin-top: 0; */
-    /* padding-top: 0; */
+    margin-top: 0;
+    padding-top: 0;
     width: var(--ingredients-width);
 
     &>.table.ingredient {
@@ -75,13 +91,19 @@
       width: 100%;
 
       &>.columns {
+        display: none;
+
         &>.name {
           width: 100%;
         }
       }
 
       &>.rows {
-        /* height: -webkit-fill-available; */
+        height: 100%;
+        width: 100%;
+        /* width: calc(100% - 3em); */
+        margin-right: -3em;
+        padding-right: 3em;
 
         &>.row.record {
           display: none;
@@ -97,9 +119,25 @@
       }
 
       &>.buttonbar {
+        float: right;
         font-weight: bolder;
-        width: 100%;
+        margin-right: .5em;
+        padding-top: 1em;
         text-align: center;
+        width: 2em;
+
+        &>.button.default {
+          display: none;
+        }
+
+        &>.button {
+          border-radius: 1em;
+          cursor: pointer;
+        }
+
+        &>.expand {
+          background-image: radial-gradient(circle at center, #00ff00bb, transparent);
+        }
 
         &>.collapse {
           background-image: radial-gradient(circle at center, #f00b, transparent);

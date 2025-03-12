@@ -1,17 +1,53 @@
-.table.lifecycle {
+.workspace.lifecycle>.table.lifecycle {
+  &>.rows.ndx {
+    /* background-color: #9f93; */
+    /* width: 50%; */
+    /* font-size: 125%; */
 
-  &>.rows.ndx>.row {
-    &>.mtime {
-      text-align: center;
-      width: 20%;
+    &>.row.record {
+      display: none;
+
+      &>div {
+        float: left;
+      }
+
+      &>.mtime {
+        text-align: center;
+        width: 50%;
+      }
+
+      &>.location {
+        width: 50%;
+      }
     }
 
-    &>.location {
-      width: 50%;
+    &>.row.record.selected {
+      display: block;
+    }
+
+  }
+
+  &>.singleton.lifecycle {
+    /* width: 50%; */
+    /* background-color: #d6d6ff44; */
+    padding-top: 2em;
+    margin-top: -2em;
+    height: 29em;
+  }
+}
+
+.workspace.lifecycle>.table.lifecycle.seeking {
+  &>.rows.ndx {
+    height: 29em;
+    z-index: 1;
+    position: relative;
+
+    &>.row.record {
+      display: block;
     }
   }
 
   &>.singleton.lifecycle {
-    width: 70%;
+    display: none;
   }
 }
