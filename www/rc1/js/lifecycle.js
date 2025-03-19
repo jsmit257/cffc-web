@@ -57,7 +57,6 @@
           .trigger('unmarshal', lc)
           .data('events')
       }).then(evts => {
-        console.log('im adding more records', evts)
         $(`body>${events}`).trigger('send', evts)
       }).catch(ex => $('.alert').trigger('app-error', [
         'error',
@@ -65,8 +64,8 @@
         ex.message || ex,
       ]))
     })
-    .on('clear', `>${ndx}`, e => $(`body>${lifecycle}`).trigger('clear'))
-
+    .on('clear', `>${ndx}`, e => $(`body>${lifecycle}`)
+      .trigger('clear'))
     .on('change', `>${yield}, >${count}, >${gross}`, e => {
       let $fields = $(`body>${lifecycle}`).find('>label')
 

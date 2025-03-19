@@ -19,9 +19,11 @@
         tabindex="0"></select>
     </label>
 
-    <label class="field no-edit hover" hover="go to strain">
+    <label class="field no-edit hover progeny" hover="go to strain">
       <div class="label">Progeny</div>
-      <select class="strains progeny" x-fetch="strains" x-target-self render="strain" tabindex="0"></select>
+      <select class="strains progeny" x-fetch="strains" render="strain" tabindex="0">
+        <option id="none" value="#" class="permanent">&mdash; none &mdash;</option>
+      </select>
     </label>
 
     <label class="field hover">
@@ -35,16 +37,16 @@
     </label>
   </div>
 
-  <div class="child-table workspace active sources" x-child="source"></div>
-
   <div class="buttonbar">
-    <div class="button default cancel icon">&nbsp;</div>
-    <div class="button default ok icon">&nbsp;</div>
-    <div class="button default refresh icon">&nbsp;</div>
-    <div class="button default add icon">&nbsp;</div>
-    <div class="button default update icon">&nbsp;</div>
-    <div class="button default delete icon">&nbsp;</div>
+    <div class="button default icon cancel">&nbsp;</div>
+    <div class="button icon ok">&nbsp;</div>
+    <div class="button default icon refresh">&nbsp;</div>
+    <div class="button icon add">&nbsp;</div>
+    <div class="button icon update">&nbsp;</div>
+    <div class="button default icon delete">&nbsp;</div>
   </div>
+
+  <div class="child-table workspace active sources" x-child="source"></div>
 
   <div class="child-table workspace active events" x-child="event"></div>
 </div>

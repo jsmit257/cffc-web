@@ -1,73 +1,167 @@
 .workspace.sources>.table.sources {
   float: right;
-}
+  height: 13em;
 
-.sources .row.record {
-  height: 7em;
-}
+  &>.rows {
+    &>.row.record {
+      height: 5em;
 
-.workspace.sources>.table.sources>.rows>.row.selected {
-  background-image: radial-gradient(ellipse at top right, #fff3 00%, #fff1 20%, #0000 50%);
-}
+      &.editing {
 
-.workspace.sources>.table.sources>.rows>.row.origin-filter>label {
-  display: flex;
-  align-items: flex-start;
-}
+        &>.select,
+        &>.input {
+          appearance: auto;
+        }
 
-.workspace.sources>.table.sources>.rows>.row.record>.field {
-  align-items: baseline;
-  clear: both;
-  display: flex;
-  flex-wrap: nowrap;
-  float: none;
-}
+        &>.rowbar>.action::before {
+          content: 'save';
+        }
+      }
 
+      &.selected {
+        background-image: radial-gradient(ellipse at top right, #fff3 00%, #fff1 20%, #0000 50%);
+      }
 
-.workspace.sources>.table.sources>.rows>.row>.field.origin {
-  width: 20%;
-  clear: none;
-  float: left;
-  /* background-color: blue; */
-}
+      &>.field {
+        align-items: baseline;
+        clear: both;
+        display: flex;
+        flex-wrap: nowrap;
+        float: none;
 
-.workspace.sources>.table.sources>.rows>.row>.field.origin>span {
-  margin-left: 1em;
-  margin-right: 4em;
-}
+        &>span {
+          width: 8em;
+        }
 
-.workspace.sources>.table.sources>.rows>.row>.field>input {
-  appearance: auto;
-  /* margin-right: 0.5em; */
-  width: auto;
-  left: 0;
-}
+        &>select {
+          margin-right: 4em;
+        }
 
-.workspace.sources>.table.sources>.rows[source-type="clone"]>div:nth-child(4),
-.workspace.sources>.table.sources>.rows>div:nth-child(5) {
-  display: none;
-}
+        &>input {
+          appearance: auto;
+          width: auto;
+          left: 0;
+        }
 
-.workspace.sources>.table.sources>.rows>.row>.field>span {
-  width: 8em;
-}
+        &.origin {
+          width: 20%;
+          clear: none;
+          float: left;
 
-.workspace.sources>.table.sources>.rows>.row.record>.field>select {
-  padding-right: 3em;
-}
+          &>span {
+            margin-left: 1em;
+            margin-right: 4em;
+          }
+        }
 
-.workspace.sources>.table.sources>.rows>.row[origin="event"]>.field.strain,
-.workspace.sources>.table.sources>.rows>.row[origin="strain"]>.field.lifecycle,
-.workspace.sources>.table.sources>.rows>.row[origin="strain"]>.field.event {
-  display: none;
-}
+        &:not(.origin) {
+          width: 80%;
+          clear: right;
+        }
+      }
 
-.rowbar {
-  z-index: 1;
-  position: absolute;
-  margin-right: .5em;
-  line-height: 1.5;
-  clear: none;
-  right: 0;
-  top: .5em;
+      &>.rowbar {
+        z-index: 1;
+        position: absolute;
+        margin-right: .5em;
+        line-height: 1.5;
+        clear: none;
+        right: 0;
+        top: .5em;
+
+        &>.edit::before {
+          content: 'edit';
+        }
+
+        &>.cancel::before {
+          content: 'cancel';
+        }
+
+        &>.action::before {
+          content: 'delete';
+        }
+      }
+    }
+
+    &>.row.origin-filter {
+      &>label {
+        display: flex;
+
+        &::before {
+          content: 'Type: ';
+        }
+
+        &>select {
+          margin-left: .5em;
+        }
+      }
+
+      &>.full {
+        text-align: center;
+      }
+    }
+
+    &.empty>.row.origin-filter>label {
+      z-index: initial;
+
+      &>select {
+        appearance: auto;
+      }
+    }
+
+    &>.row.record[origin="event"]>.field.strain,
+    &>.row.record[origin="strain"]>.field:is(.lifecycle, .event) {
+      display: none;
+    }
+
+    &>.buttonbar {
+      width: 100%;
+
+      >.button {
+        width: 2em;
+        border-radius: 1em;
+        float: right;
+        text-align: center;
+        background-image: radial-gradient(#0f08, transparent 100%);
+        margin-right: 6em;
+      }
+
+      >.button::after {
+        margin-right: .5em;
+        text-align: left;
+        width: 4em;
+        display: inline-block;
+        position: fixed;
+        padding-left: 1.5em;
+      }
+
+      &>.add::after {
+        content: 'add';
+      }
+
+      &>.cancel::after {
+        content: 'cancel'
+      }
+
+      &>.save::after {
+        content: 'save';
+      }
+    }
+  }
+
+  &.editing:not(.adding)>.rows>.buttonbar,
+  &>.rows[source-type="clone"]>.buttonbar:nth-child(4),
+  &>.rows>.buttonbar:nth-child(5) {
+    display: none;
+  }
+
+  &.editing:not(.adding)>.rows {
+    &>.origin-filter>.full::before {
+      content: '(editing)';
+    }
+  }
+
+  &.adding>.rows>.origin-filter>.full::before {
+    content: '(adding)';
+  }
 }

@@ -2,6 +2,8 @@
   &>.rows.ndx {
     &>.row.record {
       display: none;
+      
+
 
       &>div {
         float: left;
@@ -23,21 +25,23 @@
     margin-top: 1em;
   }
 
-  &>.singleton.generation>label>.progeny {
-    margin-left: -7em;
-    padding-left: 7em;
-    width: 100%;
-  }
-}
-
-.workspace.generation>.table.generation.seeking {
-  &>.rows.ndx {
-    &>.row.record {
-      display: block;
+  &>.singleton.generation {
+    &>.field {
+      &.progeny {
+        z-index: 1 !important;
+      }
     }
   }
 
-  &>.singleton.generation {
-    display: none;
+  &.seeking {
+    &>.rows.ndx {
+      &>.row.record {
+        display: block;
+      }
+    }
+
+    &>.singleton.generation {
+      display: none;
+    }
   }
 }

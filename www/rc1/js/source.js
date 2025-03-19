@@ -10,8 +10,6 @@
         .parents('.rows')
         .first()
         .attr('source-type', e.currentTarget.value.toLowerCase())
-
-      console.log('this one too?')
     })
     .on('change', `${srctable}>.rows>.row.record>label>[radio-group="origin"]`, e => {
       e.stopPropagation()
@@ -20,8 +18,27 @@
         .parents('.row.record')
         .first()
         .attr('origin', e.currentTarget.value)
+    })
+    .on('change', `${srcrows}>.field>[name="lifecycle"]`, e => {
+      e.stopPropagation()
 
-      console.log('will i ever get it in one?', e.currentTarget.checked, e.currentTarget.value)
+      let $sel = $(e.currentTarget).find('>option:selected')
+      if ($sel.length === 0) {
+        // $(e.currentTarget).alert('debug', 'changing lifecycle', `no lifecycle selected`)
+        return
+      }
+      let data = $sel.data()
+
+      let $row = $(e.currentTarget.parentNode.parentNode)
+      $row.find('>.field>[name="event"]').trigger('send', data.events)
+      // console.log('data', data, e.target, $row)
+      $row.find('>.field>[name="strain"]').val(data.strain.id)
+    })
+    .on('send', `${srctable}>.rows`, (e, ...data) => {
+      e.stopPropagation()
+
+      // console.log(`.withClass(${data.length === 0}, 'empty')`)
+      $(e.currentTarget).withClass(data.length === 0, 'empty')
     })
     .on('unmarshal', `${srcrows}`, (e, data) => {
       e.stopPropagation()
@@ -29,7 +46,6 @@
       $(e.currentTarget.parentNode)
         .find('>.row.origin-filter>.field>[name="type"]')
         .val(data.type)
-        .prop('disabled', true) // TODO: only gets cleared when all records are deleted
 
       $(e.currentTarget)
         .find('[radio-group="origin"]')
@@ -38,18 +54,14 @@
       if ($(e.currentTarget)
         .find(`[radio-group="origin"][value="${data.lifecycle ? 'event' : 'strain'}"]`)
         .prop('checked', true)
+        .trigger('change')
         .val() === 'event') {
 
-        // disable strain
         $(e.currentTarget)
           .find('>label>select[name="event"]')
           .trigger('send', data.lifecycle.events)
           .val(data.lifecycle.events[0].id)
-      } // else enable strain
-
-      // $(e.currentTarget)
-      //   .find('>label>input, >label>select')
-      //   .trigger('change')
+      }
     })
     .on('post-data', `${srcrows}.selected`, (e, cfg) => {
       e.stopPropagation()
@@ -79,5 +91,128 @@
       } else {
         delete cfg.data.event
       }
+    })
+
+    // rowbar buttons
+    .on('click', `${srcrows}>.rowbar>.control`, e => { // edit or cancel
+      e.stopPropagation()
+
+      let $row = $(e.currentTarget)
+        .toggleClass('edit cancel')
+        .parents('.row.record')
+        .first()
+        .toggleClass('editing')
+        .trigger('select')
+
+      if ($row
+        .parents('.table.sources')
+        .toggleClass('editing')
+        .hasClass('editing')
+      ) {
+        $row.find('[x-fetch]').trigger('fetch')
+        $row.find('[name="lifecycle"]').trigger('change')
+      } else {
+        $row
+          .parents('.table.sources')
+          .removeClass('adding')
+      }
+    })
+    .on('click', `${srcrows}:not(.adding)>.rowbar>.cancel`, e => {
+      e.stopPropagation()
+
+      let $row = $(e.currentTarget.parentNode.parentNode)
+
+      $row.trigger('unmarshal', $row.data())
+    })
+    .on('click', `${srcrows}.adding>.rowbar>.cancel`, e => {
+      e.stopPropagation()
+
+      e.currentTarget
+        .parentNode
+        .parentNode
+        .remove()
+    })
+    .on('click', `${srcrows}:not(.editing)>.rowbar>.action`, e => { // remove
+      e.stopPropagation()
+
+      let genid = $(e.currentTarget)
+        .parents('.table.generation')
+        .first()
+        .selected()
+        .attr('id')
+
+      let $row = $(e.currentTarget
+        .parentNode
+        .parentNode)
+        .addClass('selected')
+      let url = `generation/${genid}/sources/${$row.attr('id')}`
+
+      $row.trigger('default-remove', url)
+    })
+    .on('click', `${srcrows}.editing:not(.adding)>.rowbar>.action`, e => {
+      e.stopPropagation()
+
+      let genid = $(e.currentTarget)
+        .parents('.table.generation')
+        .first()
+        .selected()
+        .attr('id')
+      let body = {}
+      let $row = $(e.currentTarget.parentNode.parentNode)
+        .trigger('marshal', body)
+      let origin = $row.find('[radio-group="origin"]:checked').val()
+      let url = `generation/${genid}/sources/${origin}/${$row.attr('id')}`
+      let params = {
+        method: body.id ? 'PATCH' : 'POST',
+        body: {
+          type: $(e.currentTarget.parentNode.parentNode.parentNode)
+            .find('>.origin-filter>.field>[name="type"]')
+            .val(),
+        },
+      }
+      params.body[origin] = body[origin]
+
+      console.log('default-update', url, params)
+      $row
+        .trigger('default-update', [url, params])
+        .find('>.rowbar>.control')
+        .toggleClass('cancel edit')
+    })
+    .on('click', `${srcrows}.adding>.rowbar>.action`, e => {
+      e.stopPropagation()
+
+      let $row = $(e.currentTarget.parentNode.parentNode)
+        .removeClass('adding')
+
+      $row.parents('.adding')
+        .first()
+        .removeClass('adding')
+
+      $(e.currentTarget).trigger('click')
+    })
+
+    // add a source
+    .on('click', `${srctable}>.rows>.buttonbar>.add`, e => {
+      e.stopPropagation()
+
+      let $rows = $(e.currentTarget.parentNode.parentNode)
+      let $row = $rows
+        .trigger('new-record')
+        .find('>.selected')
+        .addClass('editing') // this should've been set by 'enable-record'
+        .insertAfter($rows.find('>.origin-filter'))
+      console.log($row.find('input[value="event"]').click())
+      $row.find('>.rowbar>.control').toggleClass('edit cancel')
+
+      // FIXME: for testing, for the moment
+      $row.find('select[name="event"]').trigger('send', {
+        id: '1',
+        mtime: new Date().toISOString(),
+        event_type: {
+          id: 'clone',
+          name: 'clone',
+        }
+      })
+      console.log('adding', $row, $rows)
     })
 })()

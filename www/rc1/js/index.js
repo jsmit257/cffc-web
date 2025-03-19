@@ -45,12 +45,16 @@ $(_ => {
 
       $(`body>${spaces}.active`).removeClass('active')
 
+      // $(e.currentTarget)
+      //   .addClass('active')
+      //   .find(`>.table.${slug}`)
+      //   .trigger('fetch', $table => $table
+      //     .find(`.row#${localStorage[slug]}`)
+      //     .click())
       $(e.currentTarget)
         .addClass('active')
         .find(`>.table.${slug}`)
-        .trigger('fetch', $table => $table
-          .find(`.row#${localStorage[slug]}`)
-          .click())
+        .trigger('fetch')
     })
     .on('click', '.menubtn[x-stub]:not(.selected)', e => {
       $('[x-stub].selected').removeClass('selected')

@@ -1,5 +1,9 @@
 $(_ => {
-  $.valHooks.number = { get: (elem) => elem.value * 1 }
+  $.valHooks.number = { get: elem => elem.value * 1 }
+  // $.valHooks.option = {
+  //   get: elem =>
+  //     $(`[radio-group="${$(elem).attr('radio-group')}"]:checked`).val()
+  // }
 
   $.fn.extend({
     //   sortKey: function (el = this.get(0)) {
@@ -41,7 +45,7 @@ $(_ => {
       let root = $table.attr('x-target')
       // should we clear first, and what would that mean if unselecting is 
       // tied to an event? 
-      ids.forEach((i, id) => $table
+      ids.forEach(id => $table
         .find(`${root}>#${id}`)
         .trigger('select'))
 
@@ -96,7 +100,7 @@ $(_ => {
       .attr('type', data.type)
       .text(`${data.name} | Vendor: ${(data.vendor || { name: 'interim' }).name}`))
     .on('extend', 'select[render="lifecycle"]>option', (e, data) => $(e.currentTarget)
-      .text(data.location))
+      .text(`${data.location} -> ${data.strain.name}`))
     .on('extend', 'select[render="event"]>option', (e, data) => $(e.currentTarget)
       .html(`${data.event_type.name} &bull; ${data.mtime.slice(0, 19).replace(/T/, ' ')}`))
     .on('extend', 'select[render="eventtype"]>option', (e, data) => $(e.currentTarget)

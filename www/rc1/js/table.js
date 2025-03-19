@@ -1,5 +1,5 @@
 $(_ => {
-  let record = '.table>.rows>.row.record, .singleton'
+  let record = '.table>.rows>.row.record, .table>.singleton'
 
   $(document.body)
     // initialize tables
@@ -56,7 +56,7 @@ $(_ => {
       }).catch(ex => $(e.currentTarget)
         .alert('error', `GET ${url} statusCode: ${ex.status}`, ex.message ?? ex))
     })
-    .on('send', '.table .rows', (e, ...data) => {
+    .on('send', '.table>.rows', (e, ...data) => {
       e.stopPropagation()
 
       let $tmpl = $(e.currentTarget).find('.row.x-template')
@@ -67,13 +67,14 @@ $(_ => {
         .data(record)
         .insertBefore($tmpl)
         .trigger('unmarshal', record))
+
+      $(e.currentTarget).selected(localStorage[$(e.currentTarget).parents('[breadcrumb]').first().attr('breadcrumb')])
     })
     .on('unmarshal', record, (e, data) => {
       let $row = $(e.currentTarget).attr({
         id: data.id,
         dtime: data.dtime,
       })
-
 
       Object.keys(data).forEach(k => {
         let v = data[k]
@@ -117,7 +118,6 @@ $(_ => {
         .each((_, v) => data[v.parentNode.name] = $(v).data())
     })
 
-
     // initialize other lists
     .on('fetch', 'datalist[x-fetch], select[x-fetch]', e => {
       e.stopPropagation()
@@ -149,6 +149,8 @@ $(_ => {
     .on('send', 'select[x-fetch], select[x-fetch-multi]', (e, ...data) => {
       e.stopPropagation()
 
+      let val = e.currentTarget.value
+
       $(e.currentTarget).trigger('clear')
 
       data.forEach(record => $('<option>')
@@ -160,10 +162,11 @@ $(_ => {
         })
         .appendTo(e.currentTarget)
         .trigger('extend', record))
+
+      e.currentTarget.value = val
     })
     .on('send', 'input[type="radio"]', (e, opt) => $(e.currentTarget)
       .prop('checked', e.currentTarget.value === opt))
-
 
     // update actions
     .on('remove-record', '.table>.rows>.row.selected', e => {
@@ -172,22 +175,20 @@ $(_ => {
       }
       $(e.currentTarget).remove()
     })
-    .on('new-record', '.table>.rows', e => {
+    .on('new-record', '.table>.rows', (e, success = _ => _) => {
       e.stopPropagation()
 
-      localStorage.lastid = $(e.currentTarget)
-        .find('>.row.selected')
+      $(e.currentTarget.parentNode)
+        .addClass('adding')
+        .find('.selected')
         .removeClass('selected')
-        .attr('id')
 
-      $(e.currentTarget.parentNode).addClass('adding')
-
-      $(e.currentTarget)
+      success($(e.currentTarget)
         .find('>.row.x-template')
         .clone(true, true)
         .toggleClass('x-template record selected adding')
         .prependTo(e.currentTarget)
-        .trigger('enable-record')
+        .trigger('enable-record'))
     })
     .on('enable-record', '.table>.rows>.selected, .table>.singleton', e => {
       e.stopPropagation()
@@ -202,11 +203,11 @@ $(_ => {
         .map((_, v) => v.attributes['x-fetch-multi'].value)
         .sort()
         .get()
-        .filter((v, i, a) => a.lastIndexOf(v) <= i)
+        .filter((v, i, a) => v && a.lastIndexOf(v) <= i)
         .forEach(url => $row.trigger('fetch-multi', url))
 
-      $row.find('input, select')
-        // .val('')
+      $row.find('input:not([type="radio"]), select')
+        .val('')
         .first()
         .focus()
     })
@@ -215,12 +216,12 @@ $(_ => {
 
       let $row = $(e.currentTarget)
         .removeClass('editing adding')
-        .find('.row.editing')
+        .find('>.rows>.row.editing, >.singleton.editing')
         .removeClass('editing adding')
 
       $row.trigger('unmarshal', $row.data())
     })
-    .on('default-update', '.table>.rows>.row.editing', (e, url, params) => {
+    .on('default-update', '.table>.rows>.row.editing, .table>.singleton.editing', (e, url, params) => {
       e.stopPropagation()
 
       let $table = $(e.currentTarget)
@@ -248,21 +249,27 @@ $(_ => {
           }
         }
       }).catch(ex => $(e.currentTarget).alert('error',
-        `POST ${url} statusCode: ${ex.status || 'unsent'}`,
+        `${params.method} ${url} statusCode: ${ex.status || 'unsent'}`,
         ex.message ?? ex,
         params)
       ).finally(_ => { $table.trigger('disable-record') })
     })
-    .on('default-remove', '.table .rows>.row.record.selected', (e, url) => {
+    .on('default-remove', '.table>.rows>.row.record.selected', (e, url) => {
       e.stopPropagation()
 
       fetch(url, { method: 'DELETE' })
         .then(async resp => {
-          if (resp.status !== 204) throw {
-            status: resp.status,
-            message: await resp.text(),
+          switch (resp.status) {
+            case 200:
+            case 204:
+              // TODO: don't be so hasty to remove it
+              $(e.currentTarget).trigger('remove-record')
+              break
+            default: throw {
+              status: resp.status,
+              message: await resp.text(),
+            }
           }
-          $(e.currentTarget).trigger('remove-record')
         })
         .catch(ex => $('.alert').trigger('app-error', [
           'error',
@@ -271,12 +278,14 @@ $(_ => {
         ]))
     })
 
-
     // UI actions
-    .on('select', '.table:not(.editing, .adding) .row.record:not(.managed)', e => {
+    .on('select', '.table:not(.editing, .adding)>.rows>.row.record:not(.managed)', e => {
       e.stopPropagation()
 
-      $(e.currentTarget).selected().removeClass('selected')
+      $(e.currentTarget.parentNode)
+        .find('>.selected')
+        .removeClass('selected')
+      // $(e.currentTarget).selected().removeClass('selected')
 
       $(e.currentTarget).addClass('selected')
 
@@ -284,6 +293,6 @@ $(_ => {
       // other one's history console.log(new Error())
       localStorage[$(e.currentTarget).parents('[breadcrumb]').first().attr('breadcrumb')] = e.currentTarget.id
     })
-    .on('click', '.row.record:not(.selected)', e => $(e.currentTarget).trigger('select'))
+    .on('click', '.table>.rows>.row.record:not(.selected)', e => $(e.currentTarget).trigger('select'))
     .on('sort', '.table', (e, keys) => { })
 })

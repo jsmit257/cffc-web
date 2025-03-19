@@ -1,87 +1,127 @@
-label.field {
-  display: inline-block;
-}
-
-.field>input,
-.field>select {
-  float: left;
-  line-height: inherit;
-  margin: 0;
-  position: relative;
-  width: 100%;
-  z-index: -1;
-}
-
-.editing .field>input,
-.editing .field>select {
+/* .singleton.editing>.field,
+.row.editing>.field {
   z-index: initial;
-}
+} */
 
-.table>* {
-  float: left;
-  line-height: 2;
-  width: 100%;
-}
+.table {
 
-.table>.columns {
-  text-align: center;
-  line-height: 3;
-}
+  & .field {
+    display: inline-block;
+    z-index: -1;
+    position: relative;
+  }
 
-.table>.columns>.column {
-  float: left;
-  text-decoration: underline;
-}
+  & .field>input,
+  & .field>select {
+    float: left;
+    line-height: inherit;
+    /* margin: 0; */
+    position: relative;
+    width: 100%;
+  }
 
-.table>.rows {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
+  &>* {
+    float: left;
+    line-height: 2;
+    width: 100%;
+  }
 
-.rows.ndx {
-  float: left;
-  overflow-x: clip;
-  overflow-y: auto;
-}
+  &>.columns {
+    text-align: center;
+    line-height: 3;
 
-.table>.rows>.row {
-  border-radius: 1em;
-  /* line-height: 1.5; */
-  float: left;
-  width: 100%;
-  position: relative;
-}
+    &>.column {
+      float: left;
+      text-decoration: underline;
+    }
+  }
 
-.table>.rows>.row>.static,
-.table>.rows>.row>.field {
-  cursor: default;
-  float: left;
-  padding-left: .5em;
-}
+  &>.rows {
+    overflow-y: auto;
+    overflow-x: hidden;
 
-.singleton>.field {
-  clear: both;
-  display: flex;
-  flex-wrap: nowrap;
-  text-align: left;
-  width: 100%;
-}
+    &>.row {
+      border-radius: 1em;
+      /* line-height: 1.5; */
+      float: left;
+      width: 100%;
+      position: relative;
+      padding-left: .5em;
 
-.singleton>.field>div:is(.dry-weight, .per-kilo),
-.singleton>.field>select,
-.singleton>.field>input {
-  display: inline-block;
-  width: auto;
-}
+      &.ndx {
+        float: left;
+        overflow-x: clip;
+        overflow-y: auto;
+      }
 
-.singleton>.field>div.label {
-  display: inline-block;
-  width: 7em;
-  padding-left: 1em;
-}
 
-.singleton>.field>.short-date {
-  /* display: inline-block; */
-  width: auto;
-  /* font-size: initial; */
+      &.editing {
+        &>.field {
+          z-index: initial;
+        }
+
+        & input,
+        & select {
+          appearance: auto;
+          padding-right: 1em;
+        }
+      }
+
+      &>.static,
+      &>.field {
+        cursor: default;
+        float: left;
+      }
+    }
+  }
+
+  &>.singleton {
+    &>.field {
+      clear: both;
+      display: flex;
+      flex-wrap: nowrap;
+      text-align: left;
+      width: 100%;
+
+      &>div.label {
+        display: inline-block;
+        width: 9em;
+        padding-left: 1em;
+      }
+
+      &>div:is(.dry-weight, .per-kilo, .short-date),
+      &>select,
+      &>input {
+        display: inline-block;
+        width: auto;
+      }
+
+      &>.substrate>option {
+        display: none;
+      }
+
+      &>.bulk.substrate>option[type="bulk"],
+      &>.grain.substrate>option[type="grain"],
+      &>.liquid.substrate>option[type="liquid"],
+      &>.plating.substrate>option[type="plating"] {
+        display: revert;
+      }
+    }
+
+    &.editing {
+      &>.field {
+        z-index: initial;
+      }
+
+      & input,
+      & select {
+        appearance: auto;
+        padding-right: 1em;
+      }
+
+      & select>option {
+        background-color: var(--bg-color);
+      }
+    }
+  }
 }

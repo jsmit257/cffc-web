@@ -1,14 +1,14 @@
 .table:is(.editing, .adding) .buttonbar {
 
-  &>.button.default.add,
-  &>.button.default.update,
-  &>.button.default.delete,
-  &>.button.default.refresh {
+  &>.button.icon.add,
+  &>.button.icon.update,
+  &>.button.icon.delete,
+  &>.button.icon.refresh {
     cursor: not-allowed;
   }
 
-  &>.button.default.ok,
-  &>.button.default.cancel {
+  &>.button.icon.ok,
+  &>.button.icon.cancel {
     cursor: pointer;
   }
 }
@@ -21,7 +21,8 @@
     text-align: center;
   }
 
-  &>.button.default {
+  &>.button.icon {
+    background-image: radial-gradient(ellipse at 50% -1em, #ffffff5c, transparent);
     border-radius: 1em 1em 1em 1em;
     float: right;
     /* height: 2em; */
@@ -32,36 +33,36 @@
     width: 5em;
   }
 
-  &>.button.default.ok,
-  &>.button.default.cancel {
+  &>.button.icon.ok,
+  &>.button.icon.cancel {
     cursor: not-allowed;
   }
 
-  &>.button.delete::before {
+  &>.button.icon.delete::before {
     content: 'delete';
   }
 
-  &>.button.add::before {
+  &>.button.icon.add::before {
     content: 'add';
   }
 
-  &>.button.update::before {
-    content: 'update';
+  &>.button.icon.update::before {
+    content: 'edit';
   }
 
-  &>.button.refresh::before {
+  &>.button.icon.refresh::before {
     content: 'refresh';
   }
 
-  &>.button.ok::before {
+  &>.button.icon.ok::before {
     content: 'ok';
   }
 
-  &>.button.cancel::before {
+  &>.button.icon.cancel::before {
     content: 'cancel';
   }
 
-  &>.button.delete {
+  /* &>.button.delete {
     background-image: radial-gradient(ellipse at 50% -1em, #ff00005c, transparent);
   }
 
@@ -83,5 +84,5 @@
 
   &>.button.cancel {
     background-image: radial-gradient(ellipse at 50% -1em, #ff6c0087, transparent);
-  }
+  } */
 }

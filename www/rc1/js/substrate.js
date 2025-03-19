@@ -30,6 +30,7 @@
       $(e.currentTarget).addClass(data.type)
     })
     .on('click', `>${subrows}:not(.selected)`, e => {
+      // this probably shouldn't happen when `.editing`
       e.stopPropagation()
 
       $(`body>${ingrows}.selected`).removeClass('selected')
