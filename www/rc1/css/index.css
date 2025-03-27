@@ -1,10 +1,55 @@
+/* &hellip; \2026 … */
+/* &brvbar; \00A6 ¦ */
+/* &empty; \2205 ∅ */
+/* &osol; \2298 oplus/ominus/otimes 95/96/97  */
+/* &bull; \2022  */
+/* vert 4dots &#8286; \205E ⁞ */
+/* &macr; \00AF  */
+/* &mdash; \2014 */
+/* &or; \2228 */
+/* &check; \2713 */
+/* &plus; \002B */
+/* &minus; \2212 */
+/* &times; \00D7 */
+
 :root {
   --bg-color: #060617db;
-  --fg-color: aliceblie;
-  /* --bg-color: #2a2d41db; */
-  --depth-login: 5;
-  --depth-info: 3;
+  --fg-color: aliceblue;
+  --color-disabled: #f0f8ff9e;
+  --z-login: 5;
+  --z-info: 3;
   --login-background-color: #0f00255c;
+
+  --css-horz-ellipse: '\2026';
+  --css-vert-bar: '\00A6';
+  --css-empty: '\2205';
+  --css-circle-divide: '\2298';
+  --css-circle-plus: '\2295';
+  --css-circle-minus: '\2296';
+  --css-circle-times: '\2297';
+  --css-circle-dot: '\2299';
+  --css-bullet: '\2022';
+  --css-vert-ellipse: '\205E';
+  --css-macron: '\00AF';
+  --css-mdash: '\2014';
+  --css-or: '\2228';
+  --css-check: '\2713';
+  --css-math-plus: '\002B';
+  --css-math-minus: '\2212';
+  --css-math-times: '\00D7';
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  /* background-image: linear-gradient(0, transparent, #bbb3, transparent); */
+  background-image: radial-gradient(circle, green, transparent 10%), radial-gradient(ellipse, transparent 50%, #00f8);
 }
 
 * {
@@ -25,36 +70,17 @@
 
 .workspace.active {
   display: block;
-  /* margin-top: 2em; */
-  /* position: relative; */
-  /* height: 100%; */
 }
 
 .workspace>.table {
-  border-color: #faf0ff4f;
+  border-color: #462a70;
   border-style: solid;
   border-width: 0;
-  /* border-bottom-width: 1px; */
   border-left-width: 1px;
   border-top-width: 1px;
-  border-radius: 1em;
+  border-radius: 1em 1em 0 0;
   float: left;
   position: relative;
-}
-
-.table.substrate {}
-
-::-webkit-scrollbar-track {
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-image: linear-gradient(0, transparent, #bbb3, transparent);
-  border-radius: 10px;
 }
 
 input,
@@ -64,11 +90,11 @@ select {
   border: 0;
   color: white;
   display: inline-block;
-  /* font-family: system-ui; */
   font-size: large;
-  /* margin: 0; */
   outline: none;
   text-overflow: ellipsis;
+  overflow: clip;
+  white-space: nowrap;
 }
 
 select>option {
@@ -83,6 +109,7 @@ html {
   background-attachment: fixed;
   background-color: var(--bg-color);
   background-image: linear-gradient(var(--bg-color), var(--bg-color)), url(./images/background/image.avif);
+  /* background-image: url(./images/background/image.avif); */
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -113,135 +140,177 @@ body {
 
   &>.menubar {
     font-size: larger;
-    margin-bottom: 7em;
-    /* margin-top: .5em; */
-    text-align: left;
     font-weight: bold;
     line-height: 3;
-    width: 15%;
-    position: fixed;
+    width: 14em;
+    width: 100%;
 
-    &>.menubtn {
-      cursor: pointer;
+    &.menu-main>.items>:not(.main),
+    &.menu-aux>.items>:not(.aux),
+    &.menu-reporting>.items>:not(.reporting) {
+      display: none;
+    }
+
+    &>.items::after,
+    &>.ndx::before {
       border-radius: 1em;
-      margin-right: 2em;
-      padding-left: 1em;
-      text-align: right;
+      font-size: 2em;
+      line-height: 1.5em;
+      text-align: center;
+      width: 1.5em;
+      --menu-marker-color: #88b0ff;
     }
 
-    &>.menubtn:hover {
-      background-image: linear-gradient(0deg, transparent, #fff2 50%, transparent);
-      font-weight: bold;
+    & .menubtn {
+      border-radius: 1em;
+      clear: both;
+      cursor: pointer;
+      display: inline-block;
+      left: 20%;
+      text-align: center;
+      width: 100%;
+
+      &:hover {
+        background-image: linear-gradient(0deg, transparent, #fff2 50%, transparent);
+        font-weight: bold;
+      }
+
+      &.selected {
+        background-image: linear-gradient(0deg, transparent, #fff3 50%, transparent);
+        cursor: default;
+      }
     }
 
-    &>.menubtn.selected {
-      background-image: linear-gradient(0deg, transparent, #fff3 50%, transparent);
-      cursor: default;
+    &>.ndx {
+      float: left;
+      min-width: 12rem;
+      width: 10%;
+
+      &::before {
+        background-image: radial-gradient(circle at 0.33em, var(--menu-marker-color), transparent 80%);
+        /* content: '\003E'; */
+        float: left;
+      }
+    }
+
+    &>.items {
+      float: right;
+      width: 85%;
+
+      &::after {
+        background-image: radial-gradient(circle at 1.33em, var(--menu-marker-color), transparent 80%);
+        /* content: '\003C'; */
+        float: right;
+      }
+
+      &>.menubtn {
+        padding-left: 3em;
+        text-align: left;
+        clear: both;
+        width: 100%;
+      }
     }
   }
 
   &>.main {
-    width: 80%;
-    margin-bottom: 7em;
-    /* margin-top: 2em; */
-    /* margin-left: 24%; */
-    float: right;
+    width: 100%;
+    margin-bottom: 9em;
     max-height: 50em;
   }
-}
 
-body>.footer {
-  /* background-color: red; */
-  bottom: 0;
-  left: 0;
-  position: fixed;
-  float: left;
-
-  &>ul {
-    float: left;
-  }
-
-  &>.cookie-bar {
-    background-image: radial-gradient(ellipse at bottom left, var(--background-color) 70%, transparent);
-    border-radius: 0 4em 0 0;
-    float: left;
-    width: 11em;
-    
-    
-
-    & input[type="checkbox"] {
-      appearance: auto;
-    }
-
-    &>.list::before {
-      content: 'Hide';
-      font-weight: bolder;
-      line-height: 2em;
-      width: 100%;
-    }
-
-    &>.list {
-      list-style-type: none;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-
-      &>li {
-        &>input {
-          clear: left;
-          float: left;
-          margin-bottom: .5em;
-        }
-
-        &>label {
-          clear: right;
-          cursor: pointer;
-          /* display: inline-block; */
-          /* float: left; */
-          /* width: 8em; */
-          /* display: block; */
-        }
-      }
-    }
-  }
-
-  &>.powered-by {
-    background-image: radial-gradient(ellipse at bottom right, var(--background-color) 70%, transparent);
-    border-radius: 4em 0 0;
+  &>.footer {
+    /* background-color: red; */
     bottom: 0;
-    margin-right: 1em;
-    position: relative;
-    float: right;
-    z-index: var(--depth-login);
-
-    &>div {
-      display: inline-block;
-    }
+    left: 0;
+    position: fixed;
+    float: left;
 
     &>ul {
-      vertical-align: middle;
+      float: left;
+    }
 
-      & .long-text {
-        display: none;
+    &>.cookie-bar {
+      background-image: radial-gradient(ellipse at bottom left, var(--bg-color) 70%, transparent);
+      border-radius: 0 4em 0 0;
+      float: left;
+      width: 11em;
+
+
+
+      & input[type="checkbox"] {
+        appearance: auto;
+      }
+
+      &>.list::before {
+        content: 'Hide';
+        font-weight: bolder;
+        line-height: 2em;
+        width: 100%;
+      }
+
+      &>.list {
+        list-style-type: none;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+
+        &>li {
+          &>input {
+            clear: left;
+            float: left;
+            margin-bottom: .5em;
+          }
+
+          &>label {
+            clear: right;
+            cursor: pointer;
+            /* display: inline-block; */
+            /* float: left; */
+            /* width: 8em; */
+            /* display: block; */
+          }
+        }
       }
     }
 
-    &>ul::before {
-      content: 'Powered by:';
-      float: left;
-      font-style: italic;
-      line-height: 4.5em;
-      margin-left: -7em;
-    }
-  }
+    &>.powered-by {
+      background-image: radial-gradient(ellipse at bottom right, var(--bg-color) 70%, transparent);
+      border-radius: 4em 0 0;
+      bottom: 0;
+      margin-right: 1em;
+      position: relative;
+      float: right;
+      z-index: var(--z-login);
 
-  &>.powered-by:hover>ul {
-    & .long-text {
-      display: block;
+      &>div {
+        display: inline-block;
+      }
+
+      &>ul {
+        vertical-align: middle;
+
+        & .long-text {
+          display: none;
+        }
+      }
+
+      &>ul::before {
+        content: 'Powered by:';
+        float: left;
+        font-style: italic;
+        line-height: 4.5em;
+        margin-left: -7em;
+      }
     }
 
-    & .short-text {
-      display: none;
+    &>.powered-by:hover>ul {
+      & .long-text {
+        display: block;
+      }
+
+      & .short-text {
+        display: none;
+      }
     }
   }
 }

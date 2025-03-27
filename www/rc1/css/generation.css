@@ -1,47 +1,49 @@
+:root {
+  --generation-area-height: 12em;
+  --sources-area-height: 12em;
+  --generation-buttonbar-height: 4em;
+}
+
 .workspace.generation>.table.generation {
-  &>.rows.ndx {
-    &>.row.record {
-      display: none;
-      
-
-
-      &>div {
-        float: left;
-        width: 50%;
-        z-index: -1;
-        position: relative;
-        padding-left: 1em;
-      }
-    }
-
-    &>.row.record.selected {
-      display: block;
-    }
-  }
-
-  &>.singleton.generation,
-  &>.workspace.sources {
-    float: left;
-    margin-top: 1em;
-  }
-
-  &>.singleton.generation {
-    &>.field {
-      &.progeny {
-        z-index: 1 !important;
-      }
-    }
-  }
-
   &.seeking {
     &>.rows.ndx {
+      height: calc(var(--generation-buttonbar-height) + (var(--generation-area-height) + var(--sources-area-height)) * 4 / 5);
+      margin-bottom: 2em;
+
       &>.row.record {
         display: block;
       }
     }
 
-    &>.singleton.generation {
+    &>.singleton.generation,
+    &>.workspace.sources,
+    &>.buttonbar {
       display: none;
     }
+  }
+
+  &>.singleton.generation {
+    height: var(--generation-area-height);
+    margin-bottom: 2em;
+    margin-top: -2em;
+    padding-top: 3em;
+
+    &.generation {
+      &>.field {
+        &.progeny {
+          z-index: 1 !important;
+        }
+      }
+    }
+  }
+
+  &>.workspace.sources {
+    float: left;
+    height: var(--sources-area-height);
+    margin-top: 1em;
+  }
+
+  &>.buttonbar {
+    height: var(--generation-buttonbar-height);
   }
 }

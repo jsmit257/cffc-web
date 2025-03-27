@@ -43,6 +43,8 @@ body>.main>.workspace>.lifecycle>.table.lifecycle>.rows.ndx>.row>div {
   padding-left: 5%;
   width: 50%;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-x: clip;
 }
 
 body>.main>.workspace>.lifecycle>.table.lifecycle {

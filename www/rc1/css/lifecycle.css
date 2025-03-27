@@ -1,52 +1,80 @@
-.workspace.lifecycle>.table.lifecycle {
-  &>.rows.ndx {
-    /* background-color: #9f93; */
-    /* width: 50%; */
-    /* font-size: 125%; */
-
-    &>.row.record {
-      display: none;
-
-      &>div {
-        float: left;
-      }
-
-      &>.mtime {
-        text-align: center;
-        width: 50%;
-      }
-
-      &>.location {
-        width: 50%;
-      }
-    }
-
-    &>.row.record.selected {
-      display: block;
-    }
-  }
-
-  &>.singleton.lifecycle {
-    /* width: 50%; */
-    /* background-color: #d6d6ff44; */
-    padding-top: 2em;
-    margin-top: -2em;
-    height: 29em;
-  }
+:root {
+  --lifecycle-area-height: 29em;
 }
 
-.workspace.lifecycle>.table.lifecycle.seeking {
-  &>.rows.ndx {
-    height: 29em;
-    z-index: 1;
-    position: relative;
+.workspace.lifecycle>.table.lifecycle {
+  &.seeking {
+    &>.rows.ndx {
+      height: calc(var(--lifecycle-area-height) * 4 / 5);
+      margin-bottom: 2em;
+      
+      
 
-    &>.row.record {
-      display: block;
+      &>.row.record {
+        display: block;
+      }
+    }
+
+    &>.singleton.lifecycle,
+    &>.buttonbar {
+      display: none;
     }
   }
 
+  &>.singleton.lifecycle,
+  &>.buttonbar {
+    height: var(--lifecycle-area-height);
+    margin-bottom: 2em;
+    margin-top: -2em;
+    padding-top: 2em;
+  }
+
   &>.singleton.lifecycle {
-    display: none;
+    /* background-color: #d6d6ff44; */
+    width: calc(100% - 5em);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    &>.field>.dry-weight::after {
+      content: '% dry weight';
+    }
+
+    &>.field>.per-kilo::after {
+      content: '/kg';
+    }
+  }
+
+  &>.buttonbar {
+    float: right;
+    width: 5em;
+    
+    
+    
+    
+    
+
+    &>.button {
+      margin-bottom: .5em;
+      margin-top: .5em;
+      margin-left: 0;
+      clear: both;
+    }
   }
 }

@@ -19,10 +19,16 @@
           $ingredients
             .find('>.rows>.row.x-template')
             .addClass('managed')
-          $ingredients.trigger('fetch')
+          $ingredients.trigger('fetch', $ing => {
+            $(`body>${table}`)
+              .selected()
+              .data('ingredients')
+              // ?.forEach(v => $(`body>${ingrows}#${v.id}`).addClass('selected'))
+              ?.forEach(v => $ing.find(`>.row#${v.id}`).addClass('selected'))
+          })
         })
         .find('>.table.ingredient')
-        .trigger('fetch')
+        .trigger('fetch') // XXX: why don't we need resolve here
     })
     .on('unmarshal', subrows, (e, data) => {
       e.stopPropagation()
@@ -33,17 +39,20 @@
       // this probably shouldn't happen when `.editing`
       e.stopPropagation()
 
-      $(`body>${ingrows}.selected`).removeClass('selected')
+      // remove selecting from table before removing selected? ...
+      $(`body>${child}`)
+        .removeClass('selecting')
+        .find('>.rows>.row.selected')
+        .removeClass('selected')
+
+      // ... or, leave the table selecting?
+      // $(`body>${ingrows}.selected`).removeClass('selected')
 
       $(e.currentTarget).data('ingredients')?.forEach(v =>
         $(`body>${ingrows}#${v.id}`).addClass('selected'))
     })
     .on('click', `${selecting}:not(.selected)`, e => {
       e.stopPropagation()
-
-      if (e.target.nodeName !== 'LABEL') {
-        return
-      }
 
       $(e.currentTarget).trigger('update-children', [
         `substrate/${$(`body>${subrows}.selected`).attr('id')}/ingredients`,
@@ -56,10 +65,6 @@
     })
     .on('click', `${selecting}.selected`, e => {
       e.stopPropagation()
-
-      if (e.target.nodeName !== 'LABEL') {
-        return
-      }
 
       $(e.currentTarget).trigger('update-children', [
         `substrate/${$(`body>${subrows}.selected`).attr('id')}/ingredients/${e.currentTarget.id}`,
@@ -87,8 +92,8 @@
         ex.message ?? ex,
       ]))
     })
-    .on('click', `.substrate .table.ingredient>.buttonbar`, e => $(e.currentTarget.parentNode)
-      .toggleClass('selecting'))
+    .on('click', `.substrate .table.ingredient>.buttonbar`, e =>
+      $(e.currentTarget.parentNode).toggleClass('selecting'))
     .on('change', `${table}>.columns>.type>label>select`, e => {
       e.stopPropagation()
 

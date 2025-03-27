@@ -6,16 +6,16 @@ $(_ => {
   // }
 
   $.fn.extend({
-    //   sortKey: function (el = this.get(0)) {
-    //     // you could check this.length and return short when 0, but then you'd wonder
-    //     // why the code isn't working and isn't throwing errors, either; better to let
-    //     // it bomb when el is null, since it probably means a bad selector
-    //     switch (el.nodeName.toLowerCase()) {
-    //       case 'select': el = el.options[el.selectedIndex] // it's supposed to fall through
-    //       case 'div': return el.innerText
-    //       case 'input': return el.value
-    //     }
-    //   },
+    sortVal: function (el = this.get(0)) {
+      // you could check this.length and return short when 0, but then you'd wonder
+      // why the code isn't working and isn't throwing errors, either; better to let
+      // it bomb when el is null, since it probably means a bad selector
+      switch (el.nodeName.toLowerCase()) {
+        case 'select': el = el.options[el.selectedIndex] // it's supposed to fall through
+        case 'div': return el.innerText
+        case 'input': return el.value
+      }
+    },
     send: function (...data) {
       this.each(function () { $(this).trigger('send', ...data) })
       return $(this)
@@ -25,12 +25,15 @@ $(_ => {
       this.each(function () { $(this)[fn](clz) })
       return $(this)
     },
-    //   buttonbar: function (el = this.get(0)) {
-    //     return $(el).parents('.table').first().find('.buttonbar')
-    //   },
-    //   click: function (el = this.get(0)) {
-    //     return $(el).trigger('click')
-    //   },
+    buttonbar: function (el = this.get(0)) {
+      return $(el)
+        .parents('.table')
+        .first()
+        .find('>.buttonbar')
+    },
+    // click: function (el = this.get(0)) {
+    //   return $(el).trigger('click')
+    // },
     alert: function (lvl, action, msg, state) {
       this.each(function () {
         $('body>.alert').trigger('app-error', [lvl, action, msg, state, this])
@@ -50,7 +53,13 @@ $(_ => {
         .trigger('select'))
 
       return $table.find(`${root}>.selected`)
-    }
+    },
+    breadcrumb: function () {
+      return localStorage[$(this)
+        .parents('[breadcrumb]')
+        .first()
+        .attr('breadcrumb')]
+    },
   })
 
   $(document.body)
@@ -78,7 +87,8 @@ $(_ => {
     .on('long-date', 'div', (e, d) => {
       e.stopPropagation()
 
-      $(e.currentTarget).text(new Date(d).toDateString())
+      d = new Date(d)
+      $(e.currentTarget).text(d.toDateString() + ' ' + d.toLocaleTimeString())
     })
     .on('format', 'div', (e, v) => {
       e.stopPropagation()
@@ -93,11 +103,13 @@ $(_ => {
     .on('extend', 'select[render-attr]>option', (e, data) => $(e.currentTarget)
       .text(data[$(e.currentTarget).parent().attr('render-attr')]))
     .on('extend', 'select[render="strain"]>option', (e, data) => $(e.currentTarget)
-      .text(`${data.name} | ${data.species} | ${data.vendor.name} | ${data.ctime
-        .replace('T', ' ')
-        .slice(0, 16)}`))
+      .attr('dtime', data.dtime)
+      .text(`${data.name} | ${data.species} | ${data.vendor.name} | ${data.ctime.slice(0, 16)}`))
     .on('extend', 'select[render="substrate"]>option', (e, data) => $(e.currentTarget)
-      .attr('type', data.type)
+      .attr({
+        type: data.type,
+        dtime: data.dtime,
+      })
       .text(`${data.name} | Vendor: ${(data.vendor || { name: 'interim' }).name}`))
     .on('extend', 'select[render="lifecycle"]>option', (e, data) => $(e.currentTarget)
       .text(`${data.location} -> ${data.strain.name}`))
@@ -109,5 +121,4 @@ $(_ => {
         stage: data.stage.name,
       })
       .text(data.name))
-
 })

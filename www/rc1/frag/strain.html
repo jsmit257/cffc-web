@@ -1,4 +1,4 @@
-<div class="table strain" x-fetch="strains" x-target=">.rows" breadcrumb="strain">
+<div class="table strain soft-delete" x-fetch="strains" x-target=">.rows" breadcrumb="strain">
   <div class="columns">
     <div class="column name" sort-key="name">Name</div>
     <div class="column species" sort-key="species">Species</div>
@@ -27,6 +27,7 @@
     </div>
   </div>
 
+  <!-- breadcrumb is going to get noisy after a while -->
   <div class="table strainattributes" x-target=">.rows" breadcrumb="strainattribute">
     <datalist id="strain-attr-names" x-fetch="strainattributenames"></datalist>
 
@@ -48,10 +49,10 @@
     </div>
 
     <div class="buttonbar">
-      <div class="button default ok icon">&nbsp;</div>
-      <div class="button default add icon">&nbsp;</div>
-      <div class="button default update icon">&nbsp;</div>
-      <div class="button default delete icon">&nbsp;</div>
+      <div class="button delete"></div>
+      <div class="button default add"></div>
+      <div class="button default update"></div>
+      <div class="button ok"></div>
     </div>
   </div>
 

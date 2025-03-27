@@ -117,7 +117,7 @@
           .removeClass('adding')
       }
     })
-    .on('click', `${srcrows}:not(.adding)>.rowbar>.cancel`, e => {
+    .on('click', `${srcrows}:not(.adding)>.rowbar>.cancel`, e => { // implies editing
       e.stopPropagation()
 
       let $row = $(e.currentTarget.parentNode.parentNode)
@@ -162,15 +162,16 @@
         .trigger('marshal', body)
       let origin = $row.find('[radio-group="origin"]:checked').val()
       let url = `generation/${genid}/sources/${origin}/${$row.attr('id')}`
+        .replace(/\/undefined$/, '')
       let params = {
         method: body.id ? 'PATCH' : 'POST',
         body: {
           type: $(e.currentTarget.parentNode.parentNode.parentNode)
             .find('>.origin-filter>.field>[name="type"]')
             .val(),
+          ...body,
         },
       }
-      params.body[origin] = body[origin]
 
       console.log('default-update', url, params)
       $row

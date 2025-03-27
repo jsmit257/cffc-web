@@ -36,15 +36,26 @@
   <div class="login"></div>
 
   <div class="menubar">
-    <div class="menubtn main" x-stub="lifecycle">lifecycle</div>
-    <div class="menubtn main" x-stub="generation">generation</div>
-    <div class="menubtn main" x-stub="strain">strain</div>
-    <div class="menubtn main" x-stub="substrate">substrate</div>
+    <div class="ndx">
+      <div class="menubtn" category="main">main</div>
+      <div class="menubtn" category="aux">aux</div>
+      <div class="menubtn" category="reporting">reporting</div>
+    </div>
+    <div class="items">
+      <div class="menubtn main" x-stub="lifecycle">lifecycle</div>
+      <div class="menubtn main" x-stub="generation">generation</div>
+      <div class="menubtn main" x-stub="strain">strain</div>
+      <div class="menubtn main" x-stub="substrate">substrate</div>
+      <div class="menubtn aux" x-stub="ingredient">ingredient</div>
+      <div class="menubtn aux" x-stub="stage">stage</div>
+      <div class="menubtn aux" x-stub="vendor">vendor</div>
+      <div class="menubtn aux" x-stub="eventtype">eventtype</div>
 
-    <div class="menubtn aux" x-stub="ingredient">ingredient</div>
-    <div class="menubtn aux" x-stub="stage">stage</div>
-    <div class="menubtn aux" x-stub="vendor">vendor</div>
-    <div class="menubtn aux" x-stub="eventtype">eventtype</div>
+      <div class="menubtn reporting" x-stub="lifecycle">lifecycle</div>
+      <div class="menubtn reporting" x-stub="generation">generation</div>
+      <div class="menubtn reporting" x-stub="strain">strain</div>
+      <div class="menubtn reporting" x-stub="substrate">substrate</div>
+    </div>
   </div>
 
   <div class="main"></div>
@@ -134,8 +145,8 @@
         (reg) => console.log("Service worker registered:", reg),
         (err) => console.error(`Service worker registration failed: ${err}`))
     }
-    let slug = localStorage.active || 'lifecycle'
-    setTimeout(_ => $(`body>.menubar>.menubtn[x-stub="${slug}"]`).click(), 150)
+    let slug = localStorage.menu || 'main'
+    setTimeout(_ => $(`body>.menubar>.ndx>.menubtn[category="${slug}"]`).click(), 150)
   </script>
 </body>
 

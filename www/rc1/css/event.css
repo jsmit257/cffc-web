@@ -22,6 +22,7 @@
 .table.events>.columns>.eventattrs,
 .table.events>.rows>.row>.eventattrs {
   /* background-color: #8f83; */
+  cursor: default;
   display: inline-block;
   width: 21%;
   float: left;
@@ -57,14 +58,15 @@
 
 .table.events>.columns>.mtime,
 .table.events>.rows>.row>.mtime {
-  background-color: #ff83;
-  display: none;
-  width: 10%;
+  /* background-color: #ff83; */
+  text-align: center;
+  width: 20%;
 }
 
 .table.events>.columns>.ctime,
 .table.events>.rows>.row>.ctime {
   /* background-color: #fff3; */
-  width: 21%;
+  display: none;
+  width: 20%;
   text-align: center;
 }

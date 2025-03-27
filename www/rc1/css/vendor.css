@@ -2,6 +2,6 @@
   /* width: 50%; */
 
   & :is(.columns, .rows>.row)>:is(.column, .field) {
-    width: 49%;
+    width: 50%;
   }
 }

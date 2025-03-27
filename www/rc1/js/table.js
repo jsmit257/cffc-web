@@ -20,13 +20,19 @@ $(_ => {
     .on('clear', '.singleton', e => {
       e.stopPropagation()
 
-      $(e.currentTarget).removeData().find('>.field>input, >.field>select')
+      $(e.currentTarget)
+        .removeData()
+        .removeAttr('id')
+        .find('>.field>input, >.field>select')
         .val('')
-      $(e.currentTarget).removeData().find('.per-kilo, .dry-weight, div[name]')
+
+      $(e.currentTarget).find('div[name]')
         .text('')
     })
     .on('fetch', '.table[x-fetch]', (e, resolve = _ => _) => {
       e.stopPropagation()
+
+      $(e.currentTarget).find('>.columns>[sort-order]').removeAttr('sort-order')
 
       let url = e.currentTarget.attributes['x-fetch'].value
       fetch(url)
@@ -68,7 +74,7 @@ $(_ => {
         .insertBefore($tmpl)
         .trigger('unmarshal', record))
 
-      $(e.currentTarget).selected(localStorage[$(e.currentTarget).parents('[breadcrumb]').first().attr('breadcrumb')])
+      $(e.currentTarget).selected($(e.currentTarget).breadcrumb())
     })
     .on('unmarshal', record, (e, data) => {
       let $row = $(e.currentTarget).attr({
@@ -111,11 +117,14 @@ $(_ => {
 
       $(e.target)
         .find('>label>input[name], >label>select[name].static')
-        .each((_, v) => data[v.name] = v.value)
+        .each((_, v) => data[v.name] = $(v).val())
 
       $(e.target)
         .find('>label>select[name]:not(.static)>option:selected')
         .each((_, v) => data[v.parentNode.name] = $(v).data())
+
+      // TODO: check for missing required fields; currently it needs
+      //  the server to fail
     })
 
     // initialize other lists
@@ -144,8 +153,7 @@ $(_ => {
         .val(name)
         .appendTo(e.currentTarget))
     })
-    .on('send', 'select', e => // so static lists don't bubble up
-      e.stopPropagation())
+    .on('send', 'select', e => e.stopPropagation()) // so static lists don't bubble up
     .on('send', 'select[x-fetch], select[x-fetch-multi]', (e, ...data) => {
       e.stopPropagation()
 
@@ -169,11 +177,18 @@ $(_ => {
       .prop('checked', e.currentTarget.value === opt))
 
     // update actions
-    .on('remove-record', '.table>.rows>.row.selected', e => {
+    .on('remove-record', '.table:not(.soft-delete)>.rows>.row.selected', e => {
+      e.stopPropagation()
+
       if ($(e.currentTarget).prev('.row.record').click().length === 0) {
         $(e.currentTarget).next('.row.record').click()
       }
       $(e.currentTarget).remove()
+    })
+    .on('remove-record', '.table.soft-delete>.rows>.row.selected', (e, data) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).attr('dtime', (data?.dtime ?? new Date()).toISOString())
     })
     .on('new-record', '.table>.rows', (e, success = _ => _) => {
       e.stopPropagation()
@@ -183,12 +198,16 @@ $(_ => {
         .find('.selected')
         .removeClass('selected')
 
-      success($(e.currentTarget)
+      let $newrow = $(e.currentTarget)
         .find('>.row.x-template')
         .clone(true, true)
         .toggleClass('x-template record selected adding')
         .prependTo(e.currentTarget)
-        .trigger('enable-record'))
+        .trigger('enable-record')
+
+      $newrow.find('input:not([type="radio"]), select').val('')
+
+      success($newrow)
     })
     .on('enable-record', '.table>.rows>.selected, .table>.singleton', e => {
       e.stopPropagation()
@@ -207,7 +226,6 @@ $(_ => {
         .forEach(url => $row.trigger('fetch-multi', url))
 
       $row.find('input:not([type="radio"]), select')
-        .val('')
         .first()
         .focus()
     })
@@ -234,21 +252,24 @@ $(_ => {
       }).then(async resp => {
         switch (resp.status) {
           case 200:
-          case 201:
-            $(e.currentTarget).data(await resp.json())
-            break
-          case 204:
-            $(e.currentTarget).data({
-              ...$(e.currentTarget).data(),
-              ...params.body
-            })
-            break
+          case 201: return await resp.json()
+          case 204: return {
+            ...$(e.currentTarget).data(),
+            ...params.body
+          }
           default: throw {
             status: resp.status,
             message: await resp.text(),
           }
         }
-      }).catch(ex => $(e.currentTarget).alert('error',
+      }).then(json => localStorage.setItem($(e.currentTarget)
+        .data(json)
+        .parents('[breadcrumb]')
+        .first()
+        .attr('breadcrumb'),
+        json.id)
+        // might be nice to re-sort and scroll-to as needed
+      ).catch(ex => $(e.currentTarget).alert('error',
         `${params.method} ${url} statusCode: ${ex.status || 'unsent'}`,
         ex.message ?? ex,
         params)
@@ -257,13 +278,13 @@ $(_ => {
     .on('default-remove', '.table>.rows>.row.record.selected', (e, url) => {
       e.stopPropagation()
 
+      let json
       fetch(url, { method: 'DELETE' })
         .then(async resp => {
           switch (resp.status) {
-            case 200:
+            case 200: json = await resp.json()
             case 204:
-              // TODO: don't be so hasty to remove it
-              $(e.currentTarget).trigger('remove-record')
+              $(e.currentTarget).trigger('remove-record', json)
               break
             default: throw {
               status: resp.status,
@@ -293,6 +314,56 @@ $(_ => {
       // other one's history console.log(new Error())
       localStorage[$(e.currentTarget).parents('[breadcrumb]').first().attr('breadcrumb')] = e.currentTarget.id
     })
-    .on('click', '.table>.rows>.row.record:not(.selected)', e => $(e.currentTarget).trigger('select'))
-    .on('sort', '.table', (e, keys) => { })
+    .on('click', '.table>.rows>.row.record:not(.selected)', e => {
+      e.stopPropagation()
+
+      $(e.currentTarget).trigger('select')
+    })
+    .on('dblclick', record, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget)
+        .buttonbar()
+        .find('>.update')
+        .click()
+    })
+
+    // sort controls
+    .on('click', '.column[sort-key]', e => {
+      e.stopPropagation()
+
+      let $col = $(e.currentTarget)
+      let $cols = $(e.currentTarget.parentNode)
+      let key = $col.attr('sort-key')
+
+      $cols.data('sort-keys', ($cols.data('sort-keys') ?? [])
+        .filter(v => v !== key))
+        .data('sort-keys')
+        .unshift(key)
+
+      $col.attr('sort-order', ($col.attr('sort-order') ?? -1) * -1)
+        .parents('.table')
+        .first()
+        .trigger('sort', $cols.data('sort-keys'))
+    })
+    .on('sort', '.table[x-target]', (e, ...keys) => {
+      e.stopPropagation()
+
+      let $rows = $(e.currentTarget).find($(e.currentTarget).attr('x-target'))
+
+      $rows.prepend(
+        $rows.find(`>.row.record`).sort((a, b) => keys.reduce((edge, key) => {
+          let order = $(e.currentTarget)
+            .find(`>.columns>.column[sort-key="${key}"]`)
+            .attr('sort-order') ?? 1
+          let [aval, bval] = [a, b].map(row => $(row)
+            .find(`[name=${key}]`)
+            .sortVal()
+            // postgres collation is case-insensitive, but not sure we want that
+            /*.toLowerCase()*/)
+
+          return edge || order * (aval < bval ? -1 : aval > bval ? 1 : 0)
+        }, 0))
+      )
+    })
 })

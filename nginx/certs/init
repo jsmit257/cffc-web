@@ -7,5 +7,5 @@ openssl req -x509 \
   -sha256 \
   -days 3650 \
   -nodes \
-  -subj "/C=US/ST=Colorado/L=Denver/O=huautla/OU=mycology/CN=localhost" \
-  -addext "subjectAltName=DNS:10.0.0.4,IP:10.0.0.4"
+  -subj "/C=US/ST=Colorado/L=Denver/O=huautla/OU=mycology/CN=cffc.io" \
+  -addext "subjectAltName=DNS:cffc.io,IP:172.64.12.114,IP:10.0.0.4"

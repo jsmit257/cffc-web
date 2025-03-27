@@ -1,6 +1,7 @@
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open('my-cache').then(cache => {
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open('cffc-cache').then(cache => {
+      // do we stash everything here?
       return cache.addAll([
         '/index.html',
         '/js/index.js',
@@ -16,10 +17,12 @@ self.addEventListener('install', (event) => {
   )
 })
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request)
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(async response => {
+      return response || await fetch(e.request)
+    }).catch(ex => {
+      console.log(ex)
     })
   )
 })

@@ -12,7 +12,7 @@ build: down
 # - CFFC_API_HOST
 # - CFFC_API_PORT
 .PHONY: run
-run:
+run-docker:
 	docker-compose up --build --remove-orphans -d cffc-web
 	docker tag jsmit257/cffc-web:latest jsmit257/cffc-web:lkg
 
@@ -20,4 +20,5 @@ run:
 push:
 	docker push jsmit257/cffc-web:lkg
 	git tag -f stable
-	git push origin stable:stable
+	git push --force origin stable:stable
+

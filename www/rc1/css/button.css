@@ -4,11 +4,13 @@
   &>.button.icon.update,
   &>.button.icon.delete,
   &>.button.icon.refresh {
+    color: var(--color-disabled);
     cursor: not-allowed;
   }
 
   &>.button.icon.ok,
   &>.button.icon.cancel {
+    color: revert;
     cursor: pointer;
   }
 }
@@ -22,7 +24,8 @@
   }
 
   &>.button.icon {
-    background-image: radial-gradient(ellipse at 50% -1em, #ffffff5c, transparent);
+    background-image: radial-gradient(circle at left, #99ffff5c, transparent 60%), radial-gradient(circle at right, #99ffff5c, transparent 60%);
+    /* background-image: radial-gradient(ellipse at center, transparent 40%, #99ffff5c); */
     border-radius: 1em 1em 1em 1em;
     float: right;
     /* height: 2em; */
@@ -35,6 +38,7 @@
 
   &>.button.icon.ok,
   &>.button.icon.cancel {
+    color: var(--color-disabled);
     cursor: not-allowed;
   }
 

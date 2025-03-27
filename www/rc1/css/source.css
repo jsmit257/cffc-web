@@ -6,22 +6,6 @@
     &>.row.record {
       height: 5em;
 
-      &.editing {
-
-        &>.select,
-        &>.input {
-          appearance: auto;
-        }
-
-        &>.rowbar>.action::before {
-          content: 'save';
-        }
-      }
-
-      &.selected {
-        background-image: radial-gradient(ellipse at top right, #fff3 00%, #fff1 20%, #0000 50%);
-      }
-
       &>.field {
         align-items: baseline;
         clear: both;
@@ -69,16 +53,41 @@
         right: 0;
         top: .5em;
 
-        &>.edit::before {
-          content: 'edit';
+        &>.button {
+          font-weight: bold;
+          text-align: center;
+
+          &.edit::before {
+            color: cyan;
+            content: var(--css-horz-ellipse);
+          }
+
+          &.cancel::before {
+            color: orange;
+            content: 'x';
+          }
+
+          &.action::before {
+            color: red;
+            content: var(--css-circle-minus);
+          }
+        }
+      }
+
+      &.selected {
+        background-image: radial-gradient(ellipse at top right, #fff3 00%, #fff1 20%, #0000 50%), radial-gradient(ellipse at bottom left, #fff3 00%, #fff1 20%, #0000 50%);
+      }
+
+      &.editing {
+
+        &>.select,
+        &>.input {
+          appearance: auto;
         }
 
-        &>.cancel::before {
-          content: 'cancel';
-        }
-
-        &>.action::before {
-          content: 'delete';
+        &>.rowbar>.action::before {
+          color: lightgreen;
+          content: var(--css-check);
         }
       }
     }
@@ -86,6 +95,7 @@
     &>.row.origin-filter {
       &>label {
         display: flex;
+        z-index: 1;
 
         &::before {
           content: 'Type: ';
@@ -118,33 +128,28 @@
       width: 100%;
 
       >.button {
-        width: 2em;
-        border-radius: 1em;
+        /* width: 1em; */
+        /* border-radius: .33em; */
         float: right;
-        text-align: center;
-        background-image: radial-gradient(#0f08, transparent 100%);
-        margin-right: 6em;
+        /* text-align: center; */
+        /* background-image: radial-gradient(#0f08, transparent 100%); */
+        /* margin-right: 1em; */
+        font-style: italic;
       }
 
       >.button::after {
-        margin-right: .5em;
-        text-align: left;
-        width: 4em;
-        display: inline-block;
-        position: fixed;
-        padding-left: 1.5em;
+        color: cadetblue;
+        margin-right: .66em;
+        /* text-align: left; */
+        /* width: 4em; */
+        /* display: inline-block; */
+        /* position: fixed; */
+        padding-left: 1em;
+        font-weight: bold;
       }
 
       &>.add::after {
-        content: 'add';
-      }
-
-      &>.cancel::after {
-        content: 'cancel'
-      }
-
-      &>.save::after {
-        content: 'save';
+        content: var(--css-math-plus);
       }
     }
   }
