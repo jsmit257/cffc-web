@@ -1,5 +1,43 @@
 $(_ => {
   let spaces = '.main>.workspace'
+  let windowFetch = window.fetch
+  let noretry = ['valid']
+
+  window.fetch = function (url, params) {
+    return windowFetch(url, params).then(resp => {
+      switch (resp.status) {
+        case 405: // `resp.text()` doesn't matter here
+        case 400:
+        case 500:
+        // if we make handlers for the above statuses, they might need 
+        // to include the response and also need to be async; for now,
+        // just leaving it up to the client where they can call `alert()`
+        // from the element that initited the call (if that matters)
+        case 403:
+          $(document).trigger(resp.status, [url, params])
+          break
+        default:
+        // console.log('not forbidden', resp.status, url)
+      }
+
+      return resp
+    })
+  }
+
+  $(document)
+    .data('forbidden', [])
+    // handle others here?
+    .on('403', (e, url, params) => {
+      noretry.includes(url.replace(/^[^\/]*/, '')) || $(e.currentTarget)
+        .data('forbidden')
+        .push([url, params])
+    })
+    .on('unforbidden', e => {
+      $(e.delegateTarget)
+        .data('forbidden')
+        .splice(0)
+        .forEach(fetch)
+    })
 
   $(document.head)
     .on('add-script', (e, slug) => {
@@ -41,12 +79,15 @@ $(_ => {
     .on('activate', `>${spaces}`, (e, slug) => {
       e.stopPropagation()
 
+      console.log('activating spaces', $(e.currentTarget))
+      if ($(e.currentTarget).hasClass('active')) {
+        console.log('already active')
+        return
+      }
+
       $(`body>${spaces}.active`).removeClass('active')
 
-      let sel = `#${localStorage[slug]}`
-      if (sel === '#undefined') {
-        sel = ':first-child'
-      }
+      let sel = `#${localStorage[slug]}`.replace(/#undefined/, ':first-child')
 
       $(e.currentTarget)
         .addClass('active')
@@ -69,67 +110,14 @@ $(_ => {
           status: resp.status,
           message: await resp.text(),
         }
-        resolve($(await resp.text()).appendTo($(e.currentTarget).removeAttr('x-child'))) // once is enough
+
+        resolve($(await resp.text())
+          .appendTo($(e.currentTarget)
+            .removeAttr('x-child'))) // once is enough
       }).catch(ex => $(`.alert`).trigger('app-error', [
         'error',
         `loading fragment ${url} statusCode: ${ex.status}`,
         ex.message || ex,
       ]))
-    })
-
-    // menus (menubar.js?)
-    .on('click', '.menubtn[category]:not(.selected)', e => {
-      $('[category].selected').removeClass('selected')
-
-      let $btn = $(e.currentTarget)
-        .addClass('selected')
-
-      $(e.currentTarget.parentNode.parentNode)
-        .removeClass('menu-main menu-aux menu-reporting')
-        .addClass(`menu-${$btn.attr('category')}`)
-
-      let menu = localStorage.menu = $btn.attr('category')
-      let slug = localStorage[localStorage.menu]
-
-      $(`body>.menubar>.items>.menubtn.${menu}[x-stub=${slug}]`)
-        .trigger('click')
-    })
-    .on('click', '.menubtn[x-stub]:not(.selected)', e => {
-      $('[x-stub].selected').removeClass('selected')
-
-      let slug = $(e.currentTarget)
-        .addClass('selected')
-        .attr('x-stub')
-
-      localStorage[localStorage.menu ?? 'main'] = slug
-
-      if ($(`body>${spaces}.${slug}`).trigger('activate', slug).length) {
-        return
-      }
-
-      $(document.head).trigger('add-resource', {
-        src: slug,
-        href: slug,
-      })
-
-      let url = `./frag/${slug}.html`
-      fetch(url)
-        .then(async resp => {
-          if (resp.status != 200) throw {
-            status: resp.status,
-            message: await resp.text()
-          }
-          return await resp.text()
-        })
-        .then(html => $('<div>')
-          .addClass(`workspace active ${slug}`)
-          .html(html)
-          .appendTo('body>.main'))
-        .then(workspace => workspace.trigger('activate', slug))
-        .catch(ex => $('.alert').trigger('app-error', [
-          'error',
-          `loading fragment ${url}`,
-          ex.message ?? ex,
-        ]))
     })
 })

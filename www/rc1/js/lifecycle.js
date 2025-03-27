@@ -126,11 +126,13 @@
 
       $(`body>${eventrows}`).remove()
 
-      if (!$(`body>${events}`).trigger('send', data.events ?? [])
+      if (!$(`body>${events}`)
+        .trigger('send', data.events ?? [])
         .selected(localStorage[$(e.currentTarget)
           .parents('[x-target]')
           .first()
           .attr('breadcrumb')])
+        .length
       ) {
         $(`body>${eventrows}:first-child`).click()
       }

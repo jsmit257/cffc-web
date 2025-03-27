@@ -10,7 +10,7 @@
 
 .table.events>.columns>.full {
   width: 100%;
-  /* visibility: hidden; */
+  text-decoration: underline;
 }
 
 .table.events>.columns>.eventtype,
@@ -23,7 +23,6 @@
 .table.events>.rows>.row>.eventattrs {
   /* background-color: #8f83; */
   cursor: default;
-  display: inline-block;
   width: 21%;
   float: left;
   text-align: center;
@@ -37,7 +36,6 @@
 .table.events>.columns>.stage,
 .table.events>.rows>.row>.stage {
   /* background-color: #88f3; */
-  display: inline-block;
   width: 8%;
   float: left;
   /* padding-left: .25em; */

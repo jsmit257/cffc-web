@@ -63,9 +63,6 @@
   &>.rows {
     /* margin-right: 1%; */
     width: var(--substrates-width);
-    
-    
-    
 
     &>.row.record {
 
@@ -105,27 +102,9 @@
       &>.rows {
         height: 100%;
         width: calc(100% - 2em);
-        margin-right: -3em;
-        padding-right: 3em;
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        margin-right: .5em;
+        /* padding-right: 3em; */
+        float: right;
 
         &>.row.record {
           display: none;
@@ -141,25 +120,27 @@
       }
 
       &>.buttonbar {
-        float: right;
-        font-weight: bolder;
-        margin-right: .5em;
-        padding-top: 1em;
+        float: left;
+        /* font-weight: bolder; */
+        /* margin-right: .5em; */
+        padding-left: .75em;
         text-align: center;
-        width: 2em;
-        
-        
+        width: 1em;
+        height: 100%;
 
         &>.button.default {
           display: none;
         }
 
         &>.button {
-          /* border-radius: 1em; */
-          /* cursor: pointer; */
           font-weight: bold;
           font-family: sans-serif;
-          float: right;
+          /* float: right; */
+          font-size: larger;
+          height: 100%;
+          vertical-align: middle;
+          display: flex;
+          align-items: center;
         }
 
         &>.expand {
@@ -183,7 +164,7 @@
 
     &>.table.ingredient.selecting>.buttonbar {
       &>.collapse {
-        display: block;
+        display: flex;
       }
 
       &>.expand {

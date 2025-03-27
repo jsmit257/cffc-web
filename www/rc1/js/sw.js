@@ -1,9 +1,11 @@
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open('cffc-cache').then(cache => {
-      // do we stash everything here?
       return cache.addAll([
         '/index.html',
+        '/css/images/background/image.avif',
+
+        // placeholders, js and css get concatenated and/or minified for prod
         '/js/index.js',
         '/js/util.js',
         '/js/table.js',
@@ -11,7 +13,8 @@ self.addEventListener('install', e => {
         '/css/index.css',
         '/css/table.css',
         '/css/alert.css',
-        '/css/images/background/image.avif',
+
+        // but do we cache fragments and dynamic scripts/links?
       ])
     })
   )

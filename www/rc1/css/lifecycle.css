@@ -7,8 +7,6 @@
     &>.rows.ndx {
       height: calc(var(--lifecycle-area-height) * 4 / 5);
       margin-bottom: 2em;
-      
-      
 
       &>.row.record {
         display: block;
@@ -32,25 +30,6 @@
   &>.singleton.lifecycle {
     /* background-color: #d6d6ff44; */
     width: calc(100% - 5em);
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     &>.field>.dry-weight::after {
       content: '% dry weight';
@@ -64,11 +43,6 @@
   &>.buttonbar {
     float: right;
     width: 5em;
-    
-    
-    
-    
-    
 
     &>.button {
       margin-bottom: .5em;

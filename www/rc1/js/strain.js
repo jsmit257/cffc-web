@@ -34,16 +34,28 @@
             status: resp.status,
             message: await resp.text(),
           }
+
+          // XXX: this will eventually cause a lot of noise in localstorage
+          $(`body>${sa}`).attr('breadcrumb', `${url}/attribute`)
+
           return await resp.json()
         })
-        .then(json => $(`body>${attrs}`).trigger('send', json.attributes))
+        .then(json => {
+          if (!$(`body>${attrs}`)
+            .trigger('send', json.attributes)
+            .selected(localStorage[$(`body>${sa}`).attr('breadcrumb')])
+            .length
+          ) {
+            $(`body>${attrrows}:first-child`).click()
+          }
+        })
         .catch(ex => $(e.currentTarget).alert('error',
           `GET ${url} statusCode: ${ex.status || 'unsent'}`,
           ex.message ?? ex))
     })
 
     // strain attribute edit functions
-    .on('click', `>${sabtns}>.ok`, e => {
+    .on('click', `>${sabtns} >.ok`, e => {
       e.stopPropagation()
 
       let $sel = $(e.currentTarget).selected()
@@ -51,11 +63,10 @@
         throw new Error('no strainattribute selected')
       }
 
-      let sid = $(e.currentTarget)
-        .parents('.table.strain')
-        .selected()
-        .attr('id')
-      let url = `strain/${sid}/attribute/${$sel.attr('id')}`
+      let url = `${$(e.currentTarget)
+        .parents('[breadcrumb]')
+        .first()
+        .attr('breadcrumb')}/${$sel.attr('id')}`
 
       let params = { method: 'PATCH', body: {} }
       if ($(e.currentTarget)
@@ -105,11 +116,10 @@
         throw new Error('no strainattribute selected')
       }
 
-      let sid = $(e.currentTarget)
-        .parents('.table.strain')
-        .selected()
-        .attr('id')
-      let url = `strain/${sid}/attribute/${$sel.attr('id')}`
+      let url = `${$(e.currentTarget)
+        .parents('[x-target]')
+        .first()
+        .attr('breadcrumb')}/${$sel.attr('id')}`
 
       $sel.trigger('default-remove', url)
     })

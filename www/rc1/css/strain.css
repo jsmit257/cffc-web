@@ -70,8 +70,11 @@
       float: right;
 
       &>.button {
-        font-weight: bold;
+        font-weight: bolder;
         margin-top: .5em;
+        font-size: larger;
+        
+        
 
         &::before {
           margin-top: 1em;

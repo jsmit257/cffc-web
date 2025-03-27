@@ -26,8 +26,7 @@ $(_ => {
         .find('>.field>input, >.field>select')
         .val('')
 
-      $(e.currentTarget).find('div[name]')
-        .text('')
+      $(e.currentTarget).find('div[name]').text('')
     })
     .on('fetch', '.table[x-fetch]', (e, resolve = _ => _) => {
       e.stopPropagation()

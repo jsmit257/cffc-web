@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="background-image">
 
 <head>
   <title>release candidate 1</title>
@@ -13,6 +13,7 @@
   <!-- <script src="./js/jquery-slim-min.js"></script> -->
   <script src="./js/index.js" defer></script>
   <script src="./js/util.js" defer></script>
+  <script src="./js/menubar.js" defer></script>
   <script src="./js/table.js" defer></script>
   <script src="./js/alert.js" defer></script>
   <script src="./js/button.js" defer></script>
@@ -21,11 +22,13 @@
 
   <link rel="preload" href="./css/images/background/image.avif" as="image">
   <link rel="preload" href="./css/index.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/menubar.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/table.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/alert.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/button.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <noscript>
     <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/menubar.css">
     <link rel="stylesheet" href="./css/table.css">
     <link rel="stylesheet" href="./css/alert.css">
     <link rel="stylesheet" href="./css/button.css">
@@ -35,7 +38,7 @@
 <body>
   <div class="login"></div>
 
-  <div class="menubar">
+  <div class="menubar background-image">
     <div class="ndx">
       <div class="menubtn" category="main">main</div>
       <div class="menubtn" category="aux">aux</div>
@@ -145,8 +148,7 @@
         (reg) => console.log("Service worker registered:", reg),
         (err) => console.error(`Service worker registration failed: ${err}`))
     }
-    let slug = localStorage.menu || 'main'
-    setTimeout(_ => $(`body>.menubar>.ndx>.menubtn[category="${slug}"]`).click(), 150)
+    setTimeout(_ => $(`body>.menubar`).trigger('init'), 150)
   </script>
 </body>
 

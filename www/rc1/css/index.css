@@ -1,42 +1,41 @@
-/* &hellip; \2026 … */
-/* &brvbar; \00A6 ¦ */
-/* &empty; \2205 ∅ */
-/* &osol; \2298 oplus/ominus/otimes 95/96/97  */
-/* &bull; \2022  */
-/* vert 4dots &#8286; \205E ⁞ */
-/* &macr; \00AF  */
-/* &mdash; \2014 */
-/* &or; \2228 */
-/* &check; \2713 */
-/* &plus; \002B */
-/* &minus; \2212 */
-/* &times; \00D7 */
-
 :root {
-  --bg-color: #060617db;
+  --bg-color: #26253c;
   --fg-color: aliceblue;
   --color-disabled: #f0f8ff9e;
-  --z-login: 5;
-  --z-info: 3;
-  --login-background-color: #0f00255c;
 
-  --css-horz-ellipse: '\2026';
-  --css-vert-bar: '\00A6';
-  --css-empty: '\2205';
-  --css-circle-divide: '\2298';
-  --css-circle-plus: '\2295';
-  --css-circle-minus: '\2296';
-  --css-circle-times: '\2297';
-  --css-circle-dot: '\2299';
+  /* highest order, above everything */
+  --z-error: 7;
+  /* 2nd most important data */
+  --z-login: 5;
+  /* dunno about this one yet */
+  --z-info: 3;
+  /* just above the (always-)enabled labels; for menus, footers, etc */
+  --z-menu: 2;
+  /* 
+   instead of disabled/readonly inputs, just bury them when they should 
+   be inactive, and raise them when they're editable
+   */
+  --z-enabled: 1;
+  --z-disabled: -1;
+  --login-background-color: #0f00255c;
+  --body-min-width: 80em;
   --css-bullet: '\2022';
-  --css-vert-ellipse: '\205E';
+  --css-check: '\2713';
+  --css-circle-divide: '\2298';
+  --css-circle-dot: '\2299';
+  --css-circle-minus: '\2296';
+  --css-circle-plus: '\2295';
+  --css-circle-times: '\2297';
+  --css-empty: '\2205';
+  --css-horz-ellipse: '\2026';
   --css-macron: '\00AF';
+  --css-math-minus: '\2212';
+  --css-math-plus: '\002B';
+  --css-math-times: '\00D7';
   --css-mdash: '\2014';
   --css-or: '\2228';
-  --css-check: '\2713';
-  --css-math-plus: '\002B';
-  --css-math-minus: '\2212';
-  --css-math-times: '\00D7';
+  --css-vert-bar: '\00A6';
+  --css-vert-ellipse: '\205E';
 }
 
 ::-webkit-scrollbar-track {
@@ -58,29 +57,22 @@
   font-family: system-ui;
 }
 
-.selected {
-  background-image: linear-gradient(0deg, transparent, #fff2, transparent);
+.background-image {
+  background-attachment: fixed;
+  background-color: var(--bg-color);
+  /* background-image: url(./images/background/image.avif); */
+  background-image: linear-gradient(var(--bg-color), var(--bg-color)), url(./images/background/image.avif);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: saturation;
+  background-blend-mode: hue;
+  background-blend-mode: multiply;
+  background-blend-mode: hard-light;
 }
 
-.workspace,
-.x-template {
-  display: none;
-  float: left;
-}
-
-.workspace.active {
-  display: block;
-}
-
-.workspace>.table {
-  border-color: #462a70;
-  border-style: solid;
-  border-width: 0;
-  border-left-width: 1px;
-  border-top-width: 1px;
-  border-radius: 1em 1em 0 0;
-  float: left;
-  position: relative;
+a {
+  color: var(--fg-color);
 }
 
 input,
@@ -106,16 +98,6 @@ input[type="radio"] {
 }
 
 html {
-  background-attachment: fixed;
-  background-color: var(--bg-color);
-  background-image: linear-gradient(var(--bg-color), var(--bg-color)), url(./images/background/image.avif);
-  /* background-image: url(./images/background/image.avif); */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-blend-mode: saturation;
-  background-blend-mode: hue;
-  background-blend-mode: luminosity;
   color: aliceblue;
   /* font-size: 125%; */
   /* height: 100%; */
@@ -123,7 +105,7 @@ html {
   margin-left: auto;
   margin-right: auto;
   width: 60%;
-  min-width: 80em;
+  min-width: var(--body-min-width);
 }
 
 body {
@@ -136,86 +118,35 @@ body {
   &>.footer {
     float: left;
     width: 100%;
-  }
-
-  &>.menubar {
-    font-size: larger;
-    font-weight: bold;
-    line-height: 3;
-    width: 14em;
-    width: 100%;
-
-    &.menu-main>.items>:not(.main),
-    &.menu-aux>.items>:not(.aux),
-    &.menu-reporting>.items>:not(.reporting) {
-      display: none;
-    }
-
-    &>.items::after,
-    &>.ndx::before {
-      border-radius: 1em;
-      font-size: 2em;
-      line-height: 1.5em;
-      text-align: center;
-      width: 1.5em;
-      --menu-marker-color: #88b0ff;
-    }
-
-    & .menubtn {
-      border-radius: 1em;
-      clear: both;
-      cursor: pointer;
-      display: inline-block;
-      left: 20%;
-      text-align: center;
-      width: 100%;
-
-      &:hover {
-        background-image: linear-gradient(0deg, transparent, #fff2 50%, transparent);
-        font-weight: bold;
-      }
-
-      &.selected {
-        background-image: linear-gradient(0deg, transparent, #fff3 50%, transparent);
-        cursor: default;
-      }
-    }
-
-    &>.ndx {
-      float: left;
-      min-width: 12rem;
-      width: 10%;
-
-      &::before {
-        background-image: radial-gradient(circle at 0.33em, var(--menu-marker-color), transparent 80%);
-        /* content: '\003E'; */
-        float: left;
-      }
-    }
-
-    &>.items {
-      float: right;
-      width: 85%;
-
-      &::after {
-        background-image: radial-gradient(circle at 1.33em, var(--menu-marker-color), transparent 80%);
-        /* content: '\003C'; */
-        float: right;
-      }
-
-      &>.menubtn {
-        padding-left: 3em;
-        text-align: left;
-        clear: both;
-        width: 100%;
-      }
-    }
+    min-width: var(--body-min-width);
   }
 
   &>.main {
     width: 100%;
     margin-bottom: 9em;
+    margin-top: 3.2em;
     max-height: 50em;
+
+    & .workspace,
+    & .x-template {
+      display: none;
+      float: left;
+    }
+
+    & .workspace.active {
+      display: block;
+    }
+
+    & .workspace>.table {
+      border-color: #462a70;
+      border-style: solid;
+      border-width: 0;
+      border-left-width: 1px;
+      border-top-width: 1px;
+      border-radius: 1em 1em 0 0;
+      float: left;
+      position: relative;
+    }
   }
 
   &>.footer {
@@ -235,8 +166,6 @@ body {
       float: left;
       width: 11em;
 
-
-
       & input[type="checkbox"] {
         appearance: auto;
       }
@@ -245,12 +174,14 @@ body {
         content: 'Hide';
         font-weight: bolder;
         line-height: 2em;
+        -bottom: 1em;
         width: 100%;
       }
 
       &>.list {
         list-style-type: none;
         margin: 0;
+        margin-bottom: 1em;
         display: flex;
         flex-direction: column;
 
@@ -277,7 +208,7 @@ body {
       background-image: radial-gradient(ellipse at bottom right, var(--bg-color) 70%, transparent);
       border-radius: 4em 0 0;
       bottom: 0;
-      margin-right: 1em;
+      padding-right: 1em;
       position: relative;
       float: right;
       z-index: var(--z-login);
@@ -287,6 +218,7 @@ body {
       }
 
       &>ul {
+        margin-left: 6em;
         vertical-align: middle;
 
         & .long-text {

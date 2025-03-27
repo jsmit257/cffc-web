@@ -123,6 +123,7 @@
           .parents('[x-target]')
           .first()
           .attr('breadcrumb')])
+        .length
       ) {
         $(`body>${eventrows}:first-child`).click()
       }

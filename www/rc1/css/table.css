@@ -43,6 +43,16 @@
     }
   }
 
+  & .hover:not(.selected):hover {
+    background-image: linear-gradient(0, transparent, #aaa1, transparent);
+    border-radius: 25px;
+    cursor: pointer;
+  }
+
+  & .selected {
+    background-image: linear-gradient(0deg, transparent, #fff2, transparent);
+  }
+
   &>.columns {
     text-align: center;
     line-height: 3;
