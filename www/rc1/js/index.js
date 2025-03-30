@@ -79,9 +79,7 @@ $(_ => {
     .on('activate', `>${spaces}`, (e, slug) => {
       e.stopPropagation()
 
-      console.log('activating spaces', $(e.currentTarget))
       if ($(e.currentTarget).hasClass('active')) {
-        console.log('already active')
         return
       }
 

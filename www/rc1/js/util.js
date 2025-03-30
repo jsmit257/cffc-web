@@ -82,13 +82,17 @@ $(_ => {
     .on('short-date', 'div', (e, d) => {
       e.stopPropagation()
 
-      $(e.currentTarget).text(d.slice(0, 19).replace(/T/, ' '))
+      $(e.currentTarget)
+        .data('src-date', new Date(d))
+        .text(d.slice(0, 19).replace(/T/, ' '))
     })
     .on('long-date', 'div', (e, d) => {
       e.stopPropagation()
 
       d = new Date(d)
-      $(e.currentTarget).text(d.toDateString() + ' ' + d.toLocaleTimeString())
+      $(e.currentTarget)
+        .data('src-date', d)
+        .text(d.toDateString() + ' ' + d.toLocaleTimeString())
     })
     .on('format', 'div', (e, v) => {
       e.stopPropagation()
@@ -98,10 +102,18 @@ $(_ => {
     })
 
     // custom select/render options per-entity type
-    .on('extend', 'select[render="x-basic"]>option', (e, data) => $(e.currentTarget)
-      .text(data))
     .on('extend', 'select[render-attr]>option', (e, data) => $(e.currentTarget)
       .text(data[$(e.currentTarget).parent().attr('render-attr')]))
+    .on('extend', 'select[render="event"]>option', (e, data) => $(e.currentTarget)
+      .html(`${data.event_type.name} &bull; ${data.mtime.slice(0, 19).replace(/T/, ' ')}`))
+    .on('extend', 'select[render="eventtype"]>option', (e, data) => $(e.currentTarget)
+      .attr({
+        severity: data.severity,
+        stage: data.stage.name,
+      })
+      .text(data.name))
+    .on('extend', 'select[render="lifecycle"]>option', (e, data) => $(e.currentTarget)
+      .text(`${data.location} -> ${data.strain.name}`))
     .on('extend', 'select[render="strain"]>option', (e, data) => $(e.currentTarget)
       .attr('dtime', data.dtime)
       .text(`${data.name} | ${data.species} | ${data.vendor.name} | ${data.ctime.slice(0, 16)}`))
@@ -111,14 +123,6 @@ $(_ => {
         dtime: data.dtime,
       })
       .text(`${data.name} | Vendor: ${(data.vendor || { name: 'interim' }).name}`))
-    .on('extend', 'select[render="lifecycle"]>option', (e, data) => $(e.currentTarget)
-      .text(`${data.location} -> ${data.strain.name}`))
-    .on('extend', 'select[render="event"]>option', (e, data) => $(e.currentTarget)
-      .html(`${data.event_type.name} &bull; ${data.mtime.slice(0, 19).replace(/T/, ' ')}`))
-    .on('extend', 'select[render="eventtype"]>option', (e, data) => $(e.currentTarget)
-      .attr({
-        severity: data.severity,
-        stage: data.stage.name,
-      })
-      .text(data.name))
+    .on('extend', 'select[render="x-basic"]>option', (e, data) => $(e.currentTarget)
+      .text(data))
 })

@@ -57,11 +57,6 @@
           font-weight: bolder;
           font-size: larger;
           text-align: center;
-          
-          
-          
-          
-          
 
           &.edit::before {
             color: cyan;

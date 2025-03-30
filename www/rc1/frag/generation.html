@@ -1,4 +1,4 @@
-<div class="table generation" x-fetch="generations" x-target=">.rows.ndx" breadcrumb="generation">
+<div class="table generation" x-fetch="generations" x-target=">.rows.ndx" breadcrumb="generation" ts-edit="generations">
   <div class="rows ndx">
     <div class="row hover x-template">
       <div class="static ctime" name="ctime" x-formatter="long-date"></div>
@@ -23,8 +23,8 @@
 
     <label class="field no-edit hover progeny" hover="go to strain">
       <div class="label">Progeny</div>
-      <select class="strains progeny" x-fetch="strains" render="strain" tabindex="0">
-        <option id="none" value="#" class="permanent">&mdash; none &mdash;</option>
+      <select class="strains progeny no-change" x-fetch="strains" render="strain" tabindex="0">
+        <option value="#" class="permanent null-pointer">&mdash; None &mdash;</option>
       </select>
     </label>
 

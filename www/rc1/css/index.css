@@ -112,6 +112,15 @@ body {
   margin-left: auto;
   margin-right: auto;
 
+  &>.timestamp,
+  & .x-template {
+    display: none;
+  }
+
+  &.ts-editing>.timestamp {
+    display: block;
+  }
+
   &>.login,
   &>.menubar,
   &>.main,
@@ -127,8 +136,7 @@ body {
     margin-top: 3.2em;
     max-height: 50em;
 
-    & .workspace,
-    & .x-template {
+    & .workspace {
       display: none;
       float: left;
     }
@@ -155,6 +163,7 @@ body {
     left: 0;
     position: fixed;
     float: left;
+    z-index: var(--z-menu);
 
     &>ul {
       float: left;
@@ -174,7 +183,7 @@ body {
         content: 'Hide';
         font-weight: bolder;
         line-height: 2em;
-        -bottom: 1em;
+        bottom: 1em;
         width: 100%;
       }
 
@@ -211,7 +220,6 @@ body {
       padding-right: 1em;
       position: relative;
       float: right;
-      z-index: var(--z-login);
 
       &>div {
         display: inline-block;

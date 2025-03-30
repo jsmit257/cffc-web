@@ -12,8 +12,15 @@ body>.menubar {
     clear: both;
     cursor: pointer;
     display: none;
-    text-align: center;
+    padding-left: 1em;
     width: 100%;
+
+    &::before {
+      color: transparent;
+      content: var(--css-math-minus);
+      float: left;
+      padding-right: 1em;
+    }
 
     &:hover {
       background-image: linear-gradient(0deg, transparent, #fff1 50%, transparent);
@@ -28,8 +35,9 @@ body>.menubar {
   &.selecting>:is(.ndx, .items)>.menubtn {
     display: inline-block;
 
-    &.selected {
-      background-image: linear-gradient(0deg, transparent, #fff3 50%, transparent);
+    &.selected::before {
+      color: revert;
+      content: var(--css-bullet);
     }
   }
 
@@ -58,10 +66,5 @@ body>.menubar {
     border-radius: 0 3em 3em 0;
     float: left;
     width: 87.5%;
-
-    &>.menubtn {
-      padding-left: 1em;
-      text-align: left;
-    }
   }
 }

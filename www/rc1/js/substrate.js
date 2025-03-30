@@ -23,8 +23,8 @@
           $ingredients.trigger('fetch', $ing => $(`body>${table}`)
             .selected()
             .data('ingredients')
-            // ?.forEach(v => $(`body>${ingrows}#${v.id}`).addClass('selected'))
-            ?.forEach(v => $ing.find(`>.row#${v.id}`).addClass('selected')))
+            // ?.forEach(v => $ing.find(`>.row#${v.id}`).addClass('selected')))
+            ?.forEach(v => $(`body>${ingrows}#${v.id}`).addClass('selected')))
         })
         .find('>.table.ingredient')
         .trigger('fetch') // XXX: why don't we need resolve here

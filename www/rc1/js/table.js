@@ -73,6 +73,7 @@ $(_ => {
         .insertBefore($tmpl)
         .trigger('unmarshal', record))
 
+      // DEPRECATED: but it's still used by some (e.g. events)
       $(e.currentTarget).selected($(e.currentTarget).breadcrumb())
     })
     .on('unmarshal', record, (e, data) => {
@@ -81,8 +82,7 @@ $(_ => {
         dtime: data.dtime,
       })
 
-      Object.keys(data).forEach(k => {
-        let v = data[k]
+      Object.entries(data).forEach(([k, v]) => {
         let $fld = $row.find(`>.field>[name="${k}"], >[name="${k}"]`)
 
         switch (($fld.get(0) || { nodeName: 'x-none' }).nodeName.toLowerCase()) {
@@ -107,7 +107,7 @@ $(_ => {
         $fld.val(v)
       })
 
-      $row.find('input, select').trigger('change')
+      $row.find('input:not(.no-change), select:not(.no-change)').trigger('change')
     })
     .on('marshal', record, (e, data) => {
       e.stopPropagation()

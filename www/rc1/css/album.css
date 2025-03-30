@@ -1,0 +1,17 @@
+body>.main>.workspace.album>.table.album {
+  &>.rows {
+    &>.row.record {
+      width: auto;
+
+      &>.thumbnail {
+        border-color: lightseagreen;
+        /* border-color: lightskyblue; */
+        border-style: outset;
+        cursor: pointer;
+        height: 150px;
+        object-fit: cover;
+        width: 150px;
+      }
+    }
+  }
+}

@@ -8,10 +8,14 @@ $(_ => {
   let spaces = `${main}>.workspace`
 
   $(document.body)
+    // this is where it all starts
     .on('init', `>${menubar}`, e => {
       e.stopPropagation()
 
-      let menu = localStorage.menu ?? (localStorage.menu = 'main')
+      let menu = localStorage.menu ?? (localStorage.menu =
+        $(`body>${ndxbtn}`)
+          .first()
+          .attr('category'))
       let slug = localStorage[menu] ?? (localStorage[menu] =
         $(`body>${itembtn}.${menu}`)
           .first()
@@ -28,9 +32,7 @@ $(_ => {
 
       let slug = localStorage[localStorage.menu]
 
-      console.log('wtf?', $(`body>${spaces}.${slug}`))
       if ($(`body>${spaces}.${slug}`).trigger('activate', slug).length) {
-        console.log('already loaded')
         return
       }
 

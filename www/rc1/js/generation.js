@@ -108,6 +108,58 @@
         .removeClass('editing adding')
         .trigger('unmarshal', $singleton.data())
     })
+    .on('change', `>${progeny}`, e => {
+      e.stopPropagation()
+
+      // console.log('value', `'${e.currentTarget.value}'`, new Error('stack trace'))
+      let $prog = $(e.currentTarget)
+
+      let curr = $prog.attr('curr')
+      if (curr !== '#') {
+        let url = `strain/${curr}/generation`
+        fetch(url, { method: "DELETE" })
+          .then(async resp => {
+            if (resp.status !== 204) throw {
+              status: resp.status,
+              message: await resp.text()
+            }
+            return 'success'
+          })
+          .then(_ => $prog.removeAttr('curr')
+            .find(`option[value=${curr}][disabled]`)
+            .attr('disabled', false)
+            // XXX: not sold on this gid thing
+            .removeAttr('gid'))
+          .catch(ex => console.log('this one?', ex))
+      }
+
+      let $row = $(e.currentTarget.parentNode.parentNode)
+      let val = $prog.val()
+      if (val === $prog.children().first().val()) {
+        $row.removeClass('link')
+        return
+      }
+
+      let url = `strain/${val}/generation/${$row.attr('id')}`
+      fetch(url, { method: 'PATCH' })
+        .then(async resp => {
+          if (resp.status !== 204) throw {
+            status: resp.status,
+            message: await resp.text(),
+          }
+          return val
+        })
+        .then(curr => {
+          $prog.attr('curr', curr)
+            .find(`option[value=${val}]`)
+            .attr({
+              disabled: true,
+              gid: $row.attr('id'),
+            })
+          $row.addClass('link')
+        })
+        .catch(ex => console.log('this other one?', ex))
+    })
 
     .on('clear', `>${ndx}`, e => $(`body>${gen}`).trigger('clear'))
     .on('unmarshal', `>${gen}`, (e, data) => {
@@ -142,7 +194,7 @@
           }
         }
       }).then(json => {
-        $(`body>${progeny}`).val(json?.id)
+        $(`body>${progeny}`).attr('curr', json?.id).val(json?.id)
       }).catch(ex => $('.alert').trigger('app-error', [
         'error',
         `GET ${url} statusCode: ${ex.status}`,
