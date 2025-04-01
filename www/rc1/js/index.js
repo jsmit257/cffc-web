@@ -11,7 +11,7 @@ $(_ => {
         case 500:
         // if we make handlers for the above statuses, they might need 
         // to include the response and also need to be async; for now,
-        // just leaving it up to the client where they can call `alert()`
+        // just leaving it up to the client where they can call `notify()`
         // from the element that initited the call (if that matters)
         case 403:
           $(document).trigger(resp.status, [url, params])
@@ -53,11 +53,10 @@ $(_ => {
           .attr('name', slug)
           .text(text)
           .appendTo(e.currentTarget)
-      ).catch(ex => $('.alert').trigger('app-error', [
-        'error',
-        `loading script ${url} statusCode: ${ex.status}`,
-        ex.message ?? ex,
-      ]))
+      ).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
     .on('add-resource', (e, cfg) => {
       if (cfg?.src && $(e.currentTarget).find(`script[name="${cfg.src}"]`).length === 0) {
@@ -112,10 +111,9 @@ $(_ => {
         resolve($(await resp.text())
           .appendTo($(e.currentTarget)
             .removeAttr('x-child'))) // once is enough
-      }).catch(ex => $(`.alert`).trigger('app-error', [
-        'error',
-        `loading fragment ${url} statusCode: ${ex.status}`,
-        ex.message || ex,
-      ]))
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
 })

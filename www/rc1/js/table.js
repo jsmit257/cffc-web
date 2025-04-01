@@ -46,8 +46,9 @@ $(_ => {
           .find(e.currentTarget.attributes['x-target'].value)
           .trigger('clear')
           .trigger('send', resp)))
-        .catch(ex => $(e.currentTarget)
-          .alert('error', `GET '${url}' statusCode: ${ex.status}`, ex.message ?? ex))
+        .catch(ex => $(e.currentTarget).notify('error',
+          `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+          ex))
     })
     .on('fetch-multi', '.table>.rows>.row.record, .table>.singleton', (e, url) => {
       fetch(url).then(async resp => {
@@ -58,8 +59,10 @@ $(_ => {
         $(e.currentTarget)
           .find(`[x-fetch-multi="${url}"]`)
           .send(await resp.json())
-      }).catch(ex => $(e.currentTarget)
-        .alert('error', `GET ${url} statusCode: ${ex.status}`, ex.message ?? ex))
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
     .on('send', '.table>.rows', (e, ...data) => {
       e.stopPropagation()
@@ -140,8 +143,9 @@ $(_ => {
           return resp.json()
         })
         .then(json => $(e.currentTarget).trigger('send', json))
-        .catch(ex => $(e.currentTarget)
-          .alert('error', `GET ${url} statusCode: ${ex.status}`, ex.message ?? ex))
+        .catch(ex => $(e.currentTarget).notify('error',
+          `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+          ex))
     })
     .on('send', 'datalist', (e, ...data) => {
       e.stopPropagation()
@@ -268,9 +272,9 @@ $(_ => {
         .attr('breadcrumb'),
         json.id)
         // might be nice to re-sort and scroll-to as needed
-      ).catch(ex => $(e.currentTarget).alert('error',
-        `${params.method} ${url} statusCode: ${ex.status || 'unsent'}`,
-        ex.message ?? ex,
+      ).catch(ex => $(e.currentTarget).notify('error',
+        `${params.method} ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
         params)
       ).finally(_ => { $table.trigger('disable-record') })
     })
@@ -291,11 +295,10 @@ $(_ => {
             }
           }
         })
-        .catch(ex => $('.alert').trigger('app-error', [
-          'error',
-          `DELETE ${url} statusCode: ${ex.status || 'unsent'}`,
-          ex.message ?? ex,
-        ]))
+        .catch(ex => $(e.currentTarget).notify('error',
+          `DELETE ${url} statusCode: ${ex.status ?? 'unsent'}`,
+          ex,
+        ))
     })
 
     // UI actions

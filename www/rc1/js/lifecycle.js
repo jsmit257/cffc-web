@@ -58,11 +58,10 @@
         }
       }).then(json => {
         $(`body>${lifecycle}`).data(json).trigger('unmarshal', json)
-      }).catch(ex => $('.alert').trigger('app-error', [
-        'error',
-        `fetching index rows '${url} statusCode: ${ex.status}`,
-        ex.message || ex,
-      ]))
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
 
     .on('click', `>${table}:not(.editing)>.buttonbar>.add`, e => {
@@ -100,9 +99,9 @@
           params,
         ])
 
-      console.log(".trigger('default-update",
-        `lifecycle/${params.body.id}`.replace(/\/$/, ''),
-        params)
+      // console.log(".trigger('default-update",
+      //   `lifecycle/${params.body.id}`.replace(/\/$/, ''),
+      //   params)
     })
     .on('click', `>${table}.editing>.buttonbar>.cancel`, e => {
       e.stopPropagation()

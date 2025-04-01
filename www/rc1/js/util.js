@@ -34,9 +34,15 @@ $(_ => {
     // click: function (el = this.get(0)) {
     //   return $(el).trigger('click')
     // },
-    alert: function (lvl, action, msg, state) {
+    notify: function (lvl, action, msg, state) {
       this.each(function () {
-        $('body>.alert').trigger('app-error', [lvl, action, msg, state, this])
+        $('body>.notification').trigger('notify', [
+          lvl,
+          action,
+          msg.message ?? msg,
+          this,
+          state,
+        ])
       })
       return $(this)
     },

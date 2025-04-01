@@ -24,8 +24,6 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     caches.match(e.request).then(async response => {
       return response || await fetch(e.request)
-    }).catch(ex => {
-      console.log(ex)
-    })
+    }).catch(console.log)
   )
 })

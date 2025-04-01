@@ -25,7 +25,7 @@
       }
 
       let url = `${$table.attr('breadcrumb')}/${$sel.attr('id')}`
-      console.log('default-remove', url)
+      // console.log('default-remove', url)
       $sel.trigger('default-remove', url)
     })
     .on('click', `${static}>.default.add`, e => {
@@ -60,7 +60,7 @@
           params,
         ])
 
-      console.log('default-update', params)
+      // console.log('default-update', params)
     })
     .on('click', `${adding}>.default.ok`, e => {
       e.stopPropagation()
@@ -80,7 +80,7 @@
             body: body,
           }])
 
-      console.log('default-update', args)
+      // console.log('default-update', args)
     })
     .on('click', `${editing}>.default.cancel`, e => {
       e.stopPropagation()

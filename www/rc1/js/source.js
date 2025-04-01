@@ -24,7 +24,7 @@
 
       let $sel = $(e.currentTarget).find('>option:selected')
       if ($sel.length === 0) {
-        // $(e.currentTarget).alert('debug', 'changing lifecycle', `no lifecycle selected`)
+        // $(e.currentTarget).notify('debug', 'changing lifecycle', `no lifecycle selected`)
         return
       }
       let data = $sel.data()
@@ -173,7 +173,7 @@
         },
       }
 
-      console.log('default-update', url, params)
+      // console.log('default-update', url, params)
       $row
         .trigger('default-update', [url, params])
         .find('>.rowbar>.control')
@@ -202,7 +202,7 @@
         .find('>.selected')
         .addClass('editing') // this should've been set by 'enable-record'
         .insertAfter($rows.find('>.origin-filter'))
-      console.log($row.find('input[value="event"]').click())
+      $row.find('input[value="event"]').click()
       $row.find('>.rowbar>.control').toggleClass('edit cancel')
 
       // FIXME: for testing, for the moment
@@ -214,6 +214,6 @@
           name: 'clone',
         }
       })
-      console.log('adding', $row, $rows)
+      // console.log('adding', $row, $rows)
     })
 })()

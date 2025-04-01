@@ -32,6 +32,7 @@
   <link rel="preload" href="./css/alert.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/button.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <link rel="preload" href="./css/timestamp.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/slider.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
   <noscript>
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/menubar.css">
@@ -39,6 +40,7 @@
     <link rel="stylesheet" href="./css/alert.css">
     <link rel="stylesheet" href="./css/button.css">
     <link rel="stylesheet" href="./css/timestamp.css">
+    <link rel="stylesheet" href="./css/slider.css">
   </noscript>
   <!-- end:minify.css -->
 </head>
@@ -52,16 +54,19 @@
       <div class="menubtn" category="aux">aux</div>
       <div class="menubtn" category="reporting">reporting</div>
     </div>
+
     <div class="items">
       <div class="menubtn main" x-stub="lifecycle">lifecycle</div>
       <div class="menubtn main" x-stub="generation">generation</div>
       <div class="menubtn main" x-stub="strain">strain</div>
       <div class="menubtn main" x-stub="substrate">substrate</div>
-      <div class="menubtn aux" x-stub="ingredient">ingredient</div>
-      <div class="menubtn aux" x-stub="stage">stage</div>
-      <div class="menubtn aux" x-stub="vendor">vendor</div>
-      <div class="menubtn aux" x-stub="eventtype">eventtype</div>
-      <div class="menubtn aux" x-stub="album">album</div>
+      <div class="menubtn main" x-stub="ingredient">ingredient</div>
+      <div class="menubtn main" x-stub="stage">stage</div>
+      <div class="menubtn main" x-stub="vendor">vendor</div>
+      <div class="menubtn main" x-stub="eventtype">eventtype</div>
+
+      <div class="menubtn aux" x-stub="album">gallery</div>
+      <div class="menubtn aux" x-stub="camera">camera</div>
 
       <div class="menubtn reporting" x-stub="lifecycle">lifecycle</div>
       <div class="menubtn reporting" x-stub="generation">generation</div>
@@ -71,6 +76,26 @@
   </div>
 
   <div class="main"></div>
+
+  <div class="table notification">
+    <div class="fieldnames">
+      <div name="when">when?</div>
+      <div name="action">doing what?</div>
+      <div name="message">what happened?</div>
+      <div name="severity">how bad?</div>
+      <div name="response">resolved by?</div>
+    </div>
+
+    <div class="rows">
+      <div class="row x-template">
+        <div name="when" class="field short-date" x-formatter="short-date"></div>
+        <div name="action" class="field"></div>
+        <div name="message" class="field" x-formatter="html"></div>
+        <div name="severity" class="field"></div>
+        <div name="response" class="field">&nbsp;</div>
+      </div>
+    </div>
+  </div>
 
   <div class="footer">
     <div class="cookie-bar background-image">
@@ -128,26 +153,6 @@
           </div>
         </li>
       </ul>
-    </div>
-  </div>
-
-  <div class="table alert">
-    <div class="fieldnames">
-      <div name="when">when?</div>
-      <div name="action">doing what?</div>
-      <div name="message">what happened?</div>
-      <div name="severity">how bad?</div>
-      <div name="response">resolved by?</div>
-    </div>
-
-    <div class="rows">
-      <div class="row x-template">
-        <div name="when" class="field short-date" x-formatter="short-date"></div>
-        <div name="action" class="field"></div>
-        <div name="message" class="field" x-formatter="html"></div>
-        <div name="severity" class="field"></div>
-        <div name="response" class="field">&nbsp;</div>
-      </div>
     </div>
   </div>
 

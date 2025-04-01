@@ -85,11 +85,10 @@
           .toggleClass('selected')
         $(`body>${subrows}.selected`)
           .data('ingredients', json.ingredients)
-      }).catch(ex => $('.alert').trigger('app-error', [
-        'error',
-        `${args.method}: '${url}' statusCode: ${ex.status}`,
-        ex.message ?? ex,
-      ]))
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `${args.method} '${url}' statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
     .on('click', `.substrate .table.ingredient>.buttonbar`, e =>
       $(e.currentTarget.parentNode).toggleClass('selecting'))

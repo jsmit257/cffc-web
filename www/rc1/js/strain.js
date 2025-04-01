@@ -49,9 +49,9 @@
             $(`body>${attrrows}:first-child`).click()
           }
         })
-        .catch(ex => $(e.currentTarget).alert('error',
-          `GET ${url} statusCode: ${ex.status || 'unsent'}`,
-          ex.message ?? ex))
+        .catch(ex => $(e.currentTarget).notify('error',
+          `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+          ex))
     })
 
     // strain attribute edit functions

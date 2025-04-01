@@ -1,0 +1,76 @@
+<div class="table imgbox waiting editing">
+  <div class="props">
+    <label class="format">
+      <span>format:</span>
+      <select>
+        <option selected value="image/webp">webp</option>
+        <option value="image/png">png</option>
+        <option $value="image/jpeg">jpeg</option>
+      </select>
+    </label>
+
+    <label class="quality">
+      <span>quality</span>
+      <input type="range" min="50" max="100" step="1" value="100" tabindex="0">
+    </label>
+  </div>
+
+  <div class="table viddevs">
+    <div class="rows">
+      <div class="row x-template">
+        <div class="device" name="label"></div>
+      </div>
+    </div>
+  </div>
+
+  <video class="vidcap" autoplay tabindex="0"></video>
+  <!-- <video class="vidcap" width="1024" height="768" autoplay playsinline tabindex="0"></video> -->
+
+  <div class="table imgedit">
+    <div hmax=800 vmax=600 class="viewport">
+      <canvas tabindex="0"></canvas>
+    </div>
+
+    <div class="rows imgstats">
+      <div class="row x-template">
+        <div class="px width" name="width"></div>
+        &times;
+        <div class="px height" name="height"></div>
+        <div class="kb filesize" name="size"></div>
+      </div>
+    </div>
+
+    <div class="ranges">
+      <div class="row control">
+        <label>
+          <span>zoom</span>
+          <input id="scale" type="range" min="100" max="500" step="5" value="100" tabindex="0">
+        </label>
+        <!-- scissors &#9985; through &#9988;-->
+        <div class="crop button" hover="crop">&sharp;</div>
+      </div>
+
+      <div class="row control">
+        <label>
+          <span>resize</span>
+          <input id="aspect" type="range" min="40" max="100" step="6" value="100" tabindex="0">
+        </label>
+        <div class="resize button" hover="resize">&lrarr;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="greymap"></div>
+
+  <div class="colormap"></div>
+
+  <div class="rows audit"><!-- XXX: finish me -->
+    <div class="row x-template"></div>
+  </div>
+
+  <div class="buttonbar">
+    <div class="cancel button text" hover="cancel"></div>
+    <div class="ok button text" hover="ok"></div>
+    <div class="reset button text" hover="reset">reset</div>
+  </div>
+</div>

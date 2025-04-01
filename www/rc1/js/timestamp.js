@@ -14,10 +14,10 @@ $(_ => {
 
   $(document.body).on('click', stamps, e => {
     e.stopPropagation()
-    window.ts = ts
+
     if ($(e.delegateTarget).hasClass('ts-editing')) {
       // warn and bail?
-      $(e.currentTarget).alert('warn', 'already editing a timestamp')
+      $(e.currentTarget).notify('warn', 'editing timestamp', 'editor already open')
       return
       // or replace old data with the new one and continue?
     }
@@ -98,10 +98,10 @@ $(_ => {
           .map(v => `label>.${v.name}`)
           .join(','))
         .trigger('format', json)
-      ).catch(ex => $(e.currentTarget).alert('app-error', [
-        `PATCH - ${url}`,
-        `status ${ex.status} with err '${ex.message}`,
-      ])).finally(_ => $(e.currentTarget).trigger('close'))
+      ).catch(ex => $(e.currentTarget).notify('error',
+        `PATCH ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      )).finally(_ => $(e.currentTarget).trigger('close'))
     })
     .on('add-row', `${update}.x-template`, e => {
       e.stopPropagation()
@@ -146,11 +146,10 @@ $(_ => {
           ex: await resp.text()
         }
         $(e.currentTarget.parentNode.parentNode).trigger('close')
-      }).catch(ex => $(e.currentTarget).alert('app-error', [
-        'error',
-        `PATCH - ${url}`,
-        `status ${xhr.status} with err '${err}`,
-      ]))
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `DELETE ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
     .on('click', `${update}.active>.delete`, e => {
       e.stopPropagation()

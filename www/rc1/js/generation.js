@@ -54,11 +54,10 @@
         return await resp.json()
       }).then(json => {
         $(`body>${gen}`).data(json).trigger('unmarshal', json)
-      }).catch(ex => $('.alert').trigger('app-error', [
-        'error',
-        `fetching index rows '${url} statusCode: ${ex.status}`,
-        ex.message ?? ex,
-      ]))
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
 
     .on('click', `>${table}:not(.editing)>.buttonbar>.add`, e => {
@@ -130,7 +129,10 @@
             .attr('disabled', false)
             // XXX: not sold on this gid thing
             .removeAttr('gid'))
-          .catch(ex => console.log('this one?', ex))
+          .catch(ex => $prog.notify('error',
+            `DELETE ${url} statusCode: ${ex.status ?? 'unsent'}`,
+            ex,
+          ))
       }
 
       let $row = $(e.currentTarget.parentNode.parentNode)
@@ -158,7 +160,10 @@
             })
           $row.addClass('link')
         })
-        .catch(ex => console.log('this other one?', ex))
+        .catch(ex => $prog.notify('error',
+          `PATCH ${url} statusCode ${ex.status ?? 'unsent'}`,
+          ex,
+        ))
     })
 
     .on('clear', `>${ndx}`, e => $(`body>${gen}`).trigger('clear'))
@@ -195,11 +200,10 @@
         }
       }).then(json => {
         $(`body>${progeny}`).attr('curr', json?.id).val(json?.id)
-      }).catch(ex => $('.alert').trigger('app-error', [
-        'error',
-        `GET ${url} statusCode: ${ex.status}`,
-        ex.message ?? ex,
-      ]))
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
 
       $(`body>${srcrows}`).remove()
 

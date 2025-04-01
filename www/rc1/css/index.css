@@ -134,7 +134,8 @@ body {
     width: 100%;
     margin-bottom: 9em;
     margin-top: 3.2em;
-    max-height: 50em;
+    /* max-height: 50em; */
+    
 
     & .workspace {
       display: none;

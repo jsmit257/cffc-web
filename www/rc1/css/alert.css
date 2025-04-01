@@ -1,70 +1,90 @@
-body>.alert {
+body>.notification {
   background-color: #3b141482;
   border-radius: .5em;
-  float: left;
-  margin-top: 2em;
-  padding-top: .5em;
-  padding-bottom: .5em;
-  width: 100%;
-  z-index: -4;
   display: none;
-  position: relative;
-}
-
-body>.alert.auditing {
-  display: block;
-}
-
-.alert>.fieldnames {
-  font-weight: bold;
-  margin-bottom: .5em;
-  /* text-align: center; */
-}
-
-.alert>.fieldnames,
-.alert>.row {
   float: left;
+  padding-bottom: 9em;
+  padding-top: .5em;
   width: 100%;
-  line-height: 1.4;
+
+  &.auditing {
+    display: block;
+  }
+
+  &>.fieldnames {
+    float: left;
+    font-weight: bold;
+    line-height: 1.4;
+    margin-bottom: .5em;
+    padding-left: .5em;
+    text-align: center;
+    width: 100%;
+
+    &>div {
+      float: inherit;
+      text-decoration: underline;
+    }
+
+  }
+
+  &>.rows>.row.record {
+    &.error {
+      color: #ffa9a9;
+    }
+
+    &.warn {
+      color: #ffd79f;
+    }
+
+    &.info {
+      color: #aaff9f;
+    }
+
+    &.debug {
+      color: #9fd7ff;
+    }
+
+    &>div {
+      overflow: hidden;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &>.fieldnames,
+  &>.rows>.row.record {
+    &>div {
+      text-align: center;
+
+      &[name="when"] {
+        width: 11em;
+      }
+
+      &[name="action"] {
+        text-align: left;
+        width: 15em;
+      }
+
+      &[name="message"] {
+        text-align: left;
+        width: 48%;
+      }
+
+      &[name="severity"] {
+        width: 5em;
+      }
+
+      &[name="response"] {
+        width: 10em;
+      }
+    }
+  }
 }
 
-.alert>.fieldnames>div,
-.alert>.row>div {
-  float: left;
-  text-decoration: underline;
-  width: 13%;
-}
+/* .notification>.row {} */
 
-.alert>.row.error {
-  color: #ffa9a9;
-}
-
-.alert>.row.warn {
-  color: #ffd79f;
-}
-
-.alert>.row.info {
-  color: #aaff9f;
-}
-
-.alert>.row.debug {
-  color: #9fd7ff;
-}
-
-.alert>.row>div {
-  padding-left: .2em;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.alert>div>[name="message"] {
-  width: 48%;
-}
-
-/* .alert>.row {} */
-
-body>.msgbox {
+body>.alert {
   background-color: #c2c2c2ee;
   border-color: #0007;
   border-radius: 1em;
@@ -78,98 +98,103 @@ body>.msgbox {
   position: absolute;
   width: 35%;
   z-index: 5;
-}
 
-body>.msgbox::before {
-  background-image: radial-gradient(circle at center, darkgrey 50%, transparent 69%);
-  border-radius: .5em;
-  color: #ffffffb0;
-  content: '?';
-  display: block;
-  float: left;
-  font-size: 400%;
-  height: 1.2em;
-  line-height: 1.2;
-  text-align: center;
-  width: 1.2em;
-  position: absolute;
-  margin-top: .5em;
-}
+  &::before {
+    background-image: radial-gradient(circle at center, darkgrey 50%, transparent 69%);
+    border-radius: .5em;
+    color: #ffffffb0;
+    content: '?';
+    display: block;
+    float: left;
+    font-size: 400%;
+    height: 1.2em;
+    line-height: 1.2;
+    margin-top: .5em;
+    position: absolute;
+    text-align: center;
+    width: 1.2em;
+  }
 
-body>.msgbox.error::before {
-  background-image: radial-gradient(circle at center, red 50%, transparent 69%);
-  content: '\d7';
-}
+  &.error::before {
+    background-image: radial-gradient(circle at center, red 50%, transparent 69%);
+    content: '\d7';
+  }
 
-body>.msgbox.warn::before {
-  background-image: radial-gradient(circle at center, #df4a00 50%, transparent 69%);
-  content: '!';
-}
+  &.warn::before {
+    background-image: radial-gradient(circle at center, #df4a00 50%, transparent 69%);
+    content: '!';
+  }
 
-body>.msgbox.info::before {
-  background-image: radial-gradient(circle at center, green 50%, transparent 69%);
-  content: '!';
-}
+  &.info::before {
+    background-image: radial-gradient(circle at center, green 50%, transparent 69%);
+    content: '!';
+  }
 
-body>.msgbox.ask::before {
-  background-image: radial-gradient(circle at center, blue 50%, transparent 69%);
-  content: '?';
-}
+  &.ask::before {
+    background-image: radial-gradient(circle at center, blue 50%, transparent 69%);
+    content: '?';
+  }
 
-body>.msgbox>.field {
-  margin-left: 6em;
-  width: 22em;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
+  &>.field {
+    margin-left: 6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 22em;
+  }
 
-body>.msgbox>.dialog-button {
-  align-content: center;
-  background-color: #d1ad6a;
-  border: 2px outset;
-  border-radius: .75em;
-  cursor: pointer;
-  float: right;
-  line-height: 1.5em;
-  margin-left: .5em;
-  text-align: center;
-  width: 4em;
-}
+  &>.dialog-button {
+    align-content: center;
+    background-color: #d1ad6a;
+    border: 2px outset;
+    border-radius: .75em;
+    cursor: pointer;
+    float: right;
+    line-height: 1.5em;
+    margin-left: .5em;
+    text-align: center;
+    width: 4em;
+  }
 
-body>.msgbox>div[name="message"] {
-  margin-bottom: 1em;
-  margin-top: .33em;
-  height: 3em;
-  text-overflow: ellipsis;
-  font-style: italic;
-}
+  &>div {
+    &::before {
+      display: inline-block;
+      width: 3.3em;
+    }
 
-body>.msgbox>div::before {
-  width: 3.3em;
-  display: inline-block;
-}
+    &[name="message"] {
+      font-style: italic;
+      height: 4em;
+      margin-bottom: 1em;
+      margin-top: .33em;
+      overflow-x: hidden;
+      overflow-y: auto;
+      /* text-overflow: unset; */
+      white-space: break-spaces;
+    }
 
-body>.msgbox>div[name="when"]::before {
-  content: 'time:';
-}
+    &[name="when"]::before {
+      content: 'time:';
+    }
 
-body>.msgbox>div[name="severity"]::before {
-  content: 'level:';
-}
+    &[name="severity"]::before {
+      content: 'level:';
+    }
 
-body>.msgbox>div[name="action"]::before {
-  content: 'action:';
-}
+    &[name="action"]::before {
+      content: 'action:';
+    }
+  }
 
-body>.msgbox>.timeout {
-  float: left;
-  line-height: 1.5em;
-  width: 2em;
-  text-align: right;
-  color: slategrey;
-}
+  &>.timeout {
+    color: slategrey;
+    float: left;
+    line-height: 1.5em;
+    text-align: right;
+    width: 2em;
 
-body>.msgbox>.timeout::after {
-  content: 's';
+    &::after {
+      content: 's';
+    }
+  }
 }

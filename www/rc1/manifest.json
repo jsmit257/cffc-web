@@ -6,6 +6,9 @@
       "src": "./favicon.ico"
     }
   ],
+  "permissions": [
+    "camera"
+  ],
   "start_url": ".",
   "display": "fullscreen",
   "theme_color": "#000000",
