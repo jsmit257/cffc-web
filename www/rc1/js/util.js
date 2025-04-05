@@ -54,14 +54,17 @@ $(_ => {
       let root = $table.attr('x-target')
       // should we clear first, and what would that mean if unselecting is 
       // tied to an event? 
-      ids.forEach(id => $table
-        .find(`${root}>#${id}`)
-        .trigger('select'))
+      ids.forEach(id => {
+        if ((id = `#${id}`) === '#') {
+          id = ':first-of-type(.row.record)'
+        }
+        $table.find(`${root}>${id}`).trigger('select')
+      })
 
       return $table.find(`${root}>.selected`)
     },
     breadcrumb: function () {
-      return localStorage[$(this)
+      return sessionStorage[$(this)
         .parents('[breadcrumb]')
         .first()
         .attr('breadcrumb')]

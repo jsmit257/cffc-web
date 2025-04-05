@@ -3,7 +3,7 @@ $(_ => {
 
   $(document.body)
     // initialize tables
-    .on('clear', '.table .rows', e => {
+    .on('clear', '.table>.rows', e => {
       e.stopPropagation()
 
       $(e.currentTarget)
@@ -31,24 +31,25 @@ $(_ => {
     .on('fetch', '.table[x-fetch]', (e, resolve = _ => _) => {
       e.stopPropagation()
 
-      $(e.currentTarget).find('>.columns>[sort-order]').removeAttr('sort-order')
+      $(e.currentTarget)
+        .removeClass('editing adding')
+        .find('>.columns>[sort-order]')
+        .removeAttr('sort-order')
 
       let url = e.currentTarget.attributes['x-fetch'].value
-      fetch(url)
-        .then(async resp => {
-          if (resp.status !== 200) throw {
-            status: resp.status,
-            message: await resp.text(),
-          }
-          return resp.json()
-        })
-        .then(resp => resolve($(e.currentTarget)
-          .find(e.currentTarget.attributes['x-target'].value)
-          .trigger('clear')
-          .trigger('send', resp)))
-        .catch(ex => $(e.currentTarget).notify('error',
-          `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
-          ex))
+      fetch(url).then(async resp => {
+        if (resp.status !== 200) throw {
+          status: resp.status,
+          message: await resp.text(),
+        }
+        return resp.json()
+      }).then((resp = []) => resolve($(e.currentTarget)
+        .find(e.currentTarget.attributes['x-target'].value)
+        .trigger('clear')
+        .trigger('send', resp))
+      ).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex))
     })
     .on('fetch-multi', '.table>.rows>.row.record, .table>.singleton', (e, url) => {
       fetch(url).then(async resp => {
@@ -67,7 +68,7 @@ $(_ => {
     .on('send', '.table>.rows', (e, ...data) => {
       e.stopPropagation()
 
-      let $tmpl = $(e.currentTarget).find('.row.x-template')
+      let $tmpl = $(e.currentTarget).find('>.row.x-template')
 
       data.forEach(record => $tmpl
         .clone(true, true)
@@ -84,6 +85,8 @@ $(_ => {
         id: data.id,
         dtime: data.dtime,
       })
+
+      // FIXME: zero everything with a name
 
       Object.entries(data).forEach(([k, v]) => {
         let $fld = $row.find(`>.field>[name="${k}"], >[name="${k}"]`)
@@ -118,7 +121,7 @@ $(_ => {
       data.id = e.currentTarget.id
 
       $(e.target)
-        .find('>label>input[name], >label>select[name].static')
+        .find('>label>input[name], >label>select[name].static, >label>textarea')
         .each((_, v) => data[v.name] = $(v).val())
 
       $(e.target)
@@ -180,18 +183,28 @@ $(_ => {
       .prop('checked', e.currentTarget.value === opt))
 
     // update actions
+    .on('private-remove-record', '.table>.rows>.row.selected', e => {
+      e.stopPropagation()
+
+      let $row = $(e.currentTarget)
+
+      $row.selected($row.breadcrumb())
+      $row.remove()
+    })
     .on('remove-record', '.table:not(.soft-delete)>.rows>.row.selected', e => {
       e.stopPropagation()
 
-      if ($(e.currentTarget).prev('.row.record').click().length === 0) {
-        $(e.currentTarget).next('.row.record').click()
-      }
-      $(e.currentTarget).remove()
+      $(e.currentTarget).trigger('private-remove-record')
     })
     .on('remove-record', '.table.soft-delete>.rows>.row.selected', (e, data) => {
       e.stopPropagation()
 
-      $(e.currentTarget).attr('dtime', (data?.dtime ?? new Date()).toISOString())
+      let $row = $(e.currentTarget)
+      if (!$row.data('id')) {
+        $row.trigger('private-remove-record')
+      } else {
+        $row.attr('dtime', (data?.dtime ?? new Date()).toISOString())
+      }
     })
     .on('new-record', '.table>.rows', (e, success = _ => _) => {
       e.stopPropagation()
@@ -236,7 +249,7 @@ $(_ => {
       e.stopPropagation()
 
       let $row = $(e.currentTarget)
-        .removeClass('editing adding')
+        .removeClass('editing adding') // XXX: adding is superfluous here?
         .find('>.rows>.row.editing, >.singleton.editing')
         .removeClass('editing adding')
 
@@ -265,7 +278,7 @@ $(_ => {
             message: await resp.text(),
           }
         }
-      }).then(json => localStorage.setItem($(e.currentTarget)
+      }).then(json => sessionStorage.setItem($(e.currentTarget)
         .data(json)
         .parents('[breadcrumb]')
         .first()
@@ -314,7 +327,7 @@ $(_ => {
 
       // TODO: events from one of generations and lifecycles will clobber the
       // other one's history console.log(new Error())
-      localStorage[$(e.currentTarget).parents('[breadcrumb]').first().attr('breadcrumb')] = e.currentTarget.id
+      sessionStorage[$(e.currentTarget).parents('[breadcrumb]').first().attr('breadcrumb')] = e.currentTarget.id
     })
     .on('click', '.table>.rows>.row.record:not(.selected)', e => {
       e.stopPropagation()

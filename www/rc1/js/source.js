@@ -97,40 +97,10 @@
     .on('click', `${srcrows}>.rowbar>.control`, e => { // edit or cancel
       e.stopPropagation()
 
-      let $row = $(e.currentTarget)
-        .toggleClass('edit cancel')
-        .parents('.row.record')
-        .first()
-        .toggleClass('editing')
-        .trigger('select')
-
-      if ($row
-        .parents('.table.sources')
-        .toggleClass('editing')
-        .hasClass('editing')
-      ) {
-        $row.find('[x-fetch]').trigger('fetch')
-        $row.find('[name="lifecycle"]').trigger('change')
-      } else {
-        $row
-          .parents('.table.sources')
-          .removeClass('adding')
-      }
-    })
-    .on('click', `${srcrows}:not(.adding)>.rowbar>.cancel`, e => { // implies editing
-      e.stopPropagation()
-
-      let $row = $(e.currentTarget.parentNode.parentNode)
-
-      $row.trigger('unmarshal', $row.data())
-    })
-    .on('click', `${srcrows}.adding>.rowbar>.cancel`, e => {
-      e.stopPropagation()
-
-      e.currentTarget
-        .parentNode
-        .parentNode
-        .remove()
+      // FIXME: wtf?
+      console.log($(e.currentTarget.parentNode.parentNode)
+        .find('[name="lifecycle"]')
+        .trigger('change'))
     })
     .on('click', `${srcrows}:not(.editing)>.rowbar>.action`, e => { // remove
       e.stopPropagation()
@@ -145,9 +115,8 @@
         .parentNode
         .parentNode)
         .addClass('selected')
-      let url = `generation/${genid}/sources/${$row.attr('id')}`
 
-      $row.trigger('default-remove', url)
+      $row.trigger('default-remove', `generation/${genid}/sources/${$row.attr('id')}`)
     })
     .on('click', `${srcrows}.editing:not(.adding)>.rowbar>.action`, e => {
       e.stopPropagation()
@@ -182,10 +151,9 @@
     .on('click', `${srcrows}.adding>.rowbar>.action`, e => {
       e.stopPropagation()
 
-      let $row = $(e.currentTarget.parentNode.parentNode)
+      $(e.currentTarget.parentNode.parentNode)
         .removeClass('adding')
-
-      $row.parents('.adding')
+        .parents('.adding')
         .first()
         .removeClass('adding')
 
@@ -203,7 +171,7 @@
         .addClass('editing') // this should've been set by 'enable-record'
         .insertAfter($rows.find('>.origin-filter'))
       $row.find('input[value="event"]').click()
-      $row.find('>.rowbar>.control').toggleClass('edit cancel')
+      $row.find('>.rowbar').trigger('toggle')
 
       // FIXME: for testing, for the moment
       $row.find('select[name="event"]').trigger('send', {

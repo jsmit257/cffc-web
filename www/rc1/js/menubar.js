@@ -12,11 +12,11 @@ $(_ => {
     .on('init', `>${menubar}`, e => {
       e.stopPropagation()
 
-      let menu = localStorage.menu ?? (localStorage.menu =
+      let menu = sessionStorage.menu ?? (sessionStorage.menu =
         $(`body>${ndxbtn}`)
           .first()
           .attr('category'))
-      let slug = localStorage[menu] ?? (localStorage[menu] =
+      let slug = sessionStorage[menu] ?? (sessionStorage[menu] =
         $(`body>${itembtn}.${menu}`)
           .first()
           .attr('x-stub'))
@@ -30,7 +30,7 @@ $(_ => {
     .on('enable-workspace', `>${menubar}`, e => {
       e.stopPropagation()
 
-      let slug = localStorage[localStorage.menu]
+      let slug = sessionStorage[sessionStorage.menu]
 
       if ($(`body>${spaces}.${slug}`).trigger('activate', slug).length) {
         return
@@ -59,7 +59,7 @@ $(_ => {
 
       $(`body>${ndxbtn}.selected`).removeClass('selected')
 
-      let menu = localStorage.menu = $(e.currentTarget)
+      let menu = sessionStorage.menu = $(e.currentTarget)
         .addClass('selected')
         .attr('category')
 
@@ -67,7 +67,7 @@ $(_ => {
         .removeClass('menu-main menu-aux menu-reporting')
         .addClass(`menu-${menu}`)
 
-      let slug = localStorage[menu] ?? (localStorage[menu] =
+      let slug = sessionStorage[menu] ?? (sessionStorage[menu] =
         $(`body>${itembtn}.${menu}`)
           .first()
           .attr('x-stub'))
@@ -84,7 +84,7 @@ $(_ => {
 
       $('[x-stub].selected').removeClass('selected')
 
-      localStorage[localStorage.menu] = $(e.currentTarget)
+      sessionStorage[sessionStorage.menu] = $(e.currentTarget)
         .addClass('selected')
         .attr('x-stub')
 

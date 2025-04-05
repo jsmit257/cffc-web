@@ -6,7 +6,6 @@
   &.seeking {
     &>.rows.ndx {
       height: calc(var(--lifecycle-area-height) * 4 / 5);
-      margin-bottom: 2em;
 
       &>.row.record {
         display: block;
@@ -14,22 +13,31 @@
     }
 
     &>.singleton.lifecycle,
+    &>.child-table.notes,
     &>.buttonbar {
       display: none;
     }
   }
 
+  &.noting>.singleton.lifecycle {
+    display: none;
+  }
+
   &>.singleton.lifecycle,
+  &>.child-table.notes,
   &>.buttonbar {
     height: var(--lifecycle-area-height);
-    margin-bottom: 2em;
-    margin-top: -2em;
-    padding-top: 2em;
+    margin-top: -2.5em;
+    padding-top: 2.5em;
+  }
+
+  &>.singleton.lifecycle,
+  &>.child-table.notes {
+    width: calc(100% - 6em);
   }
 
   &>.singleton.lifecycle {
     /* background-color: #d6d6ff44; */
-    width: calc(100% - 5em);
 
     &>.field>.dry-weight::after {
       content: '% dry weight';
@@ -37,6 +45,16 @@
 
     &>.field>.per-kilo::after {
       content: '/kg';
+    }
+  }
+
+  &>.child-table.notes>.table.notes {
+    &>.rows {
+      /*       
+       not a perfect fit, but it's a multiple of row-height with room for 
+       the add button; seems like a fair model for now
+       */
+      height: calc(5 * var(--note-row-height));
     }
   }
 
@@ -49,6 +67,10 @@
       margin-top: .5em;
       margin-left: 0;
       clear: both;
+
+      &.notes {
+        margin-bottom: 2em;
+      }
     }
   }
 }

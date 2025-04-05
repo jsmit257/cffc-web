@@ -3,7 +3,8 @@
   let table = `${ws}>.table.strain`
   let cols = `${table}>.columns`
   let strain = `${table}>.rows`
-  let strainrows = `${strain}>.row.record`
+  let strainrow = `${strain}>.row.record`
+  let photos = `${strain}>.workspace.photos>.table.photos`
   let btns = `${table}>.buttonbar`
   let sa = `${table}>.table.strainattributes`
   let sadatalist = `${sa}>#strain-attr-names`
@@ -15,20 +16,32 @@
   $(document.body)
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
-      // console.log('strain', strain, $(`body>${strain}`))
+
+      $(`body>${strain}>[x-child]`).trigger('add-child')
     })
     .on('send', `>${strain}`, e => {
       e.stopPropagation()
 
       $(sadatalist).trigger('fetch')
     })
-    .on('click', `>${strainrows}:not(.selected)`, e => {
+    .on('click', `>${strainrow}:not(.selected)`, e => {
       e.stopPropagation()
 
-      $(`body>${attrrows}`).remove()
+      let id = $(e.currentTarget).data('id')
 
-      let url = `strain/${$(e.currentTarget).data('id')}`
-      fetch(url)
+      // FIXME: same problem with clutter as notes child in lifecycle, et al
+      let photourl = `photos/${id}`
+      $(`body>${photos}`).attr({
+        breadcrumb: photourl,
+        'x-fetch': photourl,
+      })
+
+      // XXX: how much do we want attributes to follow the URL pattern
+      //  used by photos/notes? it's not a trivial change if we go all
+      //  the way back to the database; might as well do events while 
+      //  we're at it /snark
+      let attrurl = `strain/${$(e.currentTarget).data('id')}`
+      fetch(attrurl)
         .then(async resp => {
           if (resp.status !== 200) throw {
             status: resp.status,
@@ -36,26 +49,29 @@
           }
 
           // XXX: this will eventually cause a lot of noise in localstorage
-          $(`body>${sa}`).attr('breadcrumb', `${url}/attribute`)
+          $(`body>${sa}`)
+            .attr('breadcrumb', `${attrurl}/attribute`)
+            .find('>.rows>.row.record')
+            .remove()
 
           return await resp.json()
         })
         .then(json => {
           if (!$(`body>${attrs}`)
             .trigger('send', json.attributes)
-            .selected(localStorage[$(`body>${sa}`).attr('breadcrumb')])
+            .selected(sessionStorage[$(`body>${sa}`).attr('breadcrumb')])
             .length
           ) {
             $(`body>${attrrows}:first-child`).click()
           }
         })
         .catch(ex => $(e.currentTarget).notify('error',
-          `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+          `GET ${attrurl} statusCode: ${ex.status ?? 'unsent'}`,
           ex))
     })
 
     // strain attribute edit functions
-    .on('click', `>${sabtns} >.ok`, e => {
+    .on('click', `>${sabtns} >.save`, e => {
       e.stopPropagation()
 
       let $sel = $(e.currentTarget).selected()

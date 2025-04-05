@@ -124,10 +124,10 @@ $(_ => {
 
         other = {
           method: 'POST',
-          data: ((result = new FormData()) => {
+          data: ((result) => {
             result.append('file', file, file.name)
             return result
-          })(),
+          })(new FormData()),
           error: _ => { $selected.remove() },
           processData: false,
           contentType: false,

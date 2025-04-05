@@ -1,4 +1,4 @@
-<div class="table events" x-target=">.rows" breadcrumb="event" ts-edit="events">
+<div class="table events" x-target=">.rows" breadcrumb="event">
   <div class="columns">
     <div class="column full">Events</div>
     <div class="column eventtype" sort-key="eventtype">Event</div>
@@ -9,7 +9,7 @@
     <div class="column ctime" sort-key="ctime">Created</div>
   </div>
 
-  <div class="rows">
+  <div class="rows" ts-edit="events">
     <div class="row hover x-template">
       <label class="field eventtype">
         <select class="eventtype" name="event_type" x-fetch="eventtypes" render="eventtype" tabindex="0"></select>
@@ -36,11 +36,8 @@
   </div>
 
   <div class="buttonbar">
-    <div class="button default cancel text">&nbsp;</div>
-    <div class="button default ok text">&nbsp;</div>
-    <!-- <div class="button default refresh text" style="visibility:hidden;">&nbsp;</div> -->
-    <div class="button default add text">&nbsp;</div>
-    <div class="button default update text">&nbsp;</div>
-    <div class="button default delete text">&nbsp;</div>
+    <div class="button default text action delete"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text control add"></div>
   </div>
 </div>

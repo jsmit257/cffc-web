@@ -19,7 +19,9 @@
   --z-disabled: -1;
   --login-background-color: #0f00255c;
   --body-min-width: 80em;
+  --css-arrow-back: '\21D0';
   --css-bullet: '\2022';
+  --css-camera: '\263C';
   --css-check: '\2713';
   --css-circle-divide: '\2298';
   --css-circle-dot: '\2299';
@@ -33,7 +35,10 @@
   --css-math-plus: '\002B';
   --css-math-times: '\00D7';
   --css-mdash: '\2014';
+  --css-notes: '\266B';
   --css-or: '\2228';
+  --css-sort-asc: '\2191';
+  --css-sort-desc: '\2193';
   --css-vert-bar: '\00A6';
   --css-vert-ellipse: '\205E';
 }
@@ -47,11 +52,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  /* background-image: linear-gradient(0, transparent, #bbb3, transparent); */
-  background-image: radial-gradient(circle, green, transparent 10%), radial-gradient(ellipse, transparent 50%, #00f8);
+  background-image: linear-gradient(0, transparent, #bbb3, transparent);
+  /* background-image: radial-gradient(circle, green, transparent 10%), radial-gradient(ellipse, transparent 50%, #00f8); */
 }
 
-* {
+*,
+::before,
+::after {
   box-sizing: border-box;
   font-variant: slashed-zero;
   font-family: system-ui;
@@ -89,12 +96,28 @@ select {
   white-space: nowrap;
 }
 
-select>option {
-  background-color: var(--bg-color);
-}
 
 input[type="radio"] {
   appearance: auto;
+}
+
+input[type="file"] {
+  border-right: 1px solid grey;
+  border-radius: 1em;
+}
+
+input::file-selector-button {
+  background-color: transparent;
+  border: thin solid grey;
+  border-right: 0;
+  border-radius: 1em 0.33em 0.33em 1em;
+  color: #94c9ff;
+  /* font-weight: bold; */
+  padding: 0.33em;
+}
+
+select>option {
+  background-color: var(--bg-color);
 }
 
 html {
@@ -135,7 +158,7 @@ body {
     margin-bottom: 9em;
     margin-top: 3.2em;
     /* max-height: 50em; */
-    
+
 
     & .workspace {
       display: none;

@@ -1,7 +1,9 @@
 :root {
+  --strain-rows-height: 30em;
   --strain-rows-width: 66%;
-  /* --attr-table-width: calc(100% - var(--strain-rows-width)); not working right */
-  --attr-table-width: 34%;
+  /* not working right */
+  --attr-table-width: calc(100% - var(--strain-rows-width));
+  /* --attr-table-width: 34%; */
 }
 
 .workspace.strain>.table.strain {
@@ -18,9 +20,31 @@
   &>.rows {
     width: var(--strain-rows-width);
     float: left;
+    height: var(--strain-rows-height);
+    /* background-color: #0f03; */
+    
 
     &>.row>.field {
       width: calc(var(--width) * 1.01);
+    }
+  }
+
+  &.photoing {
+    &>.rows {
+      height: auto;
+
+      &>.row:not(.selected) {
+        display: none;
+      }
+
+      &>.workspace.photos>.table.photos {
+        height: calc(var(--strain-rows-height) - var(--row-line-height));
+
+        &>.rows {
+          /* 1em each top-/bottom-margin + 1em buttonbar + tableborder and change */
+          height: calc(100% - 4em);
+        }
+      }
     }
   }
 
@@ -45,12 +69,19 @@
     text-align: center;
   }
 
+  &>.buttonbar>.photos {
+    float: left;
+  }
+
   &>.table.strainattributes {
     border: 0;
     border-left-width: 1px;
     /* border-style: solid; */
     float: right;
     width: var(--attr-table-width);
+    height: var(--strain-rows-height);
+    /* background-color: #f003; */
+    
 
     &>.columns {
       padding-right: 2em;
@@ -62,6 +93,7 @@
     }
 
     &>.rows {
+      height: calc(var(--strain-rows-height) - var(--column-line-height));
       width: calc(100% - 2em);
     }
 
@@ -70,40 +102,7 @@
       float: right;
 
       &>.button {
-        font-weight: bolder;
         margin-top: .5em;
-        font-size: larger;
-        
-        
-
-        &::before {
-          margin-top: 1em;
-        }
-
-        &.add::before {
-          color: cadetblue;
-          content: var(--css-circle-plus);
-        }
-
-        &.update::before {
-          color: cyan;
-          content: var(--css-horz-ellipse);
-        }
-
-        &.cancel::before {
-          color: orange;
-          content: 'x';
-        }
-
-        &.delete::before {
-          color: red;
-          content: var(--css-circle-minus);
-        }
-
-        &.ok::before {
-          color: lightgreen;
-          content: var(--css-check);
-        }
       }
     }
   }

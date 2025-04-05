@@ -104,7 +104,9 @@
         width: calc(100% - 2em);
         margin-right: .5em;
         /* padding-right: 3em; */
-        float: right;
+        float: left;
+        
+        
 
         &>.row.record {
           display: none;
@@ -120,13 +122,15 @@
       }
 
       &>.buttonbar {
-        float: left;
+        float: right;
         /* font-weight: bolder; */
         /* margin-right: .5em; */
         padding-left: .75em;
         text-align: center;
         width: 1em;
         height: 100%;
+        
+        
 
         &>.button.default {
           display: none;

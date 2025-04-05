@@ -1,19 +1,19 @@
-.table:is(.editing, .adding) .buttonbar {
+.table:is(.editing, .adding) .buttonbar>.button {
 
-  &>.button.text.add,
-  &>.button.text.update,
-  &>.button.text.delete,
-  &>.button.text.refresh {
+  &.notes,
+  &.photos,
+  &.add,
+  &.edit,
+  &.refresh {
     color: var(--color-disabled);
     cursor: not-allowed;
     font-weight: normal;
   }
+}
 
-  &>.button.text.ok,
-  &>.button.text.cancel {
-    color: revert;
-    cursor: pointer;
-  }
+.table.noting>.buttonbar>.button:not(.notes),
+.table.photoing>.buttonbar>.button:not(.photos) {
+  visibility: collapse;
 }
 
 .buttonbar {
@@ -22,73 +22,89 @@
   &>.button {
     cursor: pointer;
     text-align: center;
-  }
 
-  &>.button.text {
-    background-image: radial-gradient(circle at left, #99ffff5c, transparent 60%), radial-gradient(circle at right, #99ffff5c, transparent 60%);
-    background-image: radial-gradient(ellipse at center, transparent 40%, #99ffff5c);
-    border-radius: 1em 1em 1em 1em;
-    float: right;
-    font-weight: bold;
-    line-height: 2em;
-    margin-bottom: 1em;
-    margin-left: 2em;
-    margin-top: 1em;
-    width: 5em;
-  }
+    &.text {
+      background-image: radial-gradient(circle at left, #99ffff5c, transparent 60%), radial-gradient(circle at right, #99ffff5c, transparent 60%);
+      background-image: radial-gradient(ellipse at center, transparent 40%, #99ffff5c);
+      border-radius: 1em 1em 1em 1em;
+      float: right;
+      font-weight: bolder;
+      line-height: 2em;
+      margin-bottom: 1em;
+      margin-left: 2em;
+      margin-top: 1em;
+      width: 5em;
 
-  &>.button.text.ok,
-  &>.button.text.cancel {
-    color: var(--color-disabled);
-    cursor: not-allowed;
-    /* font-weight: normal; */
-  }
+      &.add::before {
+        content: 'add';
+      }
 
-  &>.button.text.delete::before {
-    content: 'delete';
-  }
+      &.cancel::before {
+        content: 'cancel';
+      }
 
-  &>.button.text.add::before {
-    content: 'add';
-  }
+      &.delete::before {
+        content: 'delete';
+      }
 
-  &>.button.text.update::before {
-    content: 'edit';
-  }
+      &.edit::before {
+        content: 'edit';
+      }
 
-  &>.button.text.refresh::before {
-    content: 'refresh';
-  }
+      &.notes::before {
+        content: 'notes';
+      }
 
-  &>.button.text.ok::before {
-    content: 'ok';
-  }
+      &.photos::before {
+        content: 'photos';
+      }
 
-  &>.button.text.cancel::before {
-    content: 'cancel';
-  }
+      &.refresh::before {
+        content: 'refresh';
+      }
 
-  /* &>.button.delete {
-    background-image: radial-gradient(ellipse at 50% -1em, #ff00005c, transparent);
-  }
+      &.save::before {
+        content: 'save';
+      }
+    }
 
-  &>.button.add {
-    background-image: radial-gradient(ellipse at 50% -1em, #e100e169, transparent);
-  }
+    &.icon {
+      font-size: larger;
 
-  &>.button.update {
-    background-image: radial-gradient(ellipse at 50% -1em, #00dfdf70, transparent);
-  }
+      &.add::before {
+        color: cadetblue;
+        content: var(--css-circle-plus);
+      }
 
-  &>.button.refresh {
-    background-image: radial-gradient(ellipse at 50% -1em, #e3e30078, transparent);
-  }
+      &.back::before {
+        color: coral;
+        content: var(--css-arrow-back);
+      }
 
-  &>.button.ok {
-    background-image: radial-gradient(ellipse at 50% -1em, #0f05, transparent);
-  }
+      &.cancel::before {
+        color: orange;
+        content: var(--css-math-times);
+      }
 
-  &>.button.cancel {
-    background-image: radial-gradient(ellipse at 50% -1em, #ff6c0087, transparent);
-  } */
+      &.delete::before {
+        color: red;
+        content: var(--css-circle-minus);
+      }
+
+      &.edit::before {
+        color: cyan;
+        content: var(--css-vert-ellipse);
+      }
+
+      &.notes::before {
+        color: chartreuse;
+        content: var(--css-notes);
+      }
+
+      &.save::before {
+        color: lightgreen;
+        content: var(--css-check);
+      }
+    }
+  }
 }

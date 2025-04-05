@@ -2,7 +2,7 @@
   let ws = '.main>.workspace.generation'
   let table = `${ws}>.table.generation`
   let ndx = `${table}>.rows.ndx`
-  let ndxrows = `${ndx}>.row.record`
+  let ndxrow = `${ndx}>.row.record`
   let gen = `${table}>.singleton.generation`
   let progeny = `${gen}>.field>.progeny`
   let srctable = `${table}>.workspace.sources>.table.sources`
@@ -24,7 +24,7 @@
         .find('>.table.generation>.child-table.events')
         .trigger('add-child')
     })
-    .on('click', `>${ndxrows}.selected`, e => {
+    .on('click', `>${ndxrow}.selected`, e => {
       if ($(e.currentTarget)
         .parents('.table.generation')
         .first()
@@ -36,10 +36,10 @@
       $(e.currentTarget.parentNode.parentNode)
         .toggleClass('seeking')
     })
-    .on('click', `>${ndxrows}:not(.selected)`, e => {
+    .on('click', `>${ndxrow}:not(.selected)`, e => {
       e.stopPropagation()
 
-      let url = `${localStorage[localStorage.menu]}/${$(e.currentTarget).data('id')}`
+      let url = `${sessionStorage[sessionStorage.menu]}/${$(e.currentTarget).data('id')}`
       fetch(url).then(async resp => {
         if (resp.status !== 200) throw {
           status: resp.status,
@@ -60,53 +60,73 @@
       ))
     })
 
-    .on('click', `>${table}:not(.editing)>.buttonbar>.add`, e => {
+    .on('unmarshal', `>${gen}`, (e, data) => {
+      // there are two unmarshals b/c all the current event consumers share
+      // this block as well as `click` on ndx:not(selected), but it's not
+      // trivial to pull them up into an abstract handler w/o more markup
       e.stopPropagation()
 
-      $(`body>${ndx}`)
-        .trigger('new-record')
-        .selected()
-        .trigger('unmarshal', {
-          id: 'newrow',
-          ctime: new Date().toISOString(),
-        })
+      $(`body>${eventrows}`).remove()
 
-      $(`body>${gen}`).trigger('clear').trigger('enable-record')
+      if (!$(`body>${events}`)
+        .trigger('send', data.events ?? [])
+        .selected($(e.currentTarget).breadcrumb())
+        .length
+      ) {
+        $(`body>${eventrows}:first-child`).click()
+      }
     })
-    .on('click', `>${table}:not(.editing)>.buttonbar>.update`, e => {
+    .on('unmarshal', `>${gen}`, (e, data) => {
       e.stopPropagation()
 
+      let url = `/strain/${data.id}/generation`
+      fetch(url).then(async resp => {
+        switch (resp.status) {
+          case 200: return await resp.json()
+          case 204: return { id: '#' }
+          default: throw {
+            status: resp.status,
+            message: await resp.text(),
+          }
+        }
+      }).then(json => {
+        $(`body>${progeny}`).attr('curr', json?.id).val(json?.id)
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
+
+      $(`body>${srcrows}`).remove()
+
+      $(`body>${srctable}>.rows`)
+        .send(data.sources)
+        .find('.row:not(.x-template) input, .row:not(.x-template) select')
+        .trigger('change')
+    })
+    .on('marshal', `>${ndxrow}`, (e, data) => {
+      e.stopPropagation()
+
+      $(`body>${gen}`).trigger('marshal', data)
+    })
+    .on('new-record', `>${ndx}`, e => {
+      e.stopPropagation()
+
+      $(`body>${gen}`).trigger('clear')
+    })
+    .on('enable-record', `>${ndxrow}`, e => {
+      e.stopPropagation()
+      console.log('generation enabling ndx')
       $(`body>${gen}`).trigger('enable-record')
     })
-    .on('click', `>${table}.editing>.buttonbar>.ok`, e => {
+    .on('disable-record', `>${ndx}`, e => {
       e.stopPropagation()
 
-      let params = {
-        method: /\badding\b/.test(e.currentTarget.parentNode.parentNode.className)
-          ? 'POST'
-          : 'PATCH',
-        body: {}
-      }
-      $(e.currentTarget.parentNode.parentNode)
-        .find('>.singleton.generation')
-        .trigger('marshal', params.body)
-        .trigger('default-update', [
-          `generation/${params.body.id}`.replace(/\/$/, ''),
-          params,
-        ])
-
-      // console.log(".trigger('default-update", `generation/${params.body.id}`, params)
-    })
-    .on('click', `>${table}.editing>.buttonbar>.cancel`, e => {
-      e.stopPropagation()
-
-      let $singleton = $(e.currentTarget.parentNode.parentNode)
-        .find('>.singleton.generation')
-
+      let $singleton = $(`body>${gen}`)
       $singleton
         .removeClass('editing adding')
         .trigger('unmarshal', $singleton.data())
     })
+
     .on('change', `>${progeny}`, e => {
       e.stopPropagation()
 
@@ -166,55 +186,8 @@
         ))
     })
 
-    .on('clear', `>${ndx}`, e => $(`body>${gen}`).trigger('clear'))
-    .on('unmarshal', `>${gen}`, (e, data) => {
-      // there are two unmarshals b/c all the current event consumers share
-      // this block as well as `click` on ndx:not(selected), but it's not
-      // trivial to pull them up into an abstract handler w/o more markup
-      e.stopPropagation()
-
-      $(`body>${eventrows}`).remove()
-
-      if (!$(`body>${events}`).trigger('send', data.events ?? [])
-        .selected(localStorage[$(e.currentTarget)
-          .parents('[x-target]')
-          .first()
-          .attr('breadcrumb')])
-        .length
-      ) {
-        $(`body>${eventrows}:first-child`).click()
-      }
-    })
-    .on('unmarshal', `>${gen}`, (e, data) => {
-      e.stopPropagation()
-
-      let url = `/strain/${data.id}/generation`
-      fetch(url).then(async resp => {
-        switch (resp.status) {
-          case 200: return await resp.json()
-          case 204: return { id: '#' }
-          default: throw {
-            status: resp.status,
-            message: await resp.text(),
-          }
-        }
-      }).then(json => {
-        $(`body>${progeny}`).attr('curr', json?.id).val(json?.id)
-      }).catch(ex => $(e.currentTarget).notify('error',
-        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
-        ex,
-      ))
-
-      $(`body>${srcrows}`).remove()
-
-      $(`body>${srctable}>.rows`)
-        .send(data.sources)
-        .find('.row:not(.x-template) input, .row:not(.x-template) select')
-        .trigger('change')
-    })
-
     // called from tablejs's render-record: div.trigger(format, v) when render=sources
-    .on('sources', `>${ndxrows}>.sources`, (e, ...sources) => {
+    .on('sources', `>${ndxrow}>.sources`, (e, ...sources) => {
       e.stopPropagation()
 
       $(e.currentTarget).text($(sources)

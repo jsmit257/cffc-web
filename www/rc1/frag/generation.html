@@ -1,4 +1,4 @@
-<div class="table generation" x-fetch="generations" x-target=">.rows.ndx" breadcrumb="generation" ts-edit="generations">
+<div class="table generation" x-fetch="generations" x-target=">.rows.ndx" breadcrumb="generation">
   <div class="rows ndx">
     <div class="row hover x-template">
       <div class="static ctime" name="ctime" x-formatter="long-date"></div>
@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <div class="singleton generation">
+  <div class="singleton generation" ts-edit="generations">
     <label class="field hover">
       <div class="label">Plating</div>
       <select class="plating substrate" name="plating_substrate" x-fetch-multi="substrates" render="substrate"
@@ -40,12 +40,10 @@
   </div>
 
   <div class="buttonbar">
-    <div class="button default text cancel">&nbsp;</div>
-    <div class="button text ok">&nbsp;</div>
-    <div class="button default text refresh">&nbsp;</div>
-    <div class="button text add">&nbsp;</div>
-    <div class="button text update">&nbsp;</div>
-    <div class="button default text delete">&nbsp;</div>
+    <div class="button default text action delete"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text control add"></div>
+    <div class="button default text refresh"></div>
   </div>
 
   <div class="child-table workspace active sources" x-child="source"></div>

@@ -52,27 +52,6 @@
         clear: none;
         right: 0;
         top: .5em;
-
-        &>.button {
-          font-weight: bolder;
-          font-size: larger;
-          text-align: center;
-
-          &.edit::before {
-            color: cyan;
-            content: var(--css-horz-ellipse);
-          }
-
-          &.cancel::before {
-            color: orange;
-            content: var(--css-math-times);
-          }
-
-          &.action::before {
-            color: red;
-            content: var(--css-circle-minus);
-          }
-        }
       }
 
       &.selected {
@@ -84,11 +63,6 @@
         &>.select,
         &>.input {
           appearance: auto;
-        }
-
-        &>.rowbar>.action::before {
-          color: lightgreen;
-          content: var(--css-check);
         }
       }
     }
@@ -129,22 +103,13 @@
       width: 100%;
 
       >.button {
-        /* width: 1em; */
-        /* border-radius: .33em; */
         float: right;
-        /* text-align: center; */
-        /* background-image: radial-gradient(#0f08, transparent 100%); */
-        /* margin-right: 1em; */
         font-style: italic;
       }
 
       >.button::after {
         color: cadetblue;
         margin-right: .66em;
-        /* text-align: left; */
-        /* width: 4em; */
-        /* display: inline-block; */
-        /* position: fixed; */
         padding-left: 1em;
         font-weight: bold;
       }

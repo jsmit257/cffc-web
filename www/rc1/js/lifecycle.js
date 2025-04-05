@@ -2,10 +2,11 @@
   let ws = '.main>.workspace.lifecycle'
   let table = `${ws}>.table.lifecycle`
   let ndx = `${table}>.rows.ndx`
-  let ndxrows = `${ndx}>.row.record`
+  let ndxrow = `${ndx}>.row.record`
   let lifecycle = `${table}>.singleton.lifecycle`
-  let events = `${table}>.child-table>.events>.rows`
-  let eventrows = `${events}>.row.record`
+  let events = `${table}>.child-table.events>.table.events`
+  let eventrow = `${events}>.rows>.row.record`
+  let notes = `${table}>.child-table.notes>.notes`
 
   let yield = `${lifecycle}>label>.yield`
   let count = `${lifecycle}>label>.count`
@@ -15,11 +16,9 @@
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget) // create events
-        .find('>.table.lifecycle>.events')
-        .trigger('add-child')
+      $(`body>${table}>[x-child]`).trigger('add-child')
     })
-    .on('click', `>${ndxrows}.selected`, e => {
+    .on('click', `>${ndxrow}.selected`, e => {
       if ($(e.currentTarget)
         .parents('.table.lifecycle')
         .first()
@@ -30,21 +29,28 @@
 
       $(e.currentTarget.parentNode.parentNode).toggleClass('seeking')
     })
-    .on('click', `>${ndxrows}:not(.selected)`, e => {
+    .on('click', `>${ndxrow}:not(.selected)`, e => {
       e.stopPropagation()
 
-      let url = `${localStorage[localStorage.menu]}/${$(e.currentTarget).data('id')}`
+      // FIXME: this often fails on refresh b/c the notes table hasn't 
+      // finished loading when this call is made; maybe putting it behind
+      // the notes click would be better (and save many calls since notes
+      // are only displayed on-demand); i'm just stubborn about calling
+      // all the functions up to trigger redundantly
+      let notesurl = `notes/${$(e.currentTarget).data('id')}`
+      $(`body>${notes}`).attr({
+        breadcrumb: notesurl,
+        'x-fetch': notesurl,
+      }).trigger('fetch')
+
+      let url = `${sessionStorage[sessionStorage.menu]}/${$(e.currentTarget).data('id')}`
       fetch(url).then(async resp => {
         if (resp.status !== 200) throw {
           status: resp.status,
           msg: await resp.text()
         }
-
-        // XXX: this will eventually cause a lot of noise in localstorage
-        $(`body>${events}`).parent().attr('breadcrumb', `${url}/events`)
-
-        $(e.currentTarget.parentNode.parentNode).removeClass('seeking')
-
+        $(`body>${events}`).attr('breadcrumb', `${url}/events`)
+        $(`body>${table}`).removeClass('seeking')
         return await resp.json()
       }).then(json => {
         return {
@@ -64,56 +70,6 @@
       ))
     })
 
-    .on('click', `>${table}:not(.editing)>.buttonbar>.add`, e => {
-      e.stopPropagation()
-
-      $(`body>${ndx}`)
-        .trigger('new-record')
-        .selected()
-        .trigger('unmarshal', {
-          id: 'newrow',
-          mtime: new Date().toISOString(),
-        })
-
-      $(`body>${lifecycle}`).trigger('clear').trigger('enable-record')
-    })
-    .on('click', `>${table}:not(.editing)>.buttonbar>.update`, e => {
-      e.stopPropagation()
-
-      $(`body>${lifecycle}`).trigger('enable-record')
-    })
-    .on('click', `>${table}.editing>.buttonbar>.ok`, e => {
-      e.stopPropagation()
-
-      let params = {
-        method: /\badding\b/.test(e.currentTarget.parentNode.parentNode.className)
-          ? 'POST'
-          : 'PATCH',
-        body: {}
-      }
-      $(e.currentTarget.parentNode.parentNode)
-        .find('>.singleton.lifecycle')
-        .trigger('marshal', params.body)
-        .trigger('default-update', [
-          `lifecycle/${params.body.id}`.replace(/\/$/, ''),
-          params,
-        ])
-
-      // console.log(".trigger('default-update",
-      //   `lifecycle/${params.body.id}`.replace(/\/$/, ''),
-      //   params)
-    })
-    .on('click', `>${table}.editing>.buttonbar>.cancel`, e => {
-      e.stopPropagation()
-
-      let $singleton = $(`body>${lifecycle}`)
-
-      $singleton
-        .removeClass('editing adding')
-        .trigger('unmarshal', $singleton.data())
-    })
-
-    .on('clear', `>${ndx}`, e => $(`body>${lifecycle}`).trigger('clear'))
     .on('clear', `>${lifecycle}`, e => {
       e.stopPropagation()
 
@@ -123,18 +79,38 @@
     .on('unmarshal', `>${lifecycle}`, (e, data) => {
       e.stopPropagation()
 
-      $(`body>${eventrows}`).remove()
+      $(`body>${eventrow}`).remove()
 
-      if (!$(`body>${events}`)
+      if (!$(`body>${events}>.rows`)
         .trigger('send', data.events ?? [])
-        .selected(localStorage[$(e.currentTarget)
-          .parents('[x-target]')
-          .first()
-          .attr('breadcrumb')])
+        .selected($(e.currentTarget).breadcrumb())
         .length
       ) {
-        $(`body>${eventrows}:first-child`).click()
+        $(`body>${eventrow}:first-child`).click()
       }
+    })
+    .on('marshal', `>${ndxrow}`, (e, data) => {
+      e.stopPropagation()
+
+      $(`body>${lifecycle}`).trigger('marshal', data)
+    })
+    .on('new-record', `>${ndx}`, e => {
+      e.stopPropagation()
+
+      $(`body>${lifecycle}`).trigger('clear')
+    })
+    .on('enable-record', `>${ndxrow}`, e => {
+      e.stopPropagation()
+
+      $(`body>${lifecycle}`).trigger('enable-record')
+    })
+    .on('disable-record', `>${ndx}`, e => {
+      e.stopPropagation()
+
+      let $singleton = $(`body>${lifecycle}`)
+      $singleton
+        .removeClass('editing adding')
+        .trigger('unmarshal', $singleton.data())
     })
 
     .on('change', `>${yield}, >${count}, >${gross}`, e => {

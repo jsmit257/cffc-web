@@ -18,15 +18,16 @@
       e.stopPropagation()
 
       $(e.currentTarget).data({
-        photoStub: localStorage['photo-stub'],
-        photoOwner: localStorage['photo-owner'] ?? localStorage['photo-stub'],
+        photoStub: sessionStorage['photo-stub'],
+        photoOwner: sessionStorage['photo-owner'] ?? sessionStorage['photo-stub'],
       })
-      $(`body>${imgbox}`).attr('owner-id', localStorage['photo-owner'])
+
+      $(`body>${imgbox}`).attr('owner-id', sessionStorage['photo-owner'])
 
       // FIXME: clear the canvas and audit too
 
       // clean up any previous owners; it only matters if 
-      // localStorage.removeItem('photo-owner')
+      // sessionStorage.removeItem('photo-owner')
 
       // remove this if `init` can be converted to fetch and delegate to
       // workspace.activate() call to `fetch`
@@ -45,22 +46,17 @@
 
       let $devs = $(e.currentTarget).trigger('clear')
 
-      console.log('where the fuck are you')
       if (!navigator.mediaDevices?.enumerateDevices()
         .then(devices => devices
           .filter(dev => dev.kind === "videoinput")
-          .map(dev => {
-            console.log('wtf?', dev)
-            return Object({
-              id: dev.deviceId,
-              label: dev.label ?? `Camera ${dev.deviceId}`,
-            })
-          }))
+          .map(dev => Object({
+            id: dev.deviceId,
+            label: dev.label || `Camera ${dev.deviceId}`, // null (??) or empty (||)
+          })))
         .then(devs => $devs.trigger('send', devs))
         .catch(ex => $(navigator.mediaDevices)
           .notify('error', 'getting camera devices', ex))
         .finally(_ => {
-          console.log('you fuck!', $(`body>${device}`).length)
           $(`body>${device}`).length || $devs
             .trigger('send', {
               id: 'retry',
@@ -275,7 +271,7 @@
     .on('click', '>.audit>.img', e => { /** what goes here? */ })
 
     // window actions
-    .on('click', `>${ctlbtn}.ok`, e => {
+    .on('click', `>${ctlbtn}.save`, e => {
       e.stopPropagation()
 
       let $imgbox = $(`body>${imgbox}`)
@@ -287,6 +283,7 @@
       // weird that the XA is driven by the canvas and not `fetch`
       $(`body>${canvas}`).get(0).toBlob(
         blob => {
+          // blob.stream().getReader().read().then(something..., something..., ...)
           params.body = ((part) => (part.append('file', blob), part))(new FormData())
 
           fetch(url, params).then(async resp => {

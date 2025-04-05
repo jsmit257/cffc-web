@@ -1,0 +1,109 @@
+:root {
+  --note-row-height: 4.5em;
+}
+
+body>.main>.workspace>.table>.child-table.notes {
+  display: none;
+}
+
+body>.main>.workspace>.table.noting>.workspace.notes {
+  display: block;
+}
+
+.table.notes {
+  background-image: radial-gradient(#8a2be222 25%, transparent);
+
+  &>.rows {
+    margin-bottom: 1em;
+    margin-top: 1em;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &>.row.record {
+      height: var(--note-row-height);
+
+      &>label {
+        &.note {
+          width: 60%;
+          height: auto;
+        }
+
+        &.break {
+          clear: right;
+          display: block;
+          float: none;
+          /* seems like z-index could cause trouble */
+          z-index: -1;
+        }
+
+        &>.note {
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          background-color: transparent;
+          color: inherit;
+          float: left;
+          font-size: inherit;
+          height: 4.5em;
+          width: 100%;
+        }
+
+        &>[x-formatter="short-date"] {
+
+          &::before {
+            display: block;
+            float: left;
+            margin-left: 1em;
+            width: 4.5em;
+          }
+
+          &.mtime::before {
+            content: 'Modified: ';
+          }
+
+          &.ctime::before {
+            content: 'Created: ';
+          }
+        }
+      }
+
+      &>.rowbar {
+        margin-right: 1em;
+        opacity: 0;
+        width: 2em;
+        /* z-index: 1; */
+        /* position: relative; */
+
+        &>.button {
+          clear: right;
+        }
+      }
+
+      &:hover>.rowbar {
+        opacity: .33;
+      }
+
+      &.selected {
+        background-image: none;
+
+        &>.rowbar {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  &>.buttonbar {
+    bottom: 0;
+    position: absolute;
+
+    &>.add {
+      margin-top: -1.5em;
+      width: 100%;
+
+      &::before {
+        margin-right: .33em;
+      }
+    }
+  }
+}

@@ -1,10 +1,59 @@
 (_ => {
-  let static = '.table:not(.editing, .adding)>.buttonbar'
-  let editing = '.table.editing:not(.adding)>.buttonbar'
-  let adding = '.table.adding>.buttonbar'
+  let bar = '.buttonbar'
+  let defaults = `${bar}>.default`
+  let static = `:not(.editing, .adding)>${defaults}`
 
   $(document.body)
-    .on('click', `${static}>.default.refresh`, e => {
+    .on('click', `${defaults}.delete`, e => {
+      e.stopPropagation()
+
+      let $table = $(e.currentTarget)
+        .parents('[breadcrumb]')
+        .first()
+
+      let $row = $(e.currentTarget).selected()
+
+      let url = `${$table.attr('breadcrumb')}/${$row.attr('id')}`
+      $row.trigger('default-remove', url)
+    })
+    .on('click', `${static}.notes`, e => {
+      e.stopPropagation()
+
+      let $parent = $(e.currentTarget)
+        .parents('.table')
+        .first()
+
+      if ($parent.hasClass('noting')) $parent
+        .find('.table.notes')
+        .trigger('fetch')
+        .removeClass('editing adding')
+        .find('.editing')
+        .removeClass('editing adding')
+        .find('.rowbar')
+        .trigger('reset')
+
+      $parent.toggleClass('noting')
+    })
+    .on('click', `${static}.photos`, e => {
+      e.stopPropagation()
+
+      let $parent = $(e.currentTarget)
+        .parents('.table')
+        .first()
+
+      if ($parent.hasClass('photoing')) $parent
+        .find('.table.photos')
+        .trigger('fetch')
+        .addClass('gallery')
+        .removeClass('detail noting editing adding')
+        .find('.editing')
+        .removeClass('editing adding')
+        .find('.rowbar')
+        .trigger('reset') // XXX: what about this?
+
+      $parent.toggleClass('photoing')
+    })
+    .on('click', `${static}.refresh`, e => {
       e.stopPropagation()
 
       $(e.currentTarget)
@@ -12,61 +61,12 @@
         .first()
         .trigger('fetch')
     })
-    .on('click', `${static}>.default.delete`, e => {
+    .on('click', `${defaults}.save`, e => {
       e.stopPropagation()
 
-      let $table = $(e.currentTarget)
-        .parents('[breadcrumb][x-target]')
-        .first()
-
-      let $sel = $table.find(`${$table.attr('x-target')} .selected`)
-      if ($sel.length === 0) {
-        throw new Error(`${$table.attr('x-target')} .selected`)
-      }
-
-      let url = `${$table.attr('breadcrumb')}/${$sel.attr('id')}`
-      // console.log('default-remove', url)
-      $sel.trigger('default-remove', url)
-    })
-    .on('click', `${static}>.default.add`, e => {
-      e.stopPropagation()
-
-      let $table = $(e.currentTarget)
-        .parents('[x-target]')
-        .first()
-
-      $table
-        .find($table.attr('x-target'))
-        .trigger('new-record')
-    })
-    .on('click', `${static}>.default.update`, e => {
-      e.stopPropagation()
-
-      $(e.currentTarget).selected().trigger('enable-record')
-    })
-    .on('click', `${editing}>.default.ok`, e => {
-      e.stopPropagation()
-
-      let $table = $(e.currentTarget)
-        .parents('[breadcrumb][x-target]')
-        .first()
-
-      let params = { method: 'PATCH', body: {} }
-      $(e.currentTarget)
-        .selected()
-        .trigger('marshal', params.body)
-        .trigger('default-update', [
-          `${$table.attr('breadcrumb')}/${params.body.id}`,
-          params,
-        ])
-
-      // console.log('default-update', params)
-    })
-    .on('click', `${adding}>.default.ok`, e => {
-      e.stopPropagation()
-
-      let $table = $(e.currentTarget)
-        .parents('[breadcrumb][x-target]')
+      let $table = $(e.currentTarget.parentNode)
+        .trigger('toggle', e.currentTarget)
+        .parents('[breadcrumb]')
         .first()
 
       let body = {}, args
@@ -74,30 +74,59 @@
         .selected()
         .trigger('marshal', body)
         .trigger('default-update', args = [
-          $table.attr('breadcrumb'),
+          `${$table.attr('breadcrumb')}/${body.id}`.replace(/\/$/, ''),
           {
-            method: 'POST',
+            method: body.id ? 'PATCH' : 'POST',
             body: body,
           }])
-
-      // console.log('default-update', args)
     })
-    .on('click', `${editing}>.default.cancel`, e => {
+    .on('toggle', bar, (e, caller) => {
       e.stopPropagation()
 
-      $(e.currentTarget)
-        .parents('.editing')
-        .first()
-        .trigger('disable-record')
+      let $bar = $(e.currentTarget)
+      if (!caller) {
+        caller = $bar.find('>.edit').get(0)
+      }
+      let classes = caller?.className
+      if (/\badd\b/.test(classes)) {
+        $(caller).toggleClass('add cancel').attr('x-alt', 'add')
+      } else if (/\bedit\b/.test(classes)) {
+        $(caller).toggleClass('edit cancel').attr('x-alt', 'edit')
+      } else {
+        let $alt = $bar.find('[x-alt]')
+        $alt
+          .toggleClass(`cancel ${$alt.attr('x-alt')}`)
+          .removeAttr('x-alt')
+      }
+      $bar.find('>.action').toggleClass('delete save')
     })
-    .on('click', `${adding}>.default.cancel`, e => {
+    .on('click', `${defaults}.control`, e => { // handles add, edit and cancel
       e.stopPropagation()
 
-      $(e.currentTarget)
-        .parents('.adding')
+      if ($(e.currentTarget).css('cursor') === 'not-allowed') {
+        return // unfortunate consequence of the rest of this being so simple
+      }
+
+      let classes = e.currentTarget.className
+      let $table = $(e.currentTarget.parentNode)
+        .trigger('toggle', e.currentTarget)
+        .parents('[x-target]')
         .first()
-        .removeClass('editing adding')
-        .selected()
-        .trigger('remove-record')
+
+      if (/\badd\b/.test(classes)) {
+        $table
+          .find($table.attr('x-target'))
+          .first()
+          .trigger('new-record')
+      } else if (/\bedit\b/.test(classes)) {
+        $table.selected().trigger('enable-record')
+      } else if ($table.hasClass('adding')) { // button must be cancel
+        $table
+          .removeClass('editing adding')
+          .selected()
+          .trigger('remove-record')
+      } else {
+        $table.trigger('disable-record')
+      }
     })
 })()

@@ -1,0 +1,142 @@
+:root {
+  --photo-row-height: 4.5em;
+}
+
+body>.main>.workspace>.table .child-table.photos {
+  display: none;
+  width: 100%;
+}
+
+body>.main>.workspace>.table.photoing .workspace.photos {
+  display: block;
+}
+
+.table.photos {
+  background-image: radial-gradient(ellipse at bottom right, #bebc1f22 25%, transparent);
+  width: 100%;
+
+  &>.rows {
+    margin-bottom: 1em;
+    margin-top: 1em;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &>.row.record {
+      &>.buttonbar {
+        text-align: center;
+        width: 3em;
+      }
+
+      &>label {
+        &>[x-formatter="short-date"] {
+
+          &::before {
+            display: block;
+            float: left;
+            margin-left: 1em;
+            width: 4.5em;
+          }
+
+          &.mtime::before {
+            content: 'Modified: ';
+          }
+
+          &.ctime::before {
+            content: 'Created: ';
+          }
+        }
+      }
+
+      &>.imaging {
+        margin-left: 1em;
+      }
+
+      &>.button.camera {
+        cursor: pointer;
+        float: left;
+        font-size: large;
+
+        &::after {
+          background-image: radial-gradient(circle, #ffff00ab, transparent 55%);
+          border-radius: 1em;
+          color: honeydew;
+          content: var(--css-camera);
+          font-size: 200%;
+          font-weight: 500;
+          width: 1.25em;
+          display: inline-block;
+          text-align: center;
+          vertical-align: middle;
+          height: 1.25em;
+        }
+      }
+
+      &>.imgtile {
+        height: auto;
+        width: auto;
+
+        &>.image {
+          width: 200px;
+          height: auto;
+        }
+      }
+    }
+  }
+
+  &>.buttonbar>.add::before {
+    margin-right: .33em;
+  }
+
+  &.gallery {
+    &>.rows {
+      &>.row.record {
+        cursor: pointer;
+        width: auto;
+
+        &>:not(.imgtile) {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &.detail {
+    &>.rows>.row.record {
+      &:not(.selected) {
+        display: none;
+      }
+
+      &.selected {
+        background: none;
+      }
+
+      &>.imaging {
+        display: none;
+      }
+
+      &>.imgtile {
+        height: auto;
+        width: auto;
+
+        &>.image {
+          height: auto;
+          width: 350px;
+        }
+      }
+
+      &.editing {
+        &>:not(.rowbar) {
+          display: none;
+        }
+
+        &>.imaging {
+          display: block;
+        }
+      }
+    }
+
+    &>.buttonbar {
+      display: none;
+    }
+  }
+}

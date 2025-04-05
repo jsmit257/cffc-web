@@ -1,4 +1,4 @@
-<div class="table lifecycle" x-fetch="lifecycles" x-target=">.rows.ndx" breadcrumb="lifecycle" ts-edit="lifecycles">
+<div class="table lifecycle" x-fetch="lifecycles" x-target=">.rows.ndx" breadcrumb="lifecycle">
   <div class="rows ndx">
     <div class="row hover x-template">
       <div class="static mtime" name="mtime" x-formatter="long-date"></div>
@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <div class="singleton lifecycle">
+  <div class="singleton lifecycle" ts-edit="lifecycles">
     <label class="field hover">
       <div class="label">Location</div>
       <input class="location" name="location" tabindex="0">
@@ -78,13 +78,14 @@
     </label>
   </div>
 
+  <div class="child-table workspace notes" x-child="note"></div>
+
   <div class="buttonbar">
-    <div class="button default delete text"></div>
-    <div class="button update text"></div>
-    <div class="button add text"></div>
-    <div class="button default refresh text"></div>
-    <div class="button ok text"></div>
-    <div class="button default cancel text"></div>
+    <div class="button default text notes"></div>
+    <div class="button default text refresh"></div>
+    <div class="button default text control add"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text action delete"></div>
   </div>
 
   <div class="child-table workspace active events" x-child="event"></div>
