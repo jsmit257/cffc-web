@@ -137,7 +137,7 @@ $(_ => {
       ))
     })
     .on('click', `>${hide}`, e => {
-      sessionStorage[e.currentTarget.id] = e.currentTarget.checked
+      localStorage[e.currentTarget.id] = e.currentTarget.checked
 
       $('body>.main')[e.currentTarget.checked // withClass doesn't exist yet
         ? 'addClass'
@@ -147,6 +147,6 @@ $(_ => {
 
   Array('deleted', 'uuid', 'timestamp').forEach(v => {
     let id = `hide-${v}`
-    sessionStorage[id] === 'true' && $(`body>${hide}#${id}`).click()
+    localStorage[id] === 'true' && $(`body>${hide}#${id}`).click()
   })
 })

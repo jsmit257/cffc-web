@@ -105,8 +105,6 @@
         margin-right: .5em;
         /* padding-right: 3em; */
         float: left;
-        
-        
 
         &>.row.record {
           display: none;
@@ -129,8 +127,6 @@
         text-align: center;
         width: 1em;
         height: 100%;
-        
-        
 
         &>.button.default {
           display: none;

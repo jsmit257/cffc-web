@@ -41,7 +41,7 @@
       $(`body>${notes}`).attr({
         breadcrumb: notesurl,
         'x-fetch': notesurl,
-      }).trigger('fetch')
+      })
 
       let url = `${sessionStorage[sessionStorage.menu]}/${$(e.currentTarget).data('id')}`
       fetch(url).then(async resp => {
