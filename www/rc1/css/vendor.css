@@ -4,4 +4,8 @@
   & :is(.columns, .rows>.row)>:is(.column, .field) {
     width: 50%;
   }
+
+  &>.rows {
+    /* height: var(--default-table-height); */
+  }
 }

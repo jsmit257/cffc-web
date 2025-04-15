@@ -6,6 +6,7 @@ body>.notification {
   padding-bottom: 9em;
   padding-top: .5em;
   width: 100%;
+  
 
   &.auditing {
     display: block;

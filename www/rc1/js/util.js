@@ -31,9 +31,6 @@ $(_ => {
         .first()
         .find('>.buttonbar')
     },
-    // click: function (el = this.get(0)) {
-    //   return $(el).trigger('click')
-    // },
     notify: function (lvl, action, msg, state) {
       this.each(function () {
         $('body>.notification').trigger('notify', [
@@ -47,21 +44,19 @@ $(_ => {
       return $(this)
     },
     selected: function (...ids) {
-      let $table = $(this)
-      if (!$table.attr('x-target')) {
-        $table = $table.parents('[x-target]').first()
-      }
-      let root = $table.attr('x-target')
-      // should we clear first, and what would that mean if unselecting is 
-      // tied to an event? 
-      ids.forEach(id => {
-        if ((id = `#${id}`) === '#') {
-          id = ':first-of-type(.row.record)'
+      let $root, $result
+      if (!($root = $(this.find(this.attr('x-target')))).length) {
+        let $table = this.parents('[x-target]').first()
+        if (!$($root = $table.find($table.attr('x-target')).first()).length) {
+          return $('nothing')
         }
-        $table.find(`${root}>${id}`).trigger('select')
-      })
+      }
 
-      return $table.find(`${root}>.selected`)
+      ids.filter(v => v).forEach(id => $root.find(`>#${id}`).trigger('select'))
+
+      return ($result = $root.find('>.selected')).length
+        ? $result
+        : $root.find('>.row.record').first().trigger('select')
     },
     breadcrumb: function () {
       return sessionStorage[$(this)

@@ -29,7 +29,6 @@
     <div class="child-table workspace photos" x-child="photo"></div>
   </div>
 
-  <!-- breadcrumb is going to get noisy after a while -->
   <div class="table strainattributes" x-target=">.rows" breadcrumb="strainattribute">
     <datalist id="strain-attr-names" x-fetch="strainattributenames"></datalist>
 
@@ -51,10 +50,9 @@
     </div>
 
     <div class="buttonbar">
-      <div class="button icon delete"></div>
-      <div class="button icon default add"></div>
-      <div class="button icon default edit"></div>
-      <div class="button icon save"></div>
+      <div class="button default icon control add"></div>
+      <div class="button default icon control edit"></div>
+      <div class="button default icon action delete"></div>
     </div>
   </div>
 
@@ -64,5 +62,6 @@
     <div class="button default text control add"></div>
     <div class="button default text refresh"></div>
     <div class="button default text photos"></div>
+    <div class="button text gen">gen</div>
   </div>
 </div>

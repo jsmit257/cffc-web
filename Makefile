@@ -11,7 +11,7 @@ build: down
 # - AUTHN_PORT
 # - CFFC_API_HOST
 # - CFFC_API_PORT
-.PHONY: run
+.PHONY: run-docker
 run-docker:
 	docker-compose up --build --remove-orphans -d cffc-web
 	docker tag jsmit257/cffc-web:latest jsmit257/cffc-web:lkg

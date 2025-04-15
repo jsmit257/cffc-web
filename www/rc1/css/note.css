@@ -24,8 +24,8 @@ body>.main>.workspace>.table.noting>.workspace.notes {
 
       &>label {
         &.note {
-          width: 60%;
           height: auto;
+          width: 60%;
         }
 
         &.break {
@@ -41,8 +41,10 @@ body>.main>.workspace>.table.noting>.workspace.notes {
           -webkit-appearance: none;
           -moz-appearance: none;
           background-color: transparent;
+          border-color: transparent;
+          border-radius: 5px;
           color: inherit;
-          float: left;
+          /* float: left; */
           font-size: inherit;
           height: 4.5em;
           width: 100%;
@@ -90,6 +92,10 @@ body>.main>.workspace>.table.noting>.workspace.notes {
           opacity: 1;
         }
       }
+
+      &.editing>label>.note {
+        border-color: blueviolet;
+      }
     }
   }
 
@@ -98,8 +104,8 @@ body>.main>.workspace>.table.noting>.workspace.notes {
     position: absolute;
 
     &>.add {
-      margin-top: -1.5em;
       width: 100%;
+      line-height: var(--buttonbar-height);
 
       &::before {
         margin-right: .33em;

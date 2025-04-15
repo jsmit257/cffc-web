@@ -1,70 +1,52 @@
-.child-table>.table {
+.workspace.events>.table.events {
   float: left;
   width: 100%;
-}
 
-.table.events input.temperature,
-.table.events input.humidity {
-  text-align: center;
-}
+  &>.columns>.full {
+    width: 100%;
+    text-decoration: underline;
+  }
 
-.table.events>.columns>.full {
-  width: 100%;
-  text-decoration: underline;
-}
+  &>.rows {
+    height: 20em;
+  }
 
-.table.events>.columns>.eventtype,
-.table.events>.rows>.row>.eventtype {
-  /* background-color: #f883; */
-  width: 30%;
-}
+  &>.columns,
+  &>.rows>.row {
+    &>.eventtype {
+      /* background-color: #f883; */
+      width: 30%;
+    }
 
-.table.events>.columns>.eventattrs,
-.table.events>.rows>.row>.eventattrs {
-  /* background-color: #8f83; */
-  cursor: default;
-  width: 21%;
-  float: left;
-  text-align: center;
-}
+    &>.eventattrs {
+      /* background-color: #8f83; */
+      cursor: default;
+      width: 21%;
+      float: left;
+      text-align: center;
+    }
 
-.table.events>.columns>.severity::after,
-.table.events>.rows>.row>.severity::after {
-  content: '/';
-}
+    &>.severity::after {
+      content: '/';
+    }
 
-.table.events>.columns>.stage,
-.table.events>.rows>.row>.stage {
-  /* background-color: #88f3; */
-  width: 8%;
-  float: left;
-  /* padding-left: .25em; */
-  text-align: left;
-}
+    &>:is(.temperature, .humidity) {
+      /* background-color: #f8f3; */
+      width: 14%;
 
-.table.events>.columns>.temperature,
-.table.events>.rows>.row>.temperature {
-  /* background-color: #f8f3; */
-  width: 14%;
-}
+      &>input {
+        text-align: center;
+      }
+    }
 
-.table.events>.columns>.humidity,
-.table.events>.rows>.row>.humidity {
-  /* background-color: #ff83; */
-  width: 7%;
-}
+    &>:is(.mtime, .ctime) {
+      /* background-color: #ff83; */
+      text-align: center;
+      width: 20%;
 
-.table.events>.columns>.mtime,
-.table.events>.rows>.row>.mtime {
-  /* background-color: #ff83; */
-  text-align: center;
-  width: 20%;
-}
-
-.table.events>.columns>.ctime,
-.table.events>.rows>.row>.ctime {
-  /* background-color: #fff3; */
-  display: none;
-  width: 20%;
-  text-align: center;
+      &.ctime {
+        display: none;
+      }
+    }
+  }
 }

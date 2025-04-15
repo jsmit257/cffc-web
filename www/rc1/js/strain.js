@@ -5,7 +5,7 @@
   let strain = `${table}>.rows`
   let strainrow = `${strain}>.row.record`
   let photos = `${strain}>.workspace.photos>.table.photos`
-  let btns = `${table}>.buttonbar`
+  let btn = `${table}>.buttonbar>.button`
   let sa = `${table}>.table.strainattributes`
   let sadatalist = `${sa}>#strain-attr-names`
   let sacols = `${sa}>.columns`
@@ -17,24 +17,27 @@
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
+      $(sadatalist).trigger('fetch')
+
       $(`body>${strain}>[x-child]`).trigger('add-child')
     })
-    .on('send', `>${strain}`, e => {
-      e.stopPropagation()
-
-      $(sadatalist).trigger('fetch')
-    })
-    .on('click', `>${strainrow}:not(.selected)`, e => {
+    .on('select', `>${strainrow}`, e => {
       e.stopPropagation()
 
       let id = $(e.currentTarget).data('id')
 
       // FIXME: same problem with clutter as notes child in lifecycle, et al
-      let photourl = `photos/${id}`
+      let breadcrumb = `photos/${id}`
       $(`body>${photos}`).attr({
-        breadcrumb: photourl,
-        'x-fetch': photourl,
+        breadcrumb,
+        'x-fetch': breadcrumb,
       })
+
+      $(e.currentTarget)
+        .parents('.table.strain')
+        .first()
+        .find('>.buttonbar>.gen')
+        .attr('gen-id', $(e.currentTarget).data('generation')?.id ?? null)
 
       // XXX: how much do we want attributes to follow the URL pattern
       //  used by photos/notes? it's not a trivial change if we go all
@@ -69,74 +72,13 @@
           `GET ${attrurl} statusCode: ${ex.status ?? 'unsent'}`,
           ex))
     })
-
-    // strain attribute edit functions
-    .on('click', `>${sabtns} >.save`, e => {
+    .on('click', `${btn}.gen`, e => {
       e.stopPropagation()
 
-      let $sel = $(e.currentTarget).selected()
-      if ($sel.length === 0) {
-        throw new Error('no strainattribute selected')
-      }
-
-      let url = `${$(e.currentTarget)
-        .parents('[breadcrumb]')
-        .first()
-        .attr('breadcrumb')}/${$sel.attr('id')}`
-
-      let params = { method: 'PATCH', body: {} }
-      if ($(e.currentTarget)
-        .parents('[breadcrumb][x-target]')
-        .first()
-        .hasClass('adding')
-      ) {
-        params.method = 'POST'
-        url = url.replace(/\/undefined$/, '')
-        $(e.currentTarget.parentNode)
-          .find('>.cancel')
-          .toggleClass('add cancel -add')
-      } else {
-        $(e.currentTarget.parentNode)
-          .find('>.cancel')
-          .toggleClass('update cancel -update')
-      }
-
-      $sel
-        .trigger('marshal', params.body)
-        .trigger('default-update', [url, params])
-    })
-    .on('click', `>${sabtns}>.add`, e => {
-      e.stopPropagation()
-
-      $(e.currentTarget).toggleClass('add cancel -add')
-    })
-    .on('click', `>${sabtns}>.update`, e => {
-      e.stopPropagation()
-
-      $(e.currentTarget).toggleClass('update cancel -update')
-    })
-    .on('click', `>${sabtns}>.cancel`, e => {
-      e.stopPropagation()
-
-      if ($(e.currentTarget).hasClass('-add')) {
-        $(e.currentTarget).toggleClass('add cancel -add')
-      } else {
-        $(e.currentTarget).toggleClass('update cancel -update')
-      }
-    })
-    .on('click', `>${sabtns}>.delete`, e => {
-      e.stopPropagation()
-
-      let $sel = $(e.currentTarget).selected()
-      if ($sel.length === 0) {
-        throw new Error('no strainattribute selected')
-      }
-
-      let url = `${$(e.currentTarget)
-        .parents('[x-target]')
-        .first()
-        .attr('breadcrumb')}/${$sel.attr('id')}`
-
-      $sel.trigger('default-remove', url)
+      $('body>.menubar').trigger('restore', [
+        'main',
+        'generation',
+        $(e.currentTarget).attr('gen-id'),
+      ])
     })
 })()

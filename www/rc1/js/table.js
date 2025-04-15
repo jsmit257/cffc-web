@@ -52,6 +52,8 @@ $(_ => {
         ex))
     })
     .on('fetch-multi', '.table>.rows>.row.record, .table>.singleton', (e, url) => {
+      e.stopPropagation()
+
       fetch(url).then(async resp => {
         if (resp.status !== 200) throw {
           status: resp.status,
@@ -77,7 +79,6 @@ $(_ => {
         .insertBefore($tmpl)
         .trigger('unmarshal', record))
 
-      // DEPRECATED: but it's still used by some (e.g. events)
       $(e.currentTarget).selected($(e.currentTarget).breadcrumb())
     })
     .on('unmarshal', record, (e, data) => {
@@ -321,13 +322,13 @@ $(_ => {
       $(e.currentTarget.parentNode)
         .find('>.selected')
         .removeClass('selected')
-      // $(e.currentTarget).selected().removeClass('selected')
 
       $(e.currentTarget).addClass('selected')
 
-      // TODO: events from one of generations and lifecycles will clobber the
-      // other one's history console.log(new Error())
-      sessionStorage[$(e.currentTarget).parents('[breadcrumb]').first().attr('breadcrumb')] = e.currentTarget.id
+      sessionStorage[$(e.currentTarget)
+        .parents('[breadcrumb]')
+        .first()
+        .attr('breadcrumb')] = e.currentTarget.id
     })
     .on('click', '.table>.rows>.row.record:not(.selected)', e => {
       e.stopPropagation()

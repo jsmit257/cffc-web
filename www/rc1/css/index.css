@@ -91,26 +91,25 @@ select {
   display: inline-block;
   font-size: large;
   outline: none;
-  text-overflow: ellipsis;
   overflow: clip;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 
 input[type="radio"] {
   appearance: auto;
 }
 
 input[type="file"] {
-  border-right: 1px solid grey;
   border-radius: 1em;
+  border-right: 1px solid grey;
 }
 
 input::file-selector-button {
   background-color: transparent;
   border: thin solid grey;
-  border-right: 0;
   border-radius: 1em 0.33em 0.33em 1em;
+  border-right: 0;
   color: #94c9ff;
   /* font-weight: bold; */
   padding: 0.33em;
@@ -149,16 +148,15 @@ body {
   &>.main,
   &>.footer {
     float: left;
-    width: 100%;
     min-width: var(--body-min-width);
+    width: 100%;
   }
 
   &>.main {
-    width: 100%;
     margin-bottom: 9em;
     margin-top: 3.2em;
     /* max-height: 50em; */
-
+    width: 100%;
 
     & .workspace {
       display: none;
@@ -170,23 +168,24 @@ body {
     }
 
     & .workspace>.table {
-      border-color: #462a70;
-      border-style: solid;
       border-width: 0;
+      border-color: #462a70;
       border-left-width: 1px;
-      border-top-width: 1px;
       border-radius: 1em 1em 0 0;
+      border-style: solid;
+      border-top-width: 1px;
       float: left;
       position: relative;
+      width: 100%;
     }
   }
 
   &>.footer {
     /* background-color: red; */
     bottom: 0;
+    float: left;
     left: 0;
     position: fixed;
-    float: left;
     z-index: var(--z-menu);
 
     &>ul {
@@ -204,19 +203,19 @@ body {
       }
 
       &>.list::before {
+        bottom: 1em;
         content: 'Hide';
         font-weight: bolder;
         line-height: 2em;
-        bottom: 1em;
         width: 100%;
       }
 
       &>.list {
+        display: flex;
+        flex-direction: column;
         list-style-type: none;
         margin: 0;
         margin-bottom: 1em;
-        display: flex;
-        flex-direction: column;
 
         &>li {
           &>input {
@@ -228,10 +227,8 @@ body {
           &>label {
             clear: right;
             cursor: pointer;
-            /* display: inline-block; */
             /* float: left; */
             /* width: 8em; */
-            /* display: block; */
           }
         }
       }
@@ -241,9 +238,9 @@ body {
       background-image: radial-gradient(ellipse at bottom right, var(--bg-color) 70%, transparent);
       border-radius: 4em 0 0;
       bottom: 0;
+      float: right;
       padding-right: 1em;
       position: relative;
-      float: right;
 
       &>div {
         display: inline-block;

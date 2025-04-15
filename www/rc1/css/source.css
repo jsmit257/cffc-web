@@ -1,6 +1,14 @@
 .workspace.sources>.table.sources {
   float: right;
-  height: 13em;
+  height: var(--sources-area-height);
+  
+  
+  
+  
+  
+  
+  
+  
 
   &>.rows {
     &>.row.record {

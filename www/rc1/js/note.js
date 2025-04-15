@@ -8,9 +8,11 @@
 
   $(document.body)
     .on('activate', `${ws}`, e => {
-      console.log('activating notes', $(e.currentTarget)
-        .parents('.table')
-        .first())
+      e.stopPropagation()
+
+      // console.log('activating notes', $(e.currentTarget)
+      //   .parents('.table')
+      //   .first())
     })
     .on('click', `${add}`, e => {
       e.stopPropagation()

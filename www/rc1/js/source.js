@@ -1,8 +1,10 @@
 (_ => {
-  let srctable = '.workspace.sources>.table.sources'
-  let srcrows = `${srctable}>.rows>.row.record`
+  let ws = '.workspace.sources'
+  let srctable = `${ws}>.table.sources`
+  let srcrow = `${srctable}>.rows>.row.record`
 
   $(document.body)
+    .on('activate', ws, e => e.stopPropagation())
     .on('change', `${srctable}>.rows>.origin-filter>label>[name="type"]`, e => {
       e.stopPropagation()
 
@@ -19,7 +21,7 @@
         .first()
         .attr('origin', e.currentTarget.value)
     })
-    .on('change', `${srcrows}>.field>[name="lifecycle"]`, e => {
+    .on('change', `${srcrow}>.field>[name="lifecycle"]`, e => {
       e.stopPropagation()
 
       let $sel = $(e.currentTarget).find('>option:selected')
@@ -40,7 +42,7 @@
       // console.log(`.withClass(${data.length === 0}, 'empty')`)
       $(e.currentTarget).withClass(data.length === 0, 'empty')
     })
-    .on('unmarshal', `${srcrows}`, (e, data) => {
+    .on('unmarshal', `${srcrow}`, (e, data) => {
       e.stopPropagation()
 
       $(e.currentTarget.parentNode)
@@ -63,7 +65,7 @@
           .val(data.lifecycle.events[0].id)
       }
     })
-    .on('post-data', `${srcrows}.selected`, (e, cfg) => {
+    .on('post-data', `${srcrow}.selected`, (e, cfg) => {
       e.stopPropagation()
 
       let endpoint = $(e.currentTarget)
@@ -94,7 +96,7 @@
     })
 
     // rowbar buttons
-    .on('click', `${srcrows}>.rowbar>.control`, e => { // edit or cancel
+    .on('click', `${srcrow}>.rowbar>.control`, e => { // edit or cancel
       e.stopPropagation()
 
       // FIXME: wtf?
@@ -102,7 +104,7 @@
         .find('[name="lifecycle"]')
         .trigger('change'))
     })
-    .on('click', `${srcrows}:not(.editing)>.rowbar>.action`, e => { // remove
+    .on('click', `${srcrow}:not(.editing)>.rowbar>.action`, e => { // remove
       e.stopPropagation()
 
       let genid = $(e.currentTarget)
@@ -116,9 +118,9 @@
         .parentNode)
         .addClass('selected')
 
-      $row.trigger('default-remove', `generation/${genid}/sources/${$row.attr('id')}`)
+      $row.trigger('default-remove', `generation/${genid}/sources/${$row.attr('id')}`)  // x-fetch + id
     })
-    .on('click', `${srcrows}.editing:not(.adding)>.rowbar>.action`, e => {
+    .on('click', `${srcrow}.editing:not(.adding)>.rowbar>.action`, e => {
       e.stopPropagation()
 
       let genid = $(e.currentTarget)
@@ -130,7 +132,7 @@
       let $row = $(e.currentTarget.parentNode.parentNode)
         .trigger('marshal', body)
       let origin = $row.find('[radio-group="origin"]:checked').val()
-      let url = `generation/${genid}/sources/${origin}/${$row.attr('id')}`
+      let url = `generation/${genid}/sources/${origin}/${$row.attr('id')}` // x-fetch + origin/...
         .replace(/\/undefined$/, '')
       let params = {
         method: body.id ? 'PATCH' : 'POST',
@@ -142,13 +144,12 @@
         },
       }
 
-      // console.log('default-update', url, params)
       $row
         .trigger('default-update', [url, params])
         .find('>.rowbar>.control')
         .toggleClass('cancel edit')
     })
-    .on('click', `${srcrows}.adding>.rowbar>.action`, e => {
+    .on('click', `${srcrow}.adding>.rowbar>.action`, e => {
       e.stopPropagation()
 
       $(e.currentTarget.parentNode.parentNode)

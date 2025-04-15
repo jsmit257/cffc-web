@@ -326,9 +326,6 @@ body>.main>.workspace.camera {
       overflow-y: clip;
       width: 100%;
 
-
-
-
       &>div {
         float: right;
 
@@ -339,19 +336,8 @@ body>.main>.workspace.camera {
       }
     }
 
-    &>.buttonbar {
-      display: none;
-
-      &>.button {
-
-        &.reset {
-          float: left;
-        }
-      }
-    }
-
-    &[owner-id]>.buttonbar {
-      display: block;
+    &>.buttonbar>.button.reset {
+      float: left;
     }
 
     &.capturing {

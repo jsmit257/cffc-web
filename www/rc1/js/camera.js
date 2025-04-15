@@ -1,6 +1,7 @@
 (_ => {
   let ws = '.main>.workspace.camera'
   let imgbox = `${ws}>.imgbox`
+  let props = `${imgbox}>.props`
   let devs = `${imgbox}>.viddevs>.rows`
   let device = `${devs}>.row.record`
   let capture = `${imgbox}>.vidcap`
@@ -17,34 +18,14 @@
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget).data({
-        photoStub: sessionStorage['photo-stub'],
-        photoOwner: sessionStorage['photo-owner'] ?? sessionStorage['photo-stub'],
-      })
-
-      $(`body>${imgbox}`).attr('owner-id', sessionStorage['photo-owner'])
-
-      // FIXME: clear the canvas and audit too
-
-      // clean up any previous owners; it only matters if 
-      // sessionStorage.removeItem('photo-owner')
-
-      // remove this if `init` can be converted to fetch and delegate to
-      // workspace.activate() call to `fetch`
-      $(`body>${devs}`).trigger('init')
+      // TODO: clear all the things here
     })
-    .on('deactivate', `>${ws}`, (e, photos) => {
-      // back from whence we came
-      // if success resend client photos
-    })
-
-    // capture controls
-    .on('init', `>${devs}`, e => {
-      // XXX: if this is enough for a fetch, then the .viddevs .table 
-      // wrapper can be removed and the rows can be decorated as .viddevs
+    .on('init', `>${ws}`, (e, fetchurl, method, success = _ => _) => {
       e.stopPropagation()
 
-      let $devs = $(e.currentTarget).trigger('clear')
+      $(e.currentTarget).data({ fetchurl, method, success })
+
+      let $devs = $(`body>${devs}`).trigger('clear')
 
       if (!navigator.mediaDevices?.enumerateDevices()
         .then(devices => devices
@@ -72,6 +53,17 @@
         )
       }
     })
+    .on('deactivate', `>${ws}`, (e, photos) => {
+      e.stopPropagation()
+
+      if (photos) {
+        $(`body>${ws}`).data('success')(photos)
+      }
+
+      $('body>.menubar').trigger('un-camera')
+    })
+
+    // capture controls
     .on('click', `>${device}#retry`, e => $(`body>${devs}`).trigger('init'))
     .on('click', `>${device}.selected`, e => $(`body>${imgbox}`)
       .hasClass('capturing')
@@ -274,36 +266,36 @@
     .on('click', `>${ctlbtn}.save`, e => {
       e.stopPropagation()
 
-      let $imgbox = $(`body>${imgbox}`)
-      let url = `/photos/${$imgbox.attr('owner-id')}/${$imgbox.attr('id')}`
-        .replace(/\/undefined$/, '')
-      let params = { method: $imgbox.attr('id') ? 'PATCH' : 'POST' }
-      let $props = $('.props')
+      let req = $(`body>${ws}`).data() // not an actual Request
 
       // weird that the XA is driven by the canvas and not `fetch`
+      // FIXME: we may want to send the greymap as SVG at some point, 
+      //  which means may we call deactivate with with more than one 
+      //  result; something about this approach will need to change
       $(`body>${canvas}`).get(0).toBlob(
         blob => {
           // blob.stream().getReader().read().then(something..., something..., ...)
-          params.body = ((part) => (part.append('file', blob), part))(new FormData())
 
-          fetch(url, params).then(async resp => {
+          fetch(req.fetchurl, {
+            method: req.method,
+            body: ((part) => (part.append('file', blob), part))(new FormData()),
+          }).then(async resp => {
             if ([200, 201].indexOf(resp.status) === -1) throw {
               status: resp.status,
               message: await resp.text()
             }
             return await resp.json()
-          }).then(result => $(`body>${ws}`).trigger('deactivate', result)
+          }).then(result => $(`body>${ws}`).trigger('deactivate', result[0])
           ).catch(ex => $(e.currentTarget).notify('error',
-            `${params.method} ${url} statusCode: ${ex.status ?? 'unsent'}`,
-            ex,
+            `${req.method} ${req.fetchurl} statusCode: ${ex.status ?? 'unsent'}`,
+            `you fucking douche! ${ex}`,
           ))
         },
-        $props.find('.format>select').val(),
-        $props.find('.quality>input').val(),
+        $(`${props}>.format>select`).val(),
+        $(`${props}>.quality>input`).val(),
       )
     })
-    .on('click', `>${ctlbtn}.cancel`, e => $(e.delegateTarget)
-      .trigger('cancel', 'user requested cancel event'))
+    .on('click', `>${ctlbtn}.cancel`, e => $(`body>${ws}`).trigger('deactivate'))
     .on('click', `>${ctlbtn}.reset`, e => {
       let $imgbox = $(e.delegateTarget),
         first = $imgbox

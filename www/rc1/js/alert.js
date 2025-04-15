@@ -55,7 +55,9 @@
     .on('click', `>${noterow}`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget).trigger('alert')
+      console.log('alert details', $(e.currentTarget)
+        .trigger('alert')
+        .data())
     })
     .on('activate', `>${alert}`, (e, src, timeout = 30) => {
       e.stopPropagation()

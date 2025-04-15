@@ -1,5 +1,4 @@
 :root {
-  --strain-rows-height: 30em;
   --strain-rows-width: 66%;
   /* not working right */
   --attr-table-width: calc(100% - var(--strain-rows-width));
@@ -18,11 +17,9 @@
   }
 
   &>.rows {
-    width: var(--strain-rows-width);
-    float: left;
-    height: var(--strain-rows-height);
     /* background-color: #0f03; */
-    
+    float: left;
+    width: var(--strain-rows-width);
 
     &>.row>.field {
       width: calc(var(--width) * 1.01);
@@ -38,7 +35,7 @@
       }
 
       &>.workspace.photos>.table.photos {
-        height: calc(var(--strain-rows-height) - var(--row-line-height));
+        height: calc(var(--default-table-height) - var(--row-line-height));
 
         &>.rows {
           /* 1em each top-/bottom-margin + 1em buttonbar + tableborder and change */
@@ -69,8 +66,13 @@
     text-align: center;
   }
 
-  &>.buttonbar>.photos {
+  &>.buttonbar>.photos,
+  &>.buttonbar>.gen {
     float: left;
+  }
+
+  &>.buttonbar>.gen:not([gen-id]) {
+    visibility: hidden;
   }
 
   &>.table.strainattributes {
@@ -79,9 +81,9 @@
     /* border-style: solid; */
     float: right;
     width: var(--attr-table-width);
-    height: var(--strain-rows-height);
+    height: var(--default-table-height);
     /* background-color: #f003; */
-    
+
 
     &>.columns {
       padding-right: 2em;
@@ -93,7 +95,7 @@
     }
 
     &>.rows {
-      height: calc(var(--strain-rows-height) - var(--column-line-height));
+      height: calc(var(--default-table-height) - var(--column-line-height));
       width: calc(100% - 2em);
     }
 

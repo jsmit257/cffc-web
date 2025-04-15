@@ -16,32 +16,26 @@
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
-      $(`body>${table}>[x-child]`).trigger('add-child')
-    })
-    .on('click', `>${ndxrow}.selected`, e => {
-      if ($(e.currentTarget)
-        .parents('.table.lifecycle')
-        .first()
-        .hasClass('editing')) {
-        return
-      }
-      e.stopPropagation()
-
-      $(e.currentTarget.parentNode.parentNode).toggleClass('seeking')
-    })
-    .on('click', `>${ndxrow}:not(.selected)`, e => {
-      e.stopPropagation()
-
-      // FIXME: this often fails on refresh b/c the notes table hasn't 
-      // finished loading when this call is made; maybe putting it behind
-      // the notes click would be better (and save many calls since notes
-      // are only displayed on-demand); i'm just stubborn about calling
-      // all the functions up to trigger redundantly
-      let notesurl = `notes/${$(e.currentTarget).data('id')}`
-      $(`body>${notes}`).attr({
-        breadcrumb: notesurl,
-        'x-fetch': notesurl,
+      $(`body>${table}>[x-child]`).trigger('add-child', $ws => {
+        let breadcrumb = `notes/${sessionStorage.lifecycle}`
+        $ws.find('>.table.notes').attr({
+          breadcrumb,
+          'x-fetch': breadcrumb,
+        })
       })
+      // $(`body>${table}>[x-child]`).trigger('add-child')
+    })
+    .on('select', `>${ndxrow}`, e => {
+      e.stopPropagation()
+
+      let breadcrumb = `notes/${$(e.currentTarget).data('id')}`
+      $(`body>${notes}`).attr({
+        breadcrumb,
+        'x-fetch': breadcrumb,
+      })
+    })
+    .on('select', `>${ndxrow}`, e => {
+      e.stopPropagation()
 
       let url = `${sessionStorage[sessionStorage.menu]}/${$(e.currentTarget).data('id')}`
       fetch(url).then(async resp => {
@@ -68,6 +62,17 @@
         `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
         ex,
       ))
+    })
+    .on('click', `>${ndxrow}.selected`, e => {
+      if ($(e.currentTarget)
+        .parents('.table.lifecycle')
+        .first()
+        .hasClass('editing')) {
+        return
+      }
+      e.stopPropagation()
+
+      $(e.currentTarget.parentNode.parentNode).toggleClass('seeking')
     })
 
     .on('clear', `>${lifecycle}`, e => {

@@ -1,7 +1,7 @@
 (_ => {
   let ws = '.child-table.photos'
   let photo = `${ws}>.table.photos`
-  let photorow = `${photo}>.rows>.row.record`
+  let photorow = `${photo}>.rows>.row`
   let image = `${photorow}>.imgtile>.image`
   let rowbtn = `${photorow}>.rowbar>.button`
   let note = `${photo}>child-table.notes>.table.notes`
@@ -9,17 +9,24 @@
   $(document.body)
     .on('activate', ws, e => {
       e.stopPropagation()
-      console.log('activating photos')
-      $(`body>${strain}>[x-child]`).trigger('add-child')
+
+      $(e.currentTarget).find('[x-child]').trigger('add-child', $ws => {
+        let breadcrumb = `photos/${sessionStorage.strain}`
+        console.log(breadcrumb)
+        $ws.find('>.table.photos').attr({
+          breadcrumb,
+          'x-eftch': breadcrumb,
+        })
+      })
     })
     .on('click', `${photorow}`, e => {
       e.stopPropagation()
 
-      let $table = $(e.currentTarget.parentNode.parentNode)
-
-      if ($table.hasClass('gallery')) {
-        $table.toggleClass('detail gallery')
-      }
+      $(e.currentTarget)
+        .parents('.workspace')
+        .first()
+        .find('>.gallery')
+        .toggleClass('detail gallery')
     })
 
     .on('unmarshal', photorow, (e, data) => {
@@ -33,14 +40,14 @@
     .on('click', `${rowbtn}.back`, e => {
       e.stopPropagation()
 
-      let $table = $(e.currentTarget)
+      $(e.currentTarget.parentNode)
+        .find('>.cancel')
+        .click()
+
+      $(e.currentTarget.parentNode.parentNode)
         .parents('.detail')
         .first()
         .toggleClass('detail gallery')
-
-      if ($table.hasClass('gallery')) {
-
-      }
     })
     .on('click', `${rowbtn}.cancel`, e => {
       e.stopPropagation()
@@ -105,6 +112,29 @@
     .on('click', `${photorow}>.camera`, e => {
       e.stopPropagation()
 
-      console.log('heres where the fun starts')
+      let $row = $(e.currentTarget.parentNode)
+
+      // console.log('well, that didnt last long', [
+      //   `${$row
+      //     .parents('[x-fetch]')
+      //     .first()
+      //     .attr('x-fetch')}/${$row.attr('id')}`
+      //     .replace(/\/undefined$/, ''),
+      //   $row.hasClass('adding') ? "POST" : "PATCH",
+      //   photos => $row.data(photos).trigger('disable-record'),
+      // ], $('body>.menubar'))
+      $('body>.menubar').trigger('camera', [
+        `${$row
+          .parents('[x-fetch]')
+          .first()
+          .attr('x-fetch')}/${$row.attr('id')}`
+          .replace(/\/undefined$/, ''),
+        $row.hasClass('adding') ? "POST" : "PATCH",
+        photos => $row
+          .data(photos)
+          .trigger('disable-record')
+          .find('>.rowbar')
+          .trigger('toggle'),
+      ])
     })
 })()

@@ -16,11 +16,11 @@ $(_ => {
         // as an alternate sort of success
         // case 3xx:
 
+        case 400:
         case 404: // anything special about this one?
         case 405: // `resp.text()` doesn't matter here
-        case 400:
         case 500:
-        // if we make handlers for other 4xx-5xx statuses, they might need 
+        // if we make handlers for above 4xx-5xx statuses, they might need 
         // to include the response and also need to be async; for now, just
         // letting them fall through to the client where they can call 
         // `notify()` from the element that initited the call (if that matters)
@@ -104,17 +104,14 @@ $(_ => {
 
       $(`body>${spaces}.active`).removeClass('active')
 
-      let sel = `#${sessionStorage[slug]}`.replace(/#undefined/, ':first-child')
-
       $(e.currentTarget)
         .addClass('active')
         .find(`>.table.${slug}`)
-        .trigger('fetch', $table => $table
-          .find(`.row.record${sel}`)
-          .removeClass('selected')
-          .click())
+        .trigger('fetch')
     })
     .on('add-child', '[x-child]', (e, resolve = _ => _) => {
+      e.stopPropagation()
+
       let slug = e.currentTarget.attributes['x-child'].value
       $(document.head).trigger('add-resource', {
         src: slug,
@@ -128,9 +125,11 @@ $(_ => {
           message: await resp.text(),
         }
         return await resp.text()
-      }).then(html => resolve($(html)
-        .appendTo($(e.currentTarget)
-          .removeAttr('x-child'))) // once is enough
+      }).then(html => $(e.currentTarget)
+        .append($(html))
+        .removeAttr('x-child') // once is enough
+        .trigger('activate', slug)
+      ).then(ws => resolve(ws)
       ).catch(ex => $(e.currentTarget).notify('error',
         `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
         ex,

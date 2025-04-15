@@ -68,10 +68,10 @@
       <div class="menubtn aux" x-stub="album">gallery</div>
       <div class="menubtn aux" x-stub="camera">camera</div>
 
-      <div class="menubtn reporting" x-stub="lifecycle">lifecycle</div>
-      <div class="menubtn reporting" x-stub="generation">generation</div>
-      <div class="menubtn reporting" x-stub="strain">strain</div>
-      <div class="menubtn reporting" x-stub="substrate">substrate</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="lifecycle">lifecycle</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="generation">generation</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="strain">strain</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="substrate">substrate</div>
     </div>
   </div>
 
@@ -214,7 +214,7 @@
         (reg) => console.log("Service worker registered:", reg),
         (err) => console.error(`Service worker registration failed: ${err}`))
     }
-    setTimeout(_ => $(`body>.menubar`).trigger('init'), 150)
+    $(_ => setTimeout(_ => $(`body>.menubar`).trigger('init'), 50))
   </script>
 </body>
 

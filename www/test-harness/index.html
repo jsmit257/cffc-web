@@ -759,20 +759,22 @@
   </div>
 
   <script defer>
-    // if ('serviceWorker' in navigator) {
-    //   try {
-    //     navigator.serviceWorker.register('./js/sw.js')
-    //   } catch (ex) {
-    //     $('body>.notification').trigger('activate', [
-    //       'debug',
-    //       'register service worker',
-    //       err,
-    //     ])
-    //   }
-    // }
-    setTimeout(_ => $(document).trigger('reload'), 150)
-    // setTimeout(_ => $('.template>.timestamp').clone(true, true).appendTo('.workspace>.active').trigger('activate', [new Date(), 'events', '123', 'mtime']), 150)
-    // setTimeout(_ => camera(), 150)
+    $(_ => {
+      // if ('serviceWorker' in navigator) {
+      //   try {
+      //     navigator.serviceWorker.register('./js/sw.js')
+      //   } catch (ex) {
+      //     $('body>.notification').trigger('activate', [
+      //       'debug',
+      //       'register service worker',
+      //       err,
+      //     ])
+      //   }
+      // }
+      setTimeout(_ => $(document).trigger('reload'), 150)
+      // setTimeout(_ => $('.template>.timestamp').clone(true, true).appendTo('.workspace>.active').trigger('activate', [new Date(), 'events', '123', 'mtime']), 150)
+      // setTimeout(_ => camera(), 150)
+    })
   </script>
 </body>
 

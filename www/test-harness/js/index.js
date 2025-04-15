@@ -32,7 +32,7 @@ $(_ => {
           .trigger('forbidden', opts)
           .find('body>.login')
           .trigger('activate')
-      } else if (xhr.status != 302) {
+      } else if (xhr.status != 302 && !/^\/?auth/.test(opts.url)) {
         $(document.body).find('>.notification').trigger('activate', [
           'error',
           `${opts.method} - ${opts.url}`,

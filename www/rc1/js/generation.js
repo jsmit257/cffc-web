@@ -16,37 +16,37 @@
 
       $(`body>${progeny}`).trigger('fetch')
 
-      $(e.currentTarget)
-        .find('>.table.generation>.child-table.sources')
-        .trigger('add-child')
+      $(`body>${table}>[x-child]`).trigger('add-child')
 
-      $(e.currentTarget)
-        .find('>.table.generation>.child-table.events')
-        .trigger('add-child')
+      //       $(e.currentTarget)
+      //         .find('>.table.generation>.child-table.sources')
+      //         .trigger('add-child')
+      // 
+      //       $(e.currentTarget)
+      //         .find('>.table.generation>.child-table.events')
+      //         .trigger('add-child')
     })
-    .on('click', `>${ndxrow}.selected`, e => {
-      if ($(e.currentTarget)
-        .parents('.table.generation')
-        .first()
-        .hasClass('editing')) {
-        return
-      }
+    .on('select', `>${ndxrow}`, e => {
+      // .on('click', `>${ndxrow}:not(.selected)`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget.parentNode.parentNode)
-        .toggleClass('seeking')
-    })
-    .on('click', `>${ndxrow}:not(.selected)`, e => {
-      e.stopPropagation()
+      // console.log(`target`, e.target.parentNode.parentNode, 'current', e.currentTarget.parentNode.parentNode)
+      // alert('pause')
 
-      let url = `${sessionStorage[sessionStorage.menu]}/${$(e.currentTarget).data('id')}`
+      let id = $(e.currentTarget).data('id')
+
+      $(`body>${srctable}`).attr({
+        breadcrumb: `source/${id}`,
+        'x-fetch': `generation/${id}/sources`,
+      })
+
+      let url = `${sessionStorage[sessionStorage.menu]}/${id}`
       fetch(url).then(async resp => {
         if (resp.status !== 200) throw {
           status: resp.status,
           msg: await resp.text()
         }
 
-        // XXX: this will eventually cause a lot of noise in localstorage
         $(`body>${events}`).parent().attr('breadcrumb', `${url}/events`)
 
         $(e.currentTarget.parentNode.parentNode).removeClass('seeking')
@@ -59,11 +59,34 @@
         ex,
       ))
     })
+    .on('click', `>${ndxrow}.selected`, e => {
+      e.stopPropagation()
 
+      if ($(e.currentTarget)
+        .parents('.table.generation')
+        .first()
+        // // FIXME: include noting in this test
+        // .attr('class')
+        // .match(/\b(editing|noting)\b/)
+        .hasClass('editing')) {
+        return
+      }
+
+      $(e.currentTarget.parentNode.parentNode).toggleClass('seeking')
+    })
+    .on('click', `>${table}>.buttonbar>.strain`, e => {
+      e.stopPropagation()
+
+      $('body>.menubar').trigger('restore', [
+        'main',
+        'strain',
+        $(e.currentTarget).attr('strain-id'),
+      ])
+    })
     .on('unmarshal', `>${gen}`, (e, data) => {
       // there are two unmarshals b/c all the current event consumers share
-      // this block as well as `click` on ndx:not(selected), but it's not
-      // trivial to pull them up into an abstract handler w/o more markup
+      // this block, but it's not trivial to pull them up into an abstract 
+      // handler w/o more markup
       e.stopPropagation()
 
       $(`body>${eventrows}`).remove()
@@ -89,9 +112,14 @@
             message: await resp.text(),
           }
         }
-      }).then(json => {
-        $(`body>${progeny}`).attr('curr', json?.id).val(json?.id)
-      }).catch(ex => $(e.currentTarget).notify('error',
+      }).then(json => $(`body>${progeny}`)
+        .attr('curr', json?.id)
+        .val(json?.id)
+        .parents('.table.generation')  // buttonbar().find('>.strain')
+        .first()
+        .find('>.buttonbar>.strain')
+        .attr('strain-id', json?.id)
+      ).catch(ex => $(e.currentTarget).notify('error',
         `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
         ex,
       ))
@@ -115,7 +143,7 @@
     })
     .on('enable-record', `>${ndxrow}`, e => {
       e.stopPropagation()
-      console.log('generation enabling ndx')
+
       $(`body>${gen}`).trigger('enable-record')
     })
     .on('disable-record', `>${ndx}`, e => {

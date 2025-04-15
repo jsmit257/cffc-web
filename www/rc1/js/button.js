@@ -23,7 +23,7 @@
         .parents('.table')
         .first()
 
-      if ($parent.hasClass('noting')) $parent
+      if (!$parent.hasClass('noting')) $parent
         .find('.table.notes')
         .trigger('fetch')
         .removeClass('editing adding')
@@ -41,7 +41,7 @@
         .parents('.table')
         .first()
 
-      if ($parent.hasClass('photoing')) $parent
+      if (!$parent.hasClass('photoing')) $parent
         .find('.table.photos')
         .trigger('fetch')
         .addClass('gallery')

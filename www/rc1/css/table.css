@@ -1,9 +1,14 @@
 :root {
+  --default-table-height: 30em;
   /* TODO: does this go in index.css, or does .workspace>.table go here? */
   --table-border-left-width: 1px;
 
   --column-line-height: 3em;
   --row-line-height: 2em;
+}
+
+.main>.workspace>.table>.rows:not(.ndx) {
+  height: var(--default-table-height);
 }
 
 .table {

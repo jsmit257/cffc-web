@@ -54,10 +54,9 @@
     }
   }
 
-  &>.rows,
   &>.workspace.ingredients {
     float: left;
-    height: 20em;
+    height: var(--default-table-height);
   }
 
   &>.rows {

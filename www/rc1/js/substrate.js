@@ -2,7 +2,7 @@
   let ws = '.main>.workspace.substrate'
   let table = `${ws}>.table.substrate`
   let sub = `${table}>.rows`
-  let subrows = `${sub}>.row.record`
+  let subrow = `${sub}>.row.record`
   let child = `${table}>.workspace.ingredients>.table.ingredient`
   let ing = `${child}>.rows`
   let ingrows = `${ing}>.row.record`
@@ -13,48 +13,41 @@
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget) // create a modified ingredients
-        .find('>.table.substrate>.ingredients')
-        .trigger('add-child', $ingredients => {
-          $ingredients
-            .find('>.rows>.row.x-template')
-            .addClass('managed')
+      $(`body>${child}`).trigger('activate')
 
-          $ingredients.trigger('fetch', $ing => $(`body>${table}`)
-            .selected()
-            .data('ingredients')
-            // ?.forEach(v => $ing.find(`>.row#${v.id}`).addClass('selected')))
-            ?.forEach(v => $(`body>${ingrows}#${v.id}`).addClass('selected')))
+      $(`body>${table}>[x-child]`).trigger('add-child', _ => {
+        $(`body>${ing}>.x-template`).addClass('managed')
+        // FIXME: outstanding sync issue, substrate has no rows yet; but 
+        //  when select is called from rows::send, ingredients has no rows;
+        //  what's the intersection when both tables are settled in
+        $(`${sub}`).selected().data('ingredients')?.forEach(v => {
+          $(`body>${ingrows}#${v.id}`).addClass('selected')
         })
-        .find('>.table.ingredient')
-        .trigger('fetch') // XXX: why don't we need resolve here
+      })
     })
-    .on('unmarshal', subrows, (e, data) => {
+    .on('unmarshal', subrow, (e, data) => {
       e.stopPropagation()
 
       $(e.currentTarget).addClass(data.type)
     })
-    .on('click', `>${subrows}:not(.selected)`, e => {
-      // this probably shouldn't happen when `.editing`
+    .on('select', `>${subrow}`, e => {
       e.stopPropagation()
 
-      // remove selecting from table before removing selected? ...
+      console.log('select substrate', $(`body>${ingrows}`).length)
       $(`body>${child}`)
         .removeClass('selecting')
         .find('>.rows>.row.selected')
         .removeClass('selected')
 
-      // ... or, leave the table selecting?
-      // $(`body>${ingrows}.selected`).removeClass('selected')
-
-      $(e.currentTarget).data('ingredients')?.forEach(v =>
-        $(`body>${ingrows}#${v.id}`).addClass('selected'))
+      $(e.currentTarget).data('ingredients')?.forEach(v => {
+        $(`body>${ingrows}#${v.id}`).addClass('selected')
+      })
     })
     .on('click', `${selecting}:not(.selected)`, e => {
       e.stopPropagation()
 
       $(e.currentTarget).trigger('update-children', [
-        `substrate/${$(`body>${subrows}.selected`).attr('id')}/ingredients`,
+        `substrate/${$(`body>${subrow}.selected`).attr('id')}/ingredients`,
         {
           method: 'POST',
           body: JSON.stringify($(e.currentTarget).data()),
@@ -66,7 +59,7 @@
       e.stopPropagation()
 
       $(e.currentTarget).trigger('update-children', [
-        `substrate/${$(`body>${subrows}.selected`).attr('id')}/ingredients/${e.currentTarget.id}`,
+        `substrate/${$(`body>${subrow}.selected`).attr('id')}/ingredients/${e.currentTarget.id}`,
         { method: 'DELETE' },
         200,
       ])
@@ -83,15 +76,18 @@
       }).then(json => {
         $(e.currentTarget)
           .toggleClass('selected')
-        $(`body>${subrows}.selected`)
+        $(`body>${subrow}.selected`)
           .data('ingredients', json.ingredients)
       }).catch(ex => $(e.currentTarget).notify('error',
         `${args.method} '${url}' statusCode: ${ex.status ?? 'unsent'}`,
         ex,
       ))
     })
-    .on('click', `.substrate .table.ingredient>.buttonbar`, e =>
-      $(e.currentTarget.parentNode).toggleClass('selecting'))
+    .on('click', `${child}>.buttonbar`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget.parentNode).toggleClass('selecting')
+    })
     .on('change', `${table}>.columns>.type>label>select`, e => {
       e.stopPropagation()
 

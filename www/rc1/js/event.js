@@ -3,6 +3,7 @@
   let datarows = `${table}>.rows>.row.record`
 
   $(document.body)
+    .on('activate', '.workspace.events', e => e.stopPropagation())
     .on('change', `${datarows}>label>.eventtype`, e => {
       e.stopPropagation()
 
