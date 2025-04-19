@@ -58,11 +58,13 @@ $(_ => {
         ? $result
         : $root.find('>.row.record').first().trigger('select')
     },
-    breadcrumb: function () {
-      return sessionStorage[$(this)
+    breadcrumb: function (id) {
+      let key = $(this)
         .parents('[breadcrumb]')
         .first()
-        .attr('breadcrumb')]
+        .attr('breadcrumb')
+
+      return sessionStorage[key] = id ?? sessionStorage[key]
     },
   })
 

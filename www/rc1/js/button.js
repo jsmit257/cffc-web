@@ -61,6 +61,27 @@
         .first()
         .trigger('fetch')
     })
+    .on('click', `${static}.report`, e => {
+      e.stopPropagation()
+
+      let $table = $(e.currentTarget)
+        .parents('[breadcrumb][x-target]')
+        .first()
+
+      console.log('clicking report', $table)
+
+      $('body>.menubar').trigger('restore', [
+        'reporting',
+        $table.attr('name'),
+        $table.breadcrumb(),
+      ])
+      // // FIXME: override for events, more or less
+      // $('body>.menubar').trigger('restore', [
+      //   'reporting',
+      //   'eventtype',
+      //   $row.find('>.eventtype>select').val(),
+      // ])
+    })
     .on('click', `${defaults}.save`, e => {
       e.stopPropagation()
 

@@ -17,7 +17,7 @@ body>.menubar {
 
     &::before {
       color: transparent;
-      content: var(--css-math-minus);
+      content: var(--css-bullet);
       float: left;
       padding-right: 1em;
     }
@@ -37,7 +37,6 @@ body>.menubar {
 
     &.selected::before {
       color: revert;
-      content: var(--css-bullet);
     }
   }
 

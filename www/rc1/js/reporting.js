@@ -1,4 +1,14 @@
-$(_ => {
+(_ => {
+  let ws = '.main>.workspace.reporting'
+  let report = `${ws}>.report`
+  let entity = `${report}>.entity`
+  let rootndx = `${entity}>.ndx`
+  let ndxrow = `${rootndx}>.row`
+  let substrates = ['bulk', 'grain', 'liquid', 'plating']
+    .map(v => `.entity[name="${v}_substrate"]`)
+    .join(',')
+  let rptitem = 'body>.menubar>.items>.reporting.selected'
+
   let labelmap = {
     'bulk_cost': 'Bulk cost',
     'bulk_substrate': 'Bulk',
@@ -29,29 +39,6 @@ $(_ => {
     'substrates': 'substrate',
   }
 
-  let format = (p => {
-    return (d) => {
-      if (!d.replace) {
-        return d
-      }
-      return d.replace(p, '$1 $2')
-    }
-  })(/^(\d{4}.\d\d.\d\d).(\d\d.\d\d.\d\d).*/)
-
-  let newentity = ($tmpl => {
-    $tmpl.find('>.ndx').remove()
-
-    return ((entityname, data, $parent) => $tmpl
-      .clone(true, true)
-      .attr('name', entityname)
-      .attr('sort-key', entityname)
-      .appendTo($parent)
-      .trigger('send', data)
-      .find('>.entity-name')
-      .trigger('map', entityname)
-      .parent())
-  })($('.workspace>.history>.entity').clone(true, true))
-
   let sortindices = (_ => {
     let result = {
       attribute: ['id', 'name', 'value'],
@@ -79,158 +66,138 @@ $(_ => {
     return result
   })()
 
-  $('.main>.workspace>.history')
-    .on('activate', (e, id) => {
-      let entityname = $('.main>.header>.menuitem.selecting').attr('entity-name')
+  let fmt = (d, p = /^(\d{4}.\d\d.\d\d).(\d\d.\d\d.\d\d).*/) =>
+    d.replace ? d.replace(p, '$1 $2') : d
+
+  $(document.body)
+    .on('activate', `>${ws}`, (e, _) => {
+      e.stopPropagation()
+
+      // FIXME: is this a timing issue? should it move/copy to report::fetch?
+      $(`body>${report}`).trigger('fetch', $(rptitem).attr('x-report'))
+    })
+    .on('fetch', `>${ws}>.table.reporting`, e => {
+      e.stopPropagation()
+
+      // hack? index::activate has done its job, now turn the table into a report;
+      // this has roots in legacy front-end logic, but also recursive reports don't 
+      // really follow the model of a flat table beyond simply loading resources
+      e.currentTarget.className = 'report'
+    })
+    .on('fetch', `>${report}`, (e, entityname) => {
+      e.stopPropagation()
+
+      sessionStorage.report = entityname
+
+      e.currentTarget.className = `report ${entityname}`
 
       $(e.currentTarget)
-        .attr('name', entityname)
+        .attr({ breadcrumb: `reports/${entityname}` })
         .find('>.entity')
         .attr('name', entityname)
         .addClass('collapsed')
-        .trigger('reinit')
+        .trigger('reinit', entityname)
         .find('>.ndx')
-        .trigger('refresh', id)
-        .parent()
-        .find('>.entity-name')
-        .trigger('map', entityname)
+        .attr('name', entityname)
+        .trigger('refresh')
     })
-    .on('reinit', '>.entity', e => $(e.currentTarget)
-      .removeAttr('dtime')
-      .find('>.list')
-      .empty()
-      .parent()
-      .find('>.cliff-notes')
-      .html('(choose ye)'))
-    .on('refresh', '>.entity>.ndx', (e, id) => {
+    .on('reinit', `>${entity}`, (e, key) => {
       e.stopPropagation()
 
-      if (id.constructor.prototype !== String.prototype) {
-        id = 'x-undefined'
-      }
-
-      $.ajax({
-        url: `/${$(e.delegateTarget).attr('name')}s`,
-        method: 'GET',
-        success: (data, status, xhr) => {
-          $(e.currentTarget)
-            .empty()
-            .trigger('send', data)
-            .find(`>.row#${id}`)
-            .click()
-        },
-        error: console.log,
-      })
+      let $entity = $(e.currentTarget).removeAttr('dtime')
+      $entity.find('>.list').empty()
+      $entity.find('>.cliff-notes').html('(choose ye)')
+      $entity.find('>.entity-name').html(labelmap[key] || key)
     })
-    .on('send', '>.entity[name="eventtype"]>.ndx', (e, ...data) => {
+    .on('refresh', `>${rootndx}`, e => {
       e.stopPropagation()
 
-      data.forEach(ev => {
-        $('<div>')
-          .addClass('row hover')
-          .attr('id', ev.id)
-          .data('url', `/reports/eventtype/${ev.id}`)
-          .appendTo(e.currentTarget)
-          .trigger('send', {
-            name: ev.name,
-            severity: ev.severity,
-            stage: ev.stage.name,
-          })
-      })
-    })
-    .on('send', '>.entity[name="generation"]>.ndx', (e, ...data) => {
-      e.stopPropagation()
+      // FIXME: get ID from sessionStorage/breadcrumb
+      let id = $(e.currentTarget).breadcrumb() ?? 'x-undefined'
 
-      data.forEach(gen => {
-        let strains = []
-        gen.sources ||= []
-        gen.sources.forEach(v => {
-          strains.push(v.strain.name)
-        })
-
-        $('<div>')
-          .addClass('row hover')
-          .attr('id', gen.id)
-          .data('url', `/reports/generation/${gen.id}`)
-          .appendTo(e.currentTarget)
-          .trigger('send', {
-            mtime: gen.mtime,
-            strains: strains.join(' & ') || 'Not assigned',
-          })
-      })
-    })
-    .on('send', '>.entity[name="lifecycle"]>.ndx', (e, ...data) => {
-      e.stopPropagation()
-
-      data.forEach(lc => {
-        $('<div>')
-          .addClass('row hover')
-          .attr('id', lc.id)
-          .data('url', `/reports/lifecycle/${lc.id}`)
-          .appendTo(e.currentTarget)
-          .trigger('send', {
-            mtime: lc.mtime,
-            location: lc.location,
-            tombstone: typeof lc.events !== 'undefined',
-          })
-      })
-    })
-    .on('send', '>.entity[name="strain"]>.ndx', (e, ...data) => {
-      e.stopPropagation()
-
-      data.forEach(strain => {
-        $('<div>')
-          .addClass('row hover')
-          .attr({ id: strain.id, dtime: strain.dtime })
-          .data('url', `/reports/strain/${strain.id}`)
-          .appendTo(e.currentTarget)
-          .trigger('send', {
-            name: strain.name,
-            species: strain.species,
-            ctime: strain.ctime,
-          })
-      })
-    })
-    .on('send', '>.entity[name="substrate"]>.ndx', (e, ...data) => {
-      e.stopPropagation()
-
-      data.forEach(sub => {
-        $('<div>')
-          .addClass('row hover')
-          .attr('id', sub.id)
-          .data('url', `/reports/substrate/${sub.id}`)
-          .appendTo(e.currentTarget)
-          .trigger('send', { name: sub.name, vendor_name: sub.vendor.name })
-      })
-    })
-    .on('send', '>.entity[name="vendor"]>.ndx', (e, ...data) => {
-      e.stopPropagation()
-
-      data.forEach(ven => {
-        $('<div>')
-          .addClass('row hover')
-          .attr({ id: ven.id })
-          .data('url', `/reports/vendor/${ven.id}`)
-          .appendTo(e.currentTarget)
-          .trigger('send', { name: ven.name })
-      })
-    })
-    .on('send', '>.entity>.ndx>.row', (e, data) => {
-      e.stopPropagation()
-
-      for (let el in data) {
-        if (Object.prototype.hasOwnProperty.call(data, el)) {
-          $('<div>')
-            .addClass(el)
-            .appendTo(e.currentTarget)
-            .text(format(data[el]))
+      let url = `${$(`body>${rootndx}`).attr('name')}s`
+      fetch(url).then(async resp => {
+        if (resp.status !== 200) throw {
+          status: resp.status,
+          message: await resp.text()
         }
-      }
+        return await resp.json()
+      }).then(json => $(e.currentTarget)
+        .empty()
+        .trigger('send', json)
+        .find(`>.row#${id}`)
+        .click()
+      ).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
-    .on('click', '>.entity>.ndx>.row', (e, parent) => {
+    .on('send', `>${rootndx}`, (e, ...data) => {
       e.stopPropagation()
 
-      let entityname = $(e.delegateTarget).attr('name')
+      data.forEach(el => $('<div>')
+        .addClass('row hover')
+        .attr('id', el.id)
+        .appendTo(e.currentTarget)
+        .trigger('reduce', el)) // select is a better event name, but it's confusing
+    })
+    .on('reduce', `>${rootndx}[name="eventtype"]>.row`, (e, record) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).trigger('send', {
+        name: record.name,
+        severity: record.severity,
+        stage: record.stage.name,
+      })
+    })
+    .on('reduce', `>${rootndx}[name="generation"]>.row`, (e, record) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).trigger('send', {
+        mtime: record.mtime,
+        strains: (record.sources?.map(src => src.strain.name) ?? ['Not assigned']).join(' & '),
+        // strains: el.sources?.map(source => source.strain.name).join(' & ') || 'Not assigned',
+      })
+    })
+    .on('reduce', `>${rootndx}[name="lifecycle"]>.row`, (e, record) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).trigger('send', {
+        mtime: record.mtime,
+        location: record.location,
+        tombstone: typeof record.events !== 'undefined',
+      })
+    })
+    .on('reduce', `>${rootndx}[name="strain"]>.row`, (e, record) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).trigger('send', {
+        name: record.name,
+        species: record.species,
+        ctime: record.ctime,
+      })
+    })
+    .on('reduce', `>${rootndx}[name="substrate"]>.row`, (e, record) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).trigger('send', { name: record.name, vendor_name: record.vendor.name })
+    })
+    .on('reduce', `>${rootndx}[name="vendor"]>.row`, (e, record) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).trigger('send', { name: record.name })
+    })
+    .on('send', `>${ndxrow}`, (e, record) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).append(Object.entries(record).map(([k, v]) => $('<div>')
+        .addClass(k)
+        .text(fmt(v))))
+    })
+    .on('click', `>${ndxrow}`, e => {
+      e.stopPropagation()
+
+      let entityname = $(e.currentTarget).parent().attr('name')
       let $entity = $(e.currentTarget)
         .parents('.entity')
         .first()
@@ -238,20 +205,27 @@ $(_ => {
       $entity.find('>.ndx>.selected').removeClass('selected')
 
       let $row = $(e.currentTarget).addClass('selected')
+      // FINISH ME: $(e.currentTarget).breadcrumb($row.attr('id'))
 
-      $.ajax({
-        url: $row.data('url') || `/${entityname}/${$row.attr('id')}`,
-        method: 'GET',
-        success: data => {
-          $entity
-            .removeClass('collapsed')
-            .find('>.list')
-            .empty()
-            .parent()
-            .trigger('send', data)
-        },
-        error: console.log,
-      })
+      let url = `reports/${entityname}/${$row.attr('id')}`
+      console.log(url)
+      fetch(url).then(async resp => {
+        if (resp.status !== 200) throw {
+          status: resp.status,
+          message: await resp.text(),
+        }
+        return await resp.json()
+      }).then(json => {
+        $entity
+          .removeClass('collapsed')
+          .find('>.list')
+          .empty()
+          .parent()
+          .trigger('send', json)
+      }).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
     })
     .on('send', '.entity[name="attribute"]', (e, data) => {
       e.stopPropagation()
@@ -261,7 +235,7 @@ $(_ => {
     .on('send', '.entity[name="event"]', (e, data) => {
       e.stopPropagation()
 
-      $(e.currentTarget).trigger('cliff-notes', [format(data.mtime), data.event_type.name])
+      $(e.currentTarget).trigger('cliff-notes', [fmt(data.mtime), data.event_type.name])
     })
     .on('send', '.entity[name="eventtype"]', (e, data) => {
       e.stopPropagation()
@@ -278,7 +252,7 @@ $(_ => {
       }
 
       $(e.currentTarget)
-        .trigger('cliff-notes', [format(data.mtime), strains.join(' & ') || 'Not assigned'])
+        .trigger('cliff-notes', [fmt(data.mtime), strains.join(' & ') || 'Not assigned'])
     })
     .on('send', '.entity[name="ingredient"]', (e, data) => {
       e.stopPropagation()
@@ -297,17 +271,17 @@ $(_ => {
       delete data.bulk_cost
 
       $(e.currentTarget)
-        .trigger('cliff-notes', [data.strain.name, format(data.mtime), `$${totalcost || '~'}`])
+        .trigger('cliff-notes', [data.strain.name, fmt(data.mtime), `$${totalcost || '~'}`])
     })
     .on('send', '.entity[name="note"]', (e, data) => {
       e.stopPropagation()
 
-      $(e.currentTarget).trigger('cliff-notes', [format(data.mtime), `${data.note.slice(0, 25)}...`])
+      $(e.currentTarget).trigger('cliff-notes', [fmt(data.mtime), `${data.note.slice(0, 25)}...`])
     })
     .on('send', '.entity[name="photo"]', (e, data) => {
       e.stopPropagation()
 
-      $(e.currentTarget).trigger('cliff-notes', format(data.mtime))
+      $(e.currentTarget).trigger('cliff-notes', fmt(data.mtime))
 
       data.image = `<a href=/album/${data.image} target=_lobby>${data.image}</a>`
     })
@@ -336,14 +310,7 @@ $(_ => {
 
       // delete data.strain_cost
     })
-    .on('send', '.entity[name="vendor"]', (e, data) => {
-      e.stopPropagation()
-
-      data.website = `<a href=${data.website} target=_macondo>${data.website}</a>`
-
-      $(e.currentTarget).trigger('cliff-notes', data.name)
-    })
-    .on('send', ['.entity[name="plating', 'liquid', 'grain', 'bulk_substrate"]'].join('_substrate"], .entity[name="'), (e, data) => {
+    .on('send', substrates, (e, data) => {
       e.stopPropagation()
 
       $(e.currentTarget).trigger('cliff-notes', [
@@ -357,20 +324,61 @@ $(_ => {
     .on('send', '.entity[name="substrate"]', (e, data) => {
       $(e.currentTarget).trigger('cliff-notes', [data.name, data.vendor.name])
     })
+    .on('send', '.entity[name="vendor"]', (e, data) => {
+      e.stopPropagation()
+
+      data.website = `<a href=${data.website} target=_macondo>${data.website}</a>`
+
+      $(e.currentTarget).trigger('cliff-notes', data.name)
+    })
     .on('send', '.entity', (e, data) => {
       e.stopPropagation()
 
-      $(e.currentTarget).attr('id', (data || {}).id)
+      Object.entries(data).forEach((entry) => $(e.currentTarget)
+        .find('>.list')
+        .trigger('parse-data', entry))
 
-      for (let el in data) {
-        if (Object.prototype.hasOwnProperty.call(data, el)) {
-          $(e.currentTarget)
-            .find('>.list')
-            .trigger('parse-data', [el, data])
-        }
-      }
-
+      // // begs the question whether id is ever used
+      // $(e.currentTarget).attr('id', data?.id).trigger('sort')
       $(e.currentTarget).trigger('sort')
+    })
+    .on('parse-data', '.list', (e, key, val) => {
+      e.stopPropagation()
+
+      switch (val.constructor.prototype) {
+        case Object.prototype:
+          $(e.currentTarget).trigger('new-entity', [key, val])
+          break
+
+        case Array.prototype:
+          let $l = $(e.currentTarget)
+            .trigger('new-entity', [key, {}, val.length])
+            .find('>.entity:last-child>.list')
+          val.forEach(v => $l.trigger('new-entity', [pluralmap[key] ?? key, v]))
+          break
+
+        default: $('<div>')
+          .addClass(`scalar`)
+          .attr('sort-key', key)
+          .append($('<div>').addClass('label').html(labelmap[key] || key))
+          .append($('<div>').addClass('value').html(fmt(val)))
+          .appendTo(e.currentTarget)
+      }
+    })
+    .on('new-entity', '.list', (e, key, val, summary) => {
+      e.stopPropagation()
+
+      $('<div>')
+        .addClass('entity collapsed')
+        .attr({
+          name: key,
+          'sort-key': key,
+        })
+        .append($('<div>').addClass('entity-name').html(labelmap[key] || key))
+        .append($('<div>').addClass('cliff-notes').text(summary)) // is text necessary?
+        .append($('<div>').addClass('list'))
+        .appendTo(e.currentTarget)
+        .trigger('send', val)
     })
     .on('sort', '.entity', e => {
       e.stopPropagation()
@@ -385,42 +393,6 @@ $(_ => {
         .append(...$list
           .children()
           .sort((a, b) => ndx.indexOf(a.getAttribute('sort-key')) - ndx.indexOf(b.getAttribute('sort-key'))))
-    })
-    .on('parse-data', '.list', (e, k, data) => {
-      e.stopPropagation()
-
-      switch (data[k].constructor.prototype) {
-        case Object.prototype:
-          newentity(k, data[k], $(e.currentTarget))
-          break
-
-        case Array.prototype:
-          let $list = newentity(k, [], $(e.currentTarget))
-            .removeClass('collapsed')
-            .find('>.list')
-
-          $list.prev().text(`(${data[k].length})`)
-
-          data[k].forEach(v => {
-            newentity(pluralmap[k] || k, v, $list)
-          })
-
-          break
-
-        default:
-          let $row = $('<div>')
-            .addClass(`scalar`)
-            .attr('sort-key', k)
-            .append($('<div>')
-              .addClass('label'))
-            .append($('<div>')
-              .addClass('value')
-              .html(format(data[k])))
-            .appendTo($(e.currentTarget))
-            .find('>.label')
-            .trigger('map', k)
-            .parent()
-      }
     })
     .on('cliff-notes', '.entity', (e, ...data) => {
       e.stopPropagation()
@@ -444,7 +416,4 @@ $(_ => {
         $e.toggleClass('collapsed')
       }
     })
-    .on('map', '.label, .entity-name', (e, key) => {
-      $(e.currentTarget).html(labelmap[key] || key)
-    })
-})
+})()

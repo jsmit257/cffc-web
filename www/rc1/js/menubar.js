@@ -22,12 +22,23 @@ $(_ => {
           .first()
           .attr('x-stub'))
 
+      let itemid = menu === 'reporting' ? 'x-report' : 'x-stub'
+      if (itemid === 'x-report') {
+        // it looks simple to merge this block with slug above, just change `.report` 
+        // to '[menu]`, but that complicates `enable-workspace` in non-trivial ways; 
+        // still, may be it would make reporting.js `activate`/`fetch` simpler?
+        slug = sessionStorage.report ?? (sessionStorage.report =
+          $(`body>${itembtn}.${menu}`)
+            .first()
+            .attr(itemid))
+      }
+
       $(e.currentTarget)
         .find('>div>.selected')
         .removeClass('selected')
 
       $(e.currentTarget).addClass(`menu-${menu}`)
-        .find(`[category="${menu}"], [x-stub="${slug}"]`)
+        .find(`[category="${menu}"], .${menu}[${itemid}="${slug}"]`)
         .addClass('selected')
 
       $(e.currentTarget).trigger('enable-workspace')

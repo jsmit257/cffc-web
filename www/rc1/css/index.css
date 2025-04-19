@@ -1,7 +1,7 @@
 :root {
   --bg-color: #26253c;
   --fg-color: aliceblue;
-  --color-disabled: #f0f8ff9e;
+  --color-disabled: color-mix(in srgb, var(--fg-color) 50%, transparent);
 
   /* highest order, above everything */
   --z-error: 7;
@@ -17,30 +17,19 @@
    */
   --z-enabled: 1;
   --z-disabled: -1;
+
   --login-background-color: #0f00255c;
   --body-min-width: 80em;
-  --css-arrow-back: '\21D0';
+
+  /* random punctuation */
   --css-bullet: '\2022';
   --css-camera: '\263C';
-  --css-check: '\2713';
-  --css-circle-divide: '\2298';
-  --css-circle-dot: '\2299';
-  --css-circle-minus: '\2296';
-  --css-circle-plus: '\2295';
-  --css-circle-times: '\2297';
-  --css-empty: '\2205';
-  --css-horz-ellipse: '\2026';
-  --css-macron: '\00AF';
-  --css-math-minus: '\2212';
-  --css-math-plus: '\002B';
-  --css-math-times: '\00D7';
-  --css-mdash: '\2014';
-  --css-notes: '\266B';
-  --css-or: '\2228';
+
+  /* control buttons */
+  --css-list-collapse: '\25bc';
+  --css-list-expand: '\25b6';
   --css-sort-asc: '\2191';
   --css-sort-desc: '\2193';
-  --css-vert-bar: '\00A6';
-  --css-vert-ellipse: '\205E';
 }
 
 ::-webkit-scrollbar-track {
@@ -161,10 +150,12 @@ body {
     & .workspace {
       display: none;
       float: left;
+      width: 100%;
     }
 
     & .workspace.active {
       display: block;
+      /* width: 100%; */
     }
 
     & .workspace>.table {

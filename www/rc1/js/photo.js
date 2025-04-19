@@ -11,15 +11,24 @@
       e.stopPropagation()
 
       $(e.currentTarget).find('[x-child]').trigger('add-child', $ws => {
-        let breadcrumb = `photos/${sessionStorage.strain}`
-        console.log(breadcrumb)
-        $ws.find('>.table.photos').attr({
+        let photoid = sessionStorage[`photos/${sessionStorage.strain}`]
+        let breadcrumb = `notes/${photoid}`
+        $ws.find('>.table.notes').attr({
           breadcrumb,
           'x-eftch': breadcrumb,
         })
       })
     })
-    .on('click', `${photorow}`, e => {
+    .on('select', photorow, e => {
+      e.stopPropagation()
+
+      let breadcrumb = `notes/${$(e.currentTarget).attr('id')}`
+      $(note).attr({
+        breadcrumb,
+        'x-fetch': breadcrumb,
+      })
+    })
+    .on('click', photorow, e => {
       e.stopPropagation()
 
       $(e.currentTarget)

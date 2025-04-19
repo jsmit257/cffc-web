@@ -8,7 +8,6 @@
   let btn = `${table}>.buttonbar>.button`
   let sa = `${table}>.table.strainattributes`
   let sadatalist = `${sa}>#strain-attr-names`
-  let sacols = `${sa}>.columns`
   let attrs = `${sa}>.rows`
   let attrrows = `${attrs}>.row.record`
   let sabtns = `${sa}>.buttonbar`
@@ -19,7 +18,13 @@
 
       $(sadatalist).trigger('fetch')
 
-      $(`body>${strain}>[x-child]`).trigger('add-child')
+      $(`body>${strain}>[x-child]`).trigger('add-child', $ws => {
+        let breadcrumb = `photos/${sessionStorage.strain}`
+        $ws.find('>.table.photos').attr({
+          breadcrumb,
+          'x-eftch': breadcrumb,
+        })
+      })
     })
     .on('select', `>${strainrow}`, e => {
       e.stopPropagation()

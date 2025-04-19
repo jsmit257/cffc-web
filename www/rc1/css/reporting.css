@@ -1,12 +1,12 @@
-.history>.entity {
+.report>.entity {
   width: 99%;
 }
 
-.history>.entity>.entity-name {
+.report>.entity>.entity-name {
   padding-bottom: 1em;
 }
 
-.history>.entity>.list {
+.report>.entity>.list {
   font-family: monospace;
   height: 60em;
   overflow-y: auto;
@@ -14,14 +14,14 @@
   width: 100%;
 }
 
-.history .entity {
+.report .entity {
   clear: left;
   float: left;
   line-height: 1.5;
   padding-left: 1em;
 }
 
-.history>.entity>.ndx {
+.report>.entity>.ndx {
   border-radius: 15px;
   border-style: none;
   float: left;
@@ -29,56 +29,56 @@
   width: 100%;
 }
 
-.history .entity>.entity-name,
-.history .entity>.cliff-notes {
+.report .entity>.entity-name,
+.report .entity>.cliff-notes {
   cursor: pointer;
   float: left;
 }
 
-.history .entity>.entity-name {
+.report .entity>.entity-name {
   width: 6.6em;
 }
 
-.history>.entity>.cliff-notes {
+.report>.entity>.cliff-notes {
   display: block !important;
 }
 
-.history .entity>.cliff-notes {
+.report .entity>.cliff-notes {
   color: #f0f8ff88;
   float: left;
   margin-left: .3em;
   width: fit-content;
 }
 
-.history .entity>.cliff-notes>div {
+.report .entity>.cliff-notes>div {
   float: left;
 }
 
-.history .entity>.cliff-notes>div::before {
+.report .entity>.cliff-notes>div::before {
   content: '\2022';
   padding-left: .3em;
   padding-right: .3em;
 }
 
-.history .entity>.cliff-notes>div:first-child::before {
+.report .entity>.cliff-notes>div:first-child::before {
   content: '';
   padding: 0;
 }
 
-.history .entity.collapsed>.cliff-notes {
+.report .entity.collapsed>.cliff-notes {
   color: aliceblue;
 }
 
-.history .entity.collapsed>.ndx {
+.report .entity.collapsed>.ndx {
   display: block;
 }
 
-.history .entity.collapsed>.list {
+.report .entity.collapsed>.list {
   display: none;
 }
 
-.history .entity>.entity-name::before {
-  content: '\25bc';
+.report .entity>.entity-name::before {
+  content: var(--css-list-collapse);
   display: block;
   float: left;
   margin-left: -1.2em;
@@ -86,28 +86,28 @@
   width: 1em;
 }
 
-.history .entity.collapsed>.entity-name::before {
-  content: '\25b6';
+.report .entity.collapsed>.entity-name::before {
+  content: var(--css-list-expand);
 }
 
-.history .entity>div.list>.scalar>.label::after,
-.history .entity.collapsed>.entity-name::after {
+.report .entity>div.list>.scalar>.label::after,
+.report .entity.collapsed>.entity-name::after {
   content: ':';
 }
 
-.history .entity>div.list>.scalar>.label {
+.report .entity>div.list>.scalar>.label {
   clear: left;
   float: left;
   margin-right: .5em;
   width: 7.5em;
 }
 
-.history .entity>.entity-name::first-letter,
-.history .entity>div.list>.scalar>.label::first-letter {
+.report .entity>.entity-name::first-letter,
+.report .entity>div.list>.scalar>.label::first-letter {
   text-transform: uppercase;
 }
 
-.history .entity>div.list>.scalar>.value {
+.report .entity>div.list>.scalar>.value {
   float: left;
   max-width: 80%;
 }
@@ -123,20 +123,20 @@
 }
 
 /* some customizations */
-.history .entity[name="source"]>.cliff-notes>div:nth-child(2)::before {
+.report .entity[name="source"]>.cliff-notes>div:nth-child(2)::before {
   content: '\2190';
 }
 
-.history>.entity[name="strain"]>.ndx>.row>.name {
+.report>.entity[name="strain"]>.ndx>.row>.name {
   width: 10em;
 }
 
-.history>.entity[name="strain"]>.ndx>.row>.species {
+.report>.entity[name="strain"]>.ndx>.row>.species {
   width: 12em;
 }
 
 /* conflicts with div.notes/div.photos in note.css/photos.css respectively */
-.history .entity.notes,
-.history .entity.photos {
+.report .entity.notes,
+.report .entity.photos {
   display: block;
 }
