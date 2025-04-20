@@ -64,18 +64,17 @@
     .on('click', `${static}.report`, e => {
       e.stopPropagation()
 
-      let $table = $(e.currentTarget)
+      console.log('clicking report', $(e.currentTarget)
         .parents('[breadcrumb][x-target]')
-        .first()
-
-      console.log('clicking report', $table)
+        .first())
 
       $('body>.menubar').trigger('restore', [
         'reporting',
-        $table.attr('name'),
-        $table.breadcrumb(),
+        $(e.currentTarget).attr('x-report'),
+        $(e.currentTarget).breadcrumb(),
       ])
       // // FIXME: override for events, more or less
+      // sessionStorage[`reports/eventtype/${$table.find('.selected>.eventtype')}`]
       // $('body>.menubar').trigger('restore', [
       //   'reporting',
       //   'eventtype',

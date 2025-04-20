@@ -6,17 +6,15 @@
   /* --vendor-color: green; */
 }
 
-.workspace.substrate {
+.workspace.substrate>.table.substrate {
 
-  &>.table.substrate[type-filter="liquid"] .row:not(.liquid),
-  &>.table.substrate[type-filter="grain"] .row:not(.grain),
-  &>.table.substrate[type-filter="bulk"] .row:not(.bulk),
-  &>.table.substrate[type-filter="plating"] .row:not(.plating) {
+  &[type-filter="liquid"] .row:not(.liquid),
+  &[type-filter="grain"] .row:not(.grain),
+  &[type-filter="bulk"] .row:not(.bulk),
+  &[type-filter="plating"] .row:not(.plating) {
     display: none;
   }
-}
 
-.workspace.substrate>.table.substrate {
   & :is(.columns, .rows>.row) {
     &>.name {
       background-color: var(--name-color);
@@ -54,11 +52,6 @@
     }
   }
 
-  &>.workspace.ingredients {
-    float: left;
-    height: var(--default-table-height);
-  }
-
   &>.rows {
     /* margin-right: 1%; */
     width: var(--substrates-width);
@@ -79,8 +72,14 @@
     }
   }
 
+  &>.buttonbar>.report {
+    float: left;
+  }
+
   &>.workspace.ingredients {
     border: 0;
+    float: left;
+    height: var(--default-table-height);
     margin-top: 0;
     padding-top: 0;
     width: var(--ingredients-width);
@@ -132,14 +131,13 @@
         }
 
         &>.button {
-          font-weight: bold;
+          align-items: center;
+          display: flex;
           font-family: sans-serif;
-          /* float: right; */
           font-size: larger;
+          font-weight: bold;
           height: 100%;
           vertical-align: middle;
-          display: flex;
-          align-items: center;
         }
 
         &>.expand {

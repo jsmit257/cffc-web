@@ -23,11 +23,15 @@
 
   /* random punctuation */
   --css-bullet: '\2022';
-  --css-camera: '\263C';
+  /* \2734 ✴ \263c ? \157bc 🞼 \2747 ❇ \2748 ❈ */
+  --css-camera: '\263c';
+  --css-inherits: '\2190';
 
   /* control buttons */
-  --css-list-collapse: '\25bc';
-  --css-list-expand: '\25b6';
+  /* \25ba ► \25b6 ▶ \2bc8 ⯈ */
+  --css-list-collapsed: '\25b6';
+  /* \25bc ▼ \2bc6 ⯆ */
+  --css-list-expanded: '\25bc';
   --css-sort-asc: '\2191';
   --css-sort-desc: '\2193';
 }
@@ -168,6 +172,13 @@ body {
       float: left;
       position: relative;
       width: 100%;
+    }
+
+    /* these were mostly added for reports, dtime should work anywhere */
+    &.hide-deleted [dtime],
+    &.hide-timestamp .scalar:is([sort-key="mtime"], [sort-key="ctime"]),
+    &.hide-uuid .scalar[sort-key="id"] {
+      display: none;
     }
   }
 

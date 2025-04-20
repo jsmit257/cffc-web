@@ -59,7 +59,7 @@ $(_ => {
         : $root.find('>.row.record').first().trigger('select')
     },
     breadcrumb: function (id) {
-      let key = $(this)
+      let key = this.attr('breadcrumb') ?? this
         .parents('[breadcrumb]')
         .first()
         .attr('breadcrumb')

@@ -5,7 +5,13 @@
     width: 50%;
   }
 
+  /* 
   &>.rows {
-    /* height: var(--default-table-height); */
+    height: var(--default-table-height);
+  }
+  */
+
+  &>.buttonbar>.report {
+    float: left;
   }
 }

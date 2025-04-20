@@ -22,15 +22,15 @@ $(_ => {
           .first()
           .attr('x-stub'))
 
-      let itemid = menu === 'reporting' ? 'x-report' : 'x-stub'
-      if (itemid === 'x-report') {
+      let itemkey = menu === 'reporting' ? 'x-report' : 'x-stub'
+      if (itemkey === 'x-report') {
         // it looks simple to merge this block with slug above, just change `.report` 
         // to '[menu]`, but that complicates `enable-workspace` in non-trivial ways; 
         // still, may be it would make reporting.js `activate`/`fetch` simpler?
         slug = sessionStorage.report ?? (sessionStorage.report =
           $(`body>${itembtn}.${menu}`)
             .first()
-            .attr(itemid))
+            .attr(itemkey))
       }
 
       $(e.currentTarget)
@@ -38,7 +38,7 @@ $(_ => {
         .removeClass('selected')
 
       $(e.currentTarget).addClass(`menu-${menu}`)
-        .find(`[category="${menu}"], .${menu}[${itemid}="${slug}"]`)
+        .find(`[category="${menu}"], .${menu}[${itemkey}="${slug}"]`)
         .addClass('selected')
 
       $(e.currentTarget).trigger('enable-workspace')
@@ -46,12 +46,17 @@ $(_ => {
     .on('restore', `>${menubar}`, (e, category, item, itemid, ...extra) => {
       e.stopPropagation()
 
-      sessionStorage.menu = category
+      if ((sessionStorage.menu = category) === 'reporting') {
+        category = 'report'
+        sessionStorage[`reports/${item}`] = itemid
+      } else {
+        sessionStorage[item] = itemid
+      }
       sessionStorage[category] = item
-      sessionStorage[item] = itemid
-      extra.forEach(v => Object.entries(v).forEach(([k, v]) => {
-        sessionStorage[k] = v
-      }))
+
+      $(e.currentTarget)
+        .removeClass('menu-main menu-aux menu-reporting')
+        .addClass(`menu-${category}`)
 
       $(e.currentTarget).trigger('init')
     })
@@ -128,7 +133,16 @@ $(_ => {
           .first()
           .attr('x-stub'))
 
-      $(`body>${itembtn}.${menu}[x-stub=${slug}]`).addClass('selected')
+      let itemkey = menu === 'reporting' ? 'x-report' : 'x-stub'
+      if (itemkey === 'x-report') {
+        // see `init` event for why this is here and not elsewhere
+        slug = sessionStorage.report ?? (sessionStorage.report =
+          $(`body>${itembtn}.${menu}`)
+            .first()
+            .attr(itemkey))
+      }
+
+      $(`body>${itembtn}.${menu}[${itemkey}=${slug}]`).addClass('selected')
     })
     .on('click', `>.selecting${itembtn}.selected`, e => {
       e.stopPropagation()

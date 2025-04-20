@@ -42,11 +42,12 @@
     margin-top: 1em;
   }
 
+  &>.buttonbar>.report,
   &>.buttonbar>.strain {
     float: left;
+  }
 
-    &[strain-id="#"] {
-      visibility: hidden;
-    }
+  &>.buttonbar>.strain[strain-id="#"] {
+    visibility: hidden;
   }
 }

@@ -73,7 +73,7 @@
     .on('activate', `>${ws}`, (e, _) => {
       e.stopPropagation()
 
-      // FIXME: is this a timing issue? should it move/copy to report::fetch?
+      // FIXME? is this a timing issue? should it move/copy to report::fetch?
       $(`body>${report}`).trigger('fetch', $(rptitem).attr('x-report'))
     })
     .on('fetch', `>${ws}>.table.reporting`, e => {
@@ -139,7 +139,7 @@
         .addClass('row hover')
         .attr('id', el.id)
         .appendTo(e.currentTarget)
-        .trigger('reduce', el)) // select is a better event name, but it's confusing
+        .trigger('reduce', el)) // select is a better event name, but that's confusing
     })
     .on('reduce', `>${rootndx}[name="eventtype"]>.row`, (e, record) => {
       e.stopPropagation()
@@ -197,32 +197,27 @@
     .on('click', `>${ndxrow}`, e => {
       e.stopPropagation()
 
-      let entityname = $(e.currentTarget).parent().attr('name')
-      let $entity = $(e.currentTarget)
-        .parents('.entity')
-        .first()
+      let $ndx = $(e.currentTarget.parentNode)
+      let $entity = $ndx.parent()
 
       $entity.find('>.ndx>.selected').removeClass('selected')
 
-      let $row = $(e.currentTarget).addClass('selected')
-      // FINISH ME: $(e.currentTarget).breadcrumb($row.attr('id'))
+      let id = $(e.currentTarget).addClass('selected').attr('id')
 
-      let url = `reports/${entityname}/${$row.attr('id')}`
-      console.log(url)
+      let url = `reports/${$ndx.attr('name')}/${$(e.currentTarget).breadcrumb(id)}`
       fetch(url).then(async resp => {
         if (resp.status !== 200) throw {
           status: resp.status,
           message: await resp.text(),
         }
         return await resp.json()
-      }).then(json => {
-        $entity
-          .removeClass('collapsed')
-          .find('>.list')
-          .empty()
-          .parent()
-          .trigger('send', json)
-      }).catch(ex => $(e.currentTarget).notify('error',
+      }).then(json => $entity
+        .removeClass('collapsed')
+        .find('>.list')
+        .empty()
+        .parent()
+        .trigger('send', json)
+      ).catch(ex => $(e.currentTarget).notify('error',
         `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
         ex,
       ))
@@ -351,10 +346,10 @@
           break
 
         case Array.prototype:
-          let $l = $(e.currentTarget)
+          let $list = $(e.currentTarget)
             .trigger('new-entity', [key, {}, val.length])
             .find('>.entity:last-child>.list')
-          val.forEach(v => $l.trigger('new-entity', [pluralmap[key] ?? key, v]))
+          val.forEach(v => $list.trigger('new-entity', [pluralmap[key] ?? key, v]))
           break
 
         default: $('<div>')
@@ -375,7 +370,7 @@
           'sort-key': key,
         })
         .append($('<div>').addClass('entity-name').html(labelmap[key] || key))
-        .append($('<div>').addClass('cliff-notes').text(summary)) // is text necessary?
+        .append($('<div>').addClass('cliff-notes').text(summary))
         .append($('<div>').addClass('list'))
         .appendTo(e.currentTarget)
         .trigger('send', val)
@@ -389,10 +384,8 @@
       }
 
       let $list = $(e.currentTarget).find('>.list');
-      $list
-        .append(...$list
-          .children()
-          .sort((a, b) => ndx.indexOf(a.getAttribute('sort-key')) - ndx.indexOf(b.getAttribute('sort-key'))))
+      $list.append(...$list.children().sort((a, b) =>
+        ndx.indexOf(a.getAttribute('sort-key')) - ndx.indexOf(b.getAttribute('sort-key'))))
     })
     .on('cliff-notes', '.entity', (e, ...data) => {
       e.stopPropagation()
