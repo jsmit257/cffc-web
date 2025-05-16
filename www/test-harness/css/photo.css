@@ -65,7 +65,7 @@ div.photos>div.rows>div.row>img {
   border-style: outset;
   cursor: pointer;
   float: left;
-  height: 150px;
+  height: auto;
   margin-bottom: .5em;
   margin-right: .5em;
   object-fit: cover;

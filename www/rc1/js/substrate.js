@@ -17,9 +17,9 @@
 
       $(`body>${table}>[x-child]`).trigger('add-child', _ => {
         $(`body>${ing}>.x-template`).addClass('managed')
-        // FIXME: outstanding sync issue, substrate has no rows yet; but 
-        //  when select is called from rows::send, ingredients has no rows;
-        //  what's the intersection when both tables are settled in
+        // FIXME: outstanding sync issue, seems like substrate has no rows 
+        //  yet; but when select is called from rows::send, ingredients has 
+        //  no rows; what's the intersection when both tables are settled in
         $(`${sub}`).selected().data('ingredients')?.forEach(v => {
           $(`body>${ingrows}#${v.id}`).addClass('selected')
         })

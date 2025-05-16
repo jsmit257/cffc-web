@@ -7,9 +7,10 @@ $(_ => {
     return windowFetch(url, params).then(resp => {
       switch (resp.status) {
         case 502:
-        case 403:
           $(document).trigger(resp.status, [url.replace(/^\/*/, ''), params])
           break
+        case 403:
+          document.location = resp.headers.get('Location')
 
         // for historical reasons failed auths send a `redirect` even though
         // they don't actually redirect at a network level - they're treated
@@ -33,8 +34,41 @@ $(_ => {
     }).catch(ex => { throw ex })
   })(window.fetch)
 
+  fetch('settings/authn_path').then(async resp => {
+    switch (resp.status) {
+      case 404: break // no auth server available, assume that's on purpose
+      case 200: return await resp.json()
+      default: throw {
+        status: resp.status,
+        method: 'GET',
+        url: resp.url,
+        message: await resp.json()
+      }
+    }
+  }).then(valid => $(window)
+    .on('check-valid', e => {
+      fetch(valid.value).then(async resp => {
+        switch (resp.status) {
+          case 204: break
+          case 200: document.location = resp.url
+          default: throw {
+            status: resp.status,
+            message: await resp.text()
+          }
+        }
+      }).catch(({ method, url, ...ex }) => $(document.body).notify('error',
+        `GET ${valid.value} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
+    })
+    .on('focus', e => (e.stopPropagation(), $(window).trigger('check-valid')))
+    .on('blur', e => (e.stopPropagation(), $(window).trigger('check-valid')
+    ))
+    .trigger('check-valid')
+  ).catch(ex => console.log('error fetching settings', ex)) // alert isn't available yet
+
   $(document)
-    .data('forbidden', [])
+    .data('retry', [])
     .on('502', (e, url, params) => {
       if (url === 'valid') {
         // disable auth check?
@@ -47,14 +81,14 @@ $(_ => {
         message: "bad gateway (see index.js)",
       }
     })
-    .on('403', (e, url, params) => {
-      noretry.includes(url) || $(e.currentTarget)
-        .data('forbidden')
-        .push([url, params])
-    })
-    .on('unforbidden', e => {
+    // .on('403', (e, url, params) => {
+    //   noretry.includes(url) || $(e.currentTarget)
+    //     .data('retry')
+    //     .push([url, params])
+    // })
+    .on('retry', e => {
       $(e.delegateTarget)
-        .data('forbidden')
+        .data('retry')
         .splice(0)
         .forEach(fetch)
     })

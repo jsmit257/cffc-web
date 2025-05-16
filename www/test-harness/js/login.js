@@ -115,7 +115,7 @@ $(_ => $('body>.login')
     $(e.currentTarget).data('last', now) // here, or in success only?
 
     $.ajax({
-      url: `/auth/${val}`,
+      url: `auth/${val}`,
       method: "GET",
       success: auth => {
         $login.attr('id', auth.id)
@@ -148,7 +148,7 @@ $(_ => $('body>.login')
     let $login = $(e.delegateTarget)
 
     $.ajax({
-      url: "/auth",
+      url: "auth",
       method: 'POST',
       data: JSON.stringify({
         id: $login.attr('id'),

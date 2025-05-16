@@ -1,5 +1,5 @@
 :root {
-  --bg-color: #26253c;
+  --bg-color: #0a0e18;
   --fg-color: aliceblue;
   --color-disabled: color-mix(in srgb, var(--fg-color) 50%, transparent);
 
@@ -17,7 +17,6 @@
    */
   --z-enabled: 1;
   --z-disabled: -1;
-
   --login-background-color: #0f00255c;
   --body-min-width: 80em;
 
@@ -55,19 +54,16 @@
   box-sizing: border-box;
   font-variant: slashed-zero;
   font-family: system-ui;
+  /* position: relative; */
 }
 
 .background-image {
   background-attachment: fixed;
-  background-color: var(--bg-color);
-  /* background-image: url(./images/background/image.avif); */
-  background-image: linear-gradient(var(--bg-color), var(--bg-color)), url(./images/background/image.avif);
+  /* background-color: var(--bg-color); */
+  background-image: linear-gradient(#0a0e18), url(./images/background/image.avif);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-blend-mode: saturation;
-  background-blend-mode: hue;
-  background-blend-mode: multiply;
   background-blend-mode: hard-light;
 }
 

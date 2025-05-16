@@ -20,9 +20,8 @@ $(_ => {
       this.each(function () { $(this).trigger('send', ...data) })
       return $(this)
     },
-    withClass: function (clz, add) {
-      let fn = add ? 'addClass' : 'removeClass'
-      this.each(function () { $(this)[fn](clz) })
+    withClass: function (add, clz) {
+      this.each(function () { $(this)[add ? 'addClass' : 'removeClass'](clz) })
       return $(this)
     },
     buttonbar: function (el = this.get(0)) {
