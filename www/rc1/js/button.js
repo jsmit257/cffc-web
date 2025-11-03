@@ -107,18 +107,32 @@
       if (!caller) {
         caller = $bar.find('>.edit').get(0)
       }
+
       let classes = caller?.className
       if (/\badd\b/.test(classes)) {
-        $(caller).toggleClass('add cancel').attr('x-alt', 'add')
+        $(caller).toggleClass('add cancel').attr({
+          'title': 'cancel',
+          'x-alt': 'add',
+        })
       } else if (/\bedit\b/.test(classes)) {
-        $(caller).toggleClass('edit cancel').attr('x-alt', 'edit')
+        $(caller).toggleClass('edit cancel').attr({
+          'title': 'cancel',
+          'x-alt': 'edit',
+        })
       } else {
-        let $alt = $bar.find('[x-alt]')
-        $alt
-          .toggleClass(`cancel ${$alt.attr('x-alt')}`)
+        let $btn = $bar.find('[x-alt]')
+        let alt = $btn.attr('x-alt')
+        $btn
+          .toggleClass(`cancel ${alt}`)
+          .attr('title', alt)
           .removeAttr('x-alt')
       }
-      $bar.find('>.action').toggleClass('delete save')
+
+      if ($bar.find('>.action').toggleClass('delete save').hasClass('delete')) {
+        $bar.find('>.action').attr('title', 'delete')
+      } else {
+        $bar.find('>.action').attr('title', 'save')
+      }
     })
     .on('click', `${defaults}.control`, e => { // handles add, edit and cancel
       e.stopPropagation()

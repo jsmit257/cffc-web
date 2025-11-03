@@ -1,17 +1,50 @@
-body>.main>.workspace.album>.table.album {
-  &>.rows {
-    &>.row.record {
-      width: auto;
+:root {
+  --gallery-rowbar-width: 1em;
+}
 
-      &>.thumbnail {
-        border-color: lightseagreen;
-        /* border-color: lightskyblue; */
-        border-style: outset;
-        cursor: pointer;
-        height: 150px;
-        object-fit: cover;
-        width: 150px;
-      }
+.main>.workspace.album>.table.album {
+  &>.full {
+    font-size: 300%;
+    height: auto;
+    padding-top: 1em;
+    position: absolute;
+    width: 100%;
+    z-index: var(--z-info);
+
+    &>.rowbar {
+      display: block;
+      height: auto;
+      width: var(--gallery-rowbar-width);
+    }
+
+    &>.thumbnail {
+      width: calc(100% - var(--gallery-rowbar-width) * 2);
+    }
+  }
+
+  &>.rows>.row.record {
+    border-color: lightskyblue;
+    border-style: inset;
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+    width: auto;
+
+    &>.rowbar {
+      display: none;
+    }
+
+    &:hover:not(.selected) {
+      background-image: radial-gradient(circle at center, #fff3, transparent);
+    }
+
+    &.selected {
+      background-image: radial-gradient(circle at center, transparent, #88f3);
+      border-style: outset;
+    }
+
+    &>.thumbnail {
+      cursor: pointer;
     }
   }
 }

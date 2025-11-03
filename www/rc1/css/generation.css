@@ -21,6 +21,10 @@
     }
   }
 
+  &>.rows.ndx {
+    z-index: var(--z-ndx);
+  }
+
   &>.singleton.generation {
     height: var(--generation-area-height);
     margin-bottom: 2em;

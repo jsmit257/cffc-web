@@ -45,7 +45,6 @@
     &>select {
       float: left;
       line-height: inherit;
-      /* margin: 0; */
       position: relative;
       width: 100%;
     }
@@ -198,7 +197,7 @@
       & select {
         /* appearance: auto; */
         /* 
-        auto makes too many uncontrollable changes to the bounding=box dimensions
+        auto makes too many uncontrollable changes to the bounding-box dimensions
         so find another way to call attention to the editable state of these controls
          */
         padding-right: 1em;

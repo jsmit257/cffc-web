@@ -1,12 +1,12 @@
 body>.menubar {
   font-size: larger;
   font-weight: bold;
+  height: auto;
   line-height: 3;
   position: fixed;
   top: 0;
   width: 60%;
   z-index: var(--z-menu);
-  height: auto;
 
   & .menubtn {
     clear: both;

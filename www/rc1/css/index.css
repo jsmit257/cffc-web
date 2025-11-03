@@ -1,7 +1,9 @@
 :root {
-  --bg-color: #0a0e18;
+  --bg-color: #0a1020;
   --fg-color: aliceblue;
   --color-disabled: color-mix(in srgb, var(--fg-color) 50%, transparent);
+  --gallery-image-width: 200px;
+  --gallery-tile-height: var(--gallery-image-width);
 
   /* highest order, above everything */
   --z-error: 7;
@@ -11,13 +13,16 @@
   --z-info: 3;
   /* just above the (always-)enabled labels; for menus, footers, etc */
   --z-menu: 2;
+  /* indices float between singletons/children and menus */
+  --z-ndx: 1;
   /* 
    instead of disabled/readonly inputs, just bury them when they should 
-   be inactive, and raise them when they're editable
+   be inactive, and raise them when they're editable; technically then, 
+   they're still editable, but they're hard to focus, selects only have
+   a single option and the save button is inactive
    */
   --z-enabled: 1;
   --z-disabled: -1;
-  --login-background-color: #0f00255c;
   --body-min-width: 80em;
 
   /* random punctuation */
@@ -35,81 +40,23 @@
   --css-sort-desc: '\2193';
 }
 
-::-webkit-scrollbar-track {
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-image: linear-gradient(0, transparent, #bbb3, transparent);
-  /* background-image: radial-gradient(circle, green, transparent 10%), radial-gradient(ellipse, transparent 50%, #00f8); */
-}
-
-*,
-::before,
-::after {
-  box-sizing: border-box;
-  font-variant: slashed-zero;
-  font-family: system-ui;
-  /* position: relative; */
-}
-
 .background-image {
   background-attachment: fixed;
-  /* background-color: var(--bg-color); */
-  background-image: linear-gradient(#0a0e18), url(./images/background/image.avif);
+  background-color: var(--bg-color);
+  background-image: linear-gradient(var(--bg-color)), url(./images/background/image.avif);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   background-blend-mode: hard-light;
 }
 
-a {
+* {
   color: var(--fg-color);
-}
-
-input,
-select {
-  appearance: none;
-  background-color: transparent;
-  border: 0;
-  color: white;
-  display: inline-block;
-  font-size: large;
-  outline: none;
-  overflow: clip;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-input[type="radio"] {
-  appearance: auto;
-}
-
-input[type="file"] {
-  border-radius: 1em;
-  border-right: 1px solid grey;
-}
-
-input::file-selector-button {
-  background-color: transparent;
-  border: thin solid grey;
-  border-radius: 1em 0.33em 0.33em 1em;
-  border-right: 0;
-  color: #94c9ff;
-  /* font-weight: bold; */
-  padding: 0.33em;
-}
-
-select>option {
-  background-color: var(--bg-color);
+  position: relative;
 }
 
 html {
-  color: aliceblue;
+  /* color: aliceblue; */
   /* font-size: 125%; */
   /* height: 100%; */
   line-height: 1.25;
@@ -126,6 +73,10 @@ body {
   &>.timestamp,
   & .x-template {
     display: none;
+  }
+
+  &.contexting .context {
+    cursor: zoom-in;
   }
 
   &.ts-editing>.timestamp {

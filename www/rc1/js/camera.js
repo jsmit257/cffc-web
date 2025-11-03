@@ -1,18 +1,28 @@
-(_ => {
-  let ws = '.main>.workspace.camera'
-  let imgbox = `${ws}>.imgbox`
-  let props = `${imgbox}>.props`
-  let devs = `${imgbox}>.viddevs>.rows`
-  let device = `${devs}>.row.record`
-  let capture = `${imgbox}>.vidcap`
-  let editor = `${imgbox}>.imgedit`
-  let canvas = `${editor}>.viewport>canvas`
-  let stats = `${editor}>.imgstats`
-  let range = `${editor}>.ranges>.row>label>[type="range"]`
-  let editbtn = `${editor}>.ranges>.row>.button`
-  let greys = `${imgbox}>.greymap`
-  let audit = `${imgbox}>.audit`
-  let ctlbtn = `${imgbox}>.buttonbar>.button`
+$(_ => {
+  const ws = '.main>.workspace.camera'
+  const imgbox = `${ws}>.imgbox`
+  const devs = `${imgbox}>.viddevs>.rows`
+  const device = `${devs}>.row.record`
+  const vidcap = `${imgbox}>.vidcap`
+  const editor = `${imgbox}>.imgedit`
+  const viewport = `${editor}>.viewport`
+  const canvas = `${viewport}>canvas`
+  const stats = `${editor}>.imgstats`
+  const statrow = `${stats}>.row.record`
+  const control = `${editor}>.controls>div`
+  const editbtn = `${control}>.button`
+  const archive = `${editor}>.archive`
+  const greys = `${imgbox}>.greymap`
+  const ctlbtn = `${imgbox}>.buttonbar>.button`
+  const props = `${imgbox}>.buttonbar>.props`
+
+  $(window).on('resize', e => {
+    if (!$('.workspace.camera.active')) {
+      return
+    }
+
+    $(`body>${statrow}.selected`).removeClass('selected').trigger('click')
+  })
 
   $(document.body)
     .on('activate', `>${ws}`, e => {
@@ -25,7 +35,9 @@
 
       $(e.currentTarget).data({ fetchurl, method, success })
 
-      let $devs = $(`body>${devs}`).trigger('clear')
+      $(window).trigger('resize')
+
+      const $devs = $(`body>${devs}`).trigger('clear')
 
       if (!navigator.mediaDevices?.enumerateDevices()
         .then(devices => devices
@@ -63,18 +75,18 @@
       $('body>.menubar').trigger('un-camera')
     })
 
-    // capture controls
+    // device controls
     .on('click', `>${device}#retry`, e => $(`body>${devs}`).trigger('init'))
     .on('click', `>${device}.selected`, e => $(`body>${imgbox}`)
       .hasClass('capturing')
-      ? $(`body>${capture}`).trigger('stop')
+      ? $(`body>${vidcap}`).trigger('stop')
       : $(e.currentTarget).removeClass('selected').trigger('click'))
     .on('click', `>${device}:not(.selected):not(#retry)`, async e => {
       $(`>${device}.selected`).removeClass('selected')
 
       $(e.currentTarget).addClass('selected')
 
-      let cam = $(`body>${capture}`).trigger('stop').get(0)
+      let cam = $(`body>${vidcap}`).trigger('stop').get(0)
 
       navigator.mediaDevices.getUserMedia({
         video: { deviceId: e.currentTarget.id },
@@ -86,19 +98,22 @@
     })
 
     // capture events
-    .on('click', `>${capture}`, e => {
+    .on('click', `>${vidcap}`, e => {
       e.stopPropagation()
 
-      let width = e.currentTarget.videoWidth,
-        height = e.currentTarget.videoHeight
+      $(`body>${stats}, body>${archive}, body>${greys}`).trigger('clear')
 
-      $(`body>${stats}, body>${audit}, body>${greys}`).trigger('clear')
-      $(`body>${editor}`).trigger('snap', [0, 0, width, height, e.currentTarget])
+      $(`body>${canvas}`).trigger('blit', [
+        e.currentTarget,
+        e.currentTarget.videoWidth,
+        e.currentTarget.videoHeight
+      ])
+
       $(`body>${device}.selected`).trigger('click')
 
       document.fullscreenElement && document.exitFullscreen()
     })
-    .on('stop', `>${capture}`, e => {
+    .on('stop', `>${vidcap}`, e => {
       e.stopPropagation()
 
       let src = e.currentTarget.srcObject
@@ -113,203 +128,381 @@
     })
 
     // editor actions
-    .on('snap', `>${editor}`, (e, x, y, w, h, cam) => {
-      let $edit = $(e.currentTarget)
-      let $props = $edit.parent().find('>.props')
-      let url = $edit
-        .trigger('capture', [x, y, w, h, cam])
-        .find('>.viewport>canvas')
-        .get(0)
-        .toDataURL($props.find('>.format>select').val(),
-          $props.find('>.quality>select').val() / 100.0)
+    .on('blit', `>${canvas}`, (e, img, w, h, loaded = imgid => imgid) => {
+      const cnv = e.currentTarget
 
-      $edit
-        .trigger('scale', [w, h, url])
-        .trigger('collect', [w, h, url])
-        .trigger('reset-range')
-        .parent()
-        .find('>.audit')
-        .trigger('create', url)
+      cnv.width = w
+      cnv.height = h
+      cnv.getContext('2d', {
+        alpha: false,
+        willReadFrequently: true
+      }).drawImage(img, 0, 0)
+
+      cnv.toBlob(blob => {
+        const [imgid, url] = [
+          crypto.randomUUID(),
+          URL.createObjectURL(blob)
+        ]
+
+        $(cnv.parentNode).attr({ imgid }).css({ backgroundImage: `url(${url})` })
+
+        $(`body>${archive}`).trigger('send', { id: imgid, url, loaded })
+      }, 'image/png', 1)
+
+      $(`body>${control}`).trigger('reset-controls')
     })
-    .on('capture', `>${editor}`, (e, x, y, w, h, img) => {
-      let pic = $(e.currentTarget).find('>.viewport>canvas').get(0)
+    .on('scale', `>${viewport}`, (e, { imgid, x1 = 0, y1 = 0, x2, y2 }) => {
+      [x1, y1, x2, y2] = [
+        Math.round(x1),
+        Math.round(y1),
+        Math.round(x2),
+        Math.round(y2),
+      ]
 
-      pic.width = w
-      pic.height = h
-      pic.getContext('2d', { alpha: false }).drawImage(img, x, y)
-    })
-    .on('scale', `>${editor}`, (e, w, h, url) => {
-      let view = $(e.currentTarget).find('>.viewport').get(0)
-      let norm = w >= h
-        ? view.attributes.hmax.value / w
-        : view.attributes.vmax.value / h
+      const vpt = $(e.currentTarget).trigger('snap', imgid).get(0),
+        cnv = vpt.querySelector(':scope>canvas'),
+        clip = {
+          id: `${imgid}-${x1}x${y1}-${x2}x${y2}`,
+          width: Math.round(x2 - x1),
+          height: Math.round(y2 - y1),
+        },
+        cnv2vpt = vpt.offsetWidth / cnv.width,      // viewport relative to canvas
+        vpt2virt = cnv.width / clip.width * cnv2vpt // background-image relative to viewport
 
-      $(view).css({
-        width: `${w * norm}px`,
-        height: `${h * norm}px`,
-        backgroundImage: `url(${url})`,
-      })
-    })
-    .on('collect', `>${editor}`, (e, width, height, url) => {
-      $(`body>${stats}`).trigger('send', {
-        width,
-        height,
-        size: (url.length / 1024).toFixed(2),
-      })
-    })
-    .on('reset-range', `>${editor}`, e => $(e.currentTarget)
-      .find('>.ranges')
-      .find('#scale, #resize')
-      .val(100)
-      .trigger('change'))
-    .on('resample', `>${editor}`, e => {
-      let scale = $(e.currentTarget).find('#resize').val() / 100.0
-      let canvas = e.currentTarget.querySelector('.viewport>canvas'),
-        oc = document.createElement('canvas'),
-        octx = oc.getContext('2d');
-
-      canvas.width = width; // destination canvas size
-      canvas.height = canvas.width * img.height / img.width;
-
-      let cur = {
-        w: Math.floor(img.width * scale),
-        h: Math.floor(img.height * scale)
+      if ($(`body>${statrow}#${clip.id}`).length === 0) {
+        $(`body>${stats}`).trigger('send', {
+          ...clip,
+          virt2cnv: (x, y) => new Object({ // convert virtual (clipped by viewport) to canvas
+            x: x / vpt2virt + x1,
+            y: y / vpt2virt + y1,
+          }),
+          scaleargs: { imgid, x1, y1, x2, y2 },
+        })
       }
 
-      oc.width = cur.w
-      oc.height = cur.h
-
-      octx.drawImage(img, 0, 0, cur.w, cur.h);
-
-      while (cur.w * scale > width) {
-        cur = {
-          w: Math.floor(cur.w * scale),
-          h: Math.floor(cur.h * scale)
-        }
-        octx.drawImage(oc, 0, 0, cur.w * 2, cur.h * 2, 0, 0, cur.w, cur.h)
+      $(vpt).css({
+        height: `${clip.height * vpt2virt}px`,
+        backgroundPosition: `-${x1 * vpt2virt}px -${y1 * vpt2virt}px`,
+        backgroundSize: `${cnv.width * vpt2virt}px ${cnv.height * vpt2virt}px`,
+      })
+    })
+    .on('snap', `>${viewport}`, (e, imgid) => {
+      if (e.currentTarget.attributes.imgid?.value === imgid) {
+        return
       }
 
-      canvas
-        .getContext("2d")
-        .drawImage(oc, 0, 0, cur.w, cur.h, 0, 0, canvas.width, canvas.height)
-    })
-    .on('commit', `>${editor}`, e => {
-      // save the resampled image
-    })
-    .on('resize', `>${editor}`, (e, pct) => {
-      let scale = pct / 100.0
-      let pic = $(`body>${canvas}`).get(0)
+      const cnv = e.currentTarget.querySelector(':scope>canvas'),
+        img = $(`body>${archive}>#${imgid}>.snapshot`).get(0)
 
-      pic.style.height = `${pic.height * scale}px`
-      pic.style.width = `${pic.width * scale}px`
+      cnv.width = img.naturalWidth
+      cnv.height = img.naturalHeight
+      cnv.getContext('2d', {
+        alpha: false,
+        willReadFrequently: true
+      }).drawImage(img, 0, 0)
+
+      $(e.currentTarget).attr({ imgid }).css({ backgroundImage: `url(${img.src})` })
     })
-    .on('crop', `>${editor}`, e => {
-      let view = e.currentTarget.querySelector('.viewport')
-      let scale = 100.0 / $(e.currentTarget).find('#scale').val()
-      // // seems like this goes width/height-out-of-bounds
-      // console.log('snap', [
-      //   -Math.round(view.scrollLeft * scale, 0),
-      //   -Math.round(view.scrollTop * scale, 0),
-      //   Math.round(view.offsetWidth * scale - 2, 0),// -2 is border-ish?
-      //   Math.round(view.offsetHeight * scale - 2, 0),
-      //   $(e.delegateTarget).find('>.audit>div:first-child>img').get(0),
-      // ])
-      $(e.currentTarget).trigger('snap', [
-        -Math.round(view.scrollLeft * scale, 0),
-        -Math.round(view.scrollTop * scale, 0),
-        Math.round(view.offsetWidth * scale - 2, 0),// -2 is border-ish?
-        Math.round(view.offsetHeight * scale - 2, 0),
-        $(`body>${audit}>:first-child>img`).get(0),
+    .on('resample', `>${canvas}`, (e, scale) => {
+      const cnv = e.currentTarget,
+        scaleargs = $(`body>${statrow}.selected`).data().scaleargs
+
+      createImageBitmap(cnv, {
+        resizeWidth: Math.round(cnv.width * scale),
+        resizeHeight: Math.round(cnv.height * scale),
+      }).then(bmp => $(cnv).trigger('blit', [
+        bmp,
+        bmp.width,
+        bmp.height,
+        imgid => $(cnv.parentNode).trigger('scale', {
+          imgid,
+          x1: scaleargs.x1 * scale,
+          y1: scaleargs.y1 * scale,
+          x2: scaleargs.x2 * scale,
+          y2: scaleargs.y2 * scale,
+        }),
+      ])).catch(ex => $(e.currentTarget).notify('error', 'failed scaling image', ex))
+    })
+    .on('rotate', `>${canvas}`, (e, theta) => { // only works for multiples of PI/2
+      const pic = e.currentTarget,
+        mtrx = ((c, s) => {
+          return (x, y) => [
+            Math.round(Math.abs(x * c + y * s)),
+            Math.round(Math.abs(x * s + y * c)),
+          ]
+        })(Math.cos(theta), Math.sin(theta)),
+        buff = new OffscreenCanvas(...mtrx(pic.width, pic.height)),
+        ctx = buff.getContext('2d', { alpha: false }),
+        scaleargs = $(`body>${statrow}.selected`).data().scaleargs,
+        [x1, y1] = mtrx(scaleargs.x1, scaleargs.y1),
+        [x2, y2] = mtrx(scaleargs.x2, scaleargs.y2)
+
+      ctx.save()
+      ctx.translate(Math.floor(buff.width / 2), Math.floor(buff.height / 2))
+      ctx.rotate(theta)
+      ctx.drawImage(pic, -pic.width / 2, -pic.height / 2)
+      ctx.restore()
+
+      console.table([scaleargs, { x1, y1, x2, y2 }])
+      $(pic).trigger('blit', [
+        buff,
+        buff.width,
+        buff.height,
+        imgid => $(pic.parentNode).trigger('scale', {
+          imgid,
+          ...(_ => x1 < x2 ? { x1, x2 } : { x1: x2, x2: x1 })(),
+          ...(_ => y1 < y2 ? { y1, y2 } : { y1: y2, y2: y1 })(),
+        }),
       ])
+      // $currstat.remove()
     })
-    .on('change', `>${range}#scale`, e => $(`body>${editor}`)
-      .trigger('resize', e.currentTarget.value))
-    .on('change', `>${range}#aspect`, e => $(`body>${editor}`)
-      .trigger('resample', e.currentTarget.value))
+    .on('crop', `>${viewport}`, e => {
+      const vpt = e.currentTarget,
+        pic = vpt.querySelector(':scope>canvas'),
+        virt2cnv = $(`body>${statrow}.selected`).data().virt2cnv,
+        p1 = virt2cnv(0, 0),
+        p2 = virt2cnv(vpt.offsetWidth, vpt.offsetHeight)
 
-    // editor buttons
-    .on('click', `>${editbtn}.crop`, e => $(`body>${editor}`)
-      .trigger('crop'))
-    .on('click', `>${editbtn}.resize`, e => $(`body>${editor}`)
-      .trigger('resize'))
+      createImageBitmap(pic, p1.x, p1.y, p2.x, p2.y)
+        .then(bmp => $(pic).trigger('blit', [bmp, p2.x - p1.x, p2.y - p1.y]))
+        .catch(ex => $(e.currentTarget).notify('error', 'failed clipping image to viewport', ex))
+    })
+    .on('click', `>${statrow}:not(.selected)`, e => $(`body>${viewport}`)
+      .trigger('scale', $(e.currentTarget).data().scaleargs))
+    .on('unmarshal', `>${statrow}`, e => $(e.currentTarget)
+      .addClass('selected')
+      .siblings('.selected')
+      .removeClass('selected'))
+    .on('unmarshal', `>${archive}>.row.record`, (e, data) => {
+      const img = e.currentTarget.querySelector(':scope>img')
 
-    // hover effects
-    .on('mouseover', `>${editbtn}.crop`, e => $(`body>${editor}`)
-      .addClass('cropping'))
-    .on('mouseout', `>${editbtn}.crop`, e => $(`body>${editor}`)
-      .removeClass('cropping'))
-    .on('mouseover', `>${editbtn}.resize`, e => $(`body>${editor}`)
-      .addClass('resizing'))
-    .on('mouseout', `>${editbtn}.resize`, e => $(`body>${editor}`)
-      .removeClass('resizing'))
+      img.src = data.url
+      img.onload = _ => {
+        $(`body>${viewport}`).trigger('scale', {
+          imgid: data.id,
+          x2: img.naturalWidth,
+          y2: img.naturalHeight,
+        })
+        data.loaded(data.id)
+      }
+    })
+
+    // editor controls
+    .on('change', `>${control}.resize>label>input`, e => {
+      const pic = $(`body > ${canvas}`).get(0),
+        pct = e.currentTarget.value / 100
+
+      $(`body > ${editbtn}.resize`)
+        .text(`${Math.round(pic.width * pct)}x${Math.round(pic.height * pct)}`)
+    })
+    .on('reset-controls', `>${control}`, e => $(e.currentTarget)
+      .find('>label>input')
+      .val(100))
+    .on('click', `>${editbtn}.resize`, e => $(`body>${canvas}`)
+      .trigger('resample', $(`body>${control}.resize>label>input`).val() / 100.0))
+    .on('change', `>${control}.rotate>label>select`, e => {
+      if (e.currentTarget.value === 0) {
+        console.log('is change to "---" ever called')
+      }
+
+      $(`body > ${canvas}`).trigger('rotate', Math.PI / 2 * e.currentTarget.value)
+
+      e.currentTarget.value = '0'
+    })
+    .on('click', `>${editbtn}.crop`, e => $(`body>${viewport}`).trigger('crop'))
 
     // audit stuff
-    .on('create', `>${audit}`, (e, url) => $('<div>')
-      .addClass('row')
-      .append($('<img>').attr('src', url))
-      .prependTo($(e.currentTarget)))
-    .on('clear', `>${audit}`, e => $(e.currentTarget)
-      .find('>.row:not(.x-template)')
-      .remove())
     .on('clear', `>${greys}`, e => $(e.currentTarget).empty())
 
-    // deprecated, there's a better way
+    // DEPRECATED, there's a better way
     .on('click', `${editor}>.viewport`, e => {
-      let pic = e.currentTarget.querySelector('canvas')
-      let ctx = pic.getContext('2d')
+      let pic = e.currentTarget.querySelector(':scope>canvas')
+      let ctx = pic.getContext('2d', { alpha: false, willReadFrequently: true })
       let pm = new pixelMap(ctx.getImageData(0, 0, pic.width, pic.height).data)
       pm.draw($('.colormap').empty().get(0))
     })
-    .on('click', '>.audit>.img', e => { /** what goes here? */ })
 
-    // window actions
-    .on('click', `>${ctlbtn}.save`, e => {
+    // workspace actions
+    .on('click', `>${ctlbtn}.cancel`, e => $(`body>${ws}`).trigger('deactivate'))
+    .on('click', `>${ctlbtn}.reset`, e => {
+      const $original = $(`body>${statrow}:first()`).removeClass('record')
+
+      $(`body>${stats}`).trigger('clear')
+      $(`body>${archive}>.row.record:not(:first)`).remove()
+
+      $original.addClass('record').trigger('click')
+    })
+    .on('click', `>${ctlbtn}.savemore`, _ => $(`body>${canvas}`)
+      .trigger('save', photo => $(window).notify('success', 'image saved', photo)))
+    .on('click', `>${ctlbtn}.save`, _ => $(`body>${canvas}`)
+      .trigger('save', photo => $(`body>${ws}`).trigger('deactivate', photo)))
+    .on('save', `>${canvas}`, (e, success) => {
       e.stopPropagation()
 
-      let req = $(`body>${ws}`).data() // not an actual Request
+      const req = $(`body>${ws}`).data(),  // not an actual Request
+        scaledata = $(`body>${statrow}.selected`).data(),
+        scaleargs = scaledata.scaleargs,
+        virt2cnv = scaledata.virt2cnv,
+        p1 = virt2cnv(scaleargs.x1, scaleargs.y1),
+        p2 = virt2cnv(scaleargs.x2, scaleargs.y2),
+        buff = new OffscreenCanvas(p2.x - p1.x, p2.y - p1.y)
 
-      // weird that the XA is driven by the canvas and not `fetch`
-      // FIXME: we may want to send the greymap as SVG at some point, 
-      //  which means may we call deactivate with with more than one 
-      //  result; something about this approach will need to change
-      $(`body>${canvas}`).get(0).toBlob(
-        blob => {
-          // blob.stream().getReader().read().then(something..., something..., ...)
+      buff.getContext('2d', { alpha: false }).drawImage(
+        e.currentTarget,
+        p1.x,
+        p1.y,
+        p2.x,
+        p2.y,
+        0,
+        0,
+        // p2.x - p1.x, // should default to buff.width/.height
+        // p2.y - p1.y,
+      )
 
-          fetch(req.fetchurl, {
-            method: req.method,
-            body: ((part) => (part.append('file', blob), part))(new FormData()),
-          }).then(async resp => {
+      buff.convertToBlob({
+        type: $(`body>${props}>.format>select`).val(),
+        quality: $(`body>${props}>.quality>input`).val(),
+      })
+        .then(blob => fetch(req.fetchurl, {
+          method: req.method,
+          body: (part => (part.append('file', blob), part))(new FormData()),
+        })
+          .then(async resp => {
             if ([200, 201].indexOf(resp.status) === -1) throw {
               status: resp.status,
               message: await resp.text()
             }
             return await resp.json()
-          }).then(result => $(`body>${ws}`).trigger('deactivate', result[0])
-          ).catch(ex => $(e.currentTarget).notify('error',
+          })
+          .then(result => { console.log(photo); success(result[0]) })
+          .catch(ex => $(e.currentTarget).notify('error',
             `${req.method} ${req.fetchurl} statusCode: ${ex.status ?? 'unsent'}`,
-            `you fucking douche! ${ex}`,
-          ))
-        },
-        $(`${props}>.format>select`).val(),
-        $(`${props}>.quality>input`).val(),
-      )
+            `failed to save image: ${ex}`,
+          )))
     })
-    .on('click', `>${ctlbtn}.cancel`, e => $(`body>${ws}`).trigger('deactivate'))
-    .on('click', `>${ctlbtn}.reset`, e => {
-      let $imgbox = $(e.delegateTarget),
-        first = $imgbox
-          .find('>.audit>div')
-          .remove()
-          .last()
-          .find('img')
-          .get(0),
-        w = first.naturalWidth,
-        h = first.naturalHeight
 
-      $(`>${editor}>.imgstats`).trigger('clear')
-      $(`>${editor}`).trigger('snap', [0, 0, w, h, first])
+  // passive events can't `preventDefault()`, so these handlers are 
+  // attached directly to the viewport
+  let vpt = $(`body>${viewport}`)
+    .on('touchstart', e => {
+      // e = e.originalEvent // jQuery-ism
+      console.log('touchstart', e, e.originalEvent)
     })
+    // .on('touchmove', e => { })
+    .on('touchend', e => {
+      console.log('touchend', e, e.originalEvent)
+    })
+    .on('pointerup', e => {
+      console.log('pointerup', e, e.originalEvent)
+    })
+    .on('mouseup', e => {
+      console.log('mouseup', e, e.originalEvent)
+    })
+    .on('wheelend', e => {
+      const $vpt = $(e.currentTarget),
+        $grid = $vpt.find('>.grid-overlay'),
+        gridbox = (o => {
+          for (const k in o) {
+            o[k] = o[k].replace(/px$/, '') * 1
+          }
+          return o
+        })($grid.css(['marginLeft', 'marginTop', 'width', 'height'])),
+        virt2cnv = $(`body>${statrow}.selected`).data().virt2cnv,
+        p1 = virt2cnv(gridbox.marginLeft, gridbox.marginTop),
+        p2 = virt2cnv(gridbox.marginLeft + gridbox.width, gridbox.marginTop + gridbox.height)
+
+      $vpt.trigger('scale', {
+        imgid: $vpt.attr('imgid'),
+        x1: p1.x,
+        y1: p1.y,
+        x2: p2.x,
+        y2: p2.y,
+      })
+
+      $grid.css({ width: '', height: '', margin: '' })
+    })
+    .on('wheel', e => {
+      e.preventDefault()
+
+      let data = $(e.currentTarget).data()
+      let now = new Date().getTime()
+
+      if (now - (data.wheeltime ?? 0) < 50) {
+        return
+      } else if (data.wheelend) {
+        clearTimeout(data.wheelend)
+      }
+
+      data.wheeltime = now
+      data.wheelend = setTimeout(() => {
+        delete data.wheelend
+        $(e.currentTarget).trigger('wheelend')
+      }, 200)
+
+      e.currentTarget.resize({
+        x: e.offsetX,
+        y: e.offsetY,
+      }, {
+        // delta values are positive moving towards the origin which is top-left
+        // in html-parlance; inverting deltaX is the first of several adjustments
+        // we make to translate the origin to the center of the viewport so 
+        // negative values mean left, and positive values mean right
+        dx: -e.originalEvent.deltaX,
+        // deltaY is OK with positive values meaning up, and negative meaning down
+        dy: e.originalEvent.deltaY,
+      })
+    })
+    .get(0)
+
+  vpt.resize = function (o, d) {
+    const $grid = $(this.querySelector(':scope>.grid-overlay')),
+      gridbox = (o => {
+        for (const k in o) {
+          o[k] = o[k].replace(/px$/, '') * 1
+        }
+        return o
+      })($grid.css([
+        'width',
+        'height',
+        'margin-left',
+        'margin-top',
+        'margin-right',
+        'margin-bottom',
+      ]))
+
+    let dx = d.dx,
+      dy = d.dy,
+      hmarg = 'margin-right',
+      vmarg = 'margin-top'
+
+    if (o.x - this.offsetWidth / 2 < 0) {
+      hmarg = 'margin-left'
+      dx *= -1
+    }
+    if (o.y - this.offsetHeight / 2 > 0) {
+      vmarg = 'margin-bottom'
+      dy *= -1
+    }
+
+    // bounds checking
+    if (gridbox[hmarg] - dx < 0) {
+      dx = -gridbox[hmarg]
+    } else if (gridbox.width + dx < 100) {
+      dx = 100 - gridbox.width
+    }
+    if (gridbox[vmarg] - dy < 0) {
+      dy = -gridbox[vmarg]
+    } else if (gridbox.height + dy < 100) {
+      dy = 100 - gridbox.height
+    }
+
+    gridbox[hmarg] = `${Math.round(this.offsetWidth - gridbox.width - dx)}px`
+    gridbox[vmarg] = `${Math.round(this.offsetHeight - gridbox.height - dy)}px`
+    gridbox.width = `${Math.round(gridbox.width + dx)}px`
+    gridbox.height = `${Math.round(gridbox.height + dy)}px`
+
+    $grid.css(gridbox)
+  }
 
   class pixelMap {
     /*
@@ -320,7 +513,7 @@
     static #fns = {
       toHash: function () { return this.toInt().toString(16) },
       toInt: function () { return (this.r << 16) + (this.g << 8) + this.b },
-      toRgb: function () { return `rgb(${this.r},${this.g},${this.b})` },
+      toRgb: function () { return `rgb(${this.r}, ${this.g}, ${this.b})` },
     }
 
     static #sort = (l, r) => l.toHash().localeCompare(r.toHash())
@@ -362,13 +555,13 @@
     }
 
     #greybar = (v, n, norm) => $('<div>')
-      .css('width', `${Math.trunc(v / norm * 100)}%`)
+      .css('width', `${Math.trunc(v / norm * 100)} % `)
       .attr('tenth', n)
       .text(`${((v / this.#count) * 100).toFixed(2)}`)
       .appendTo($('.greymap'))
 
     draw(cm) {
-      $(`body>${greys}`).empty()
+      $(`body > ${greys}`).empty()
 
       let norm = this.#greys.reduce((acc, curr) => acc < curr ? curr : acc, 0)
       this.#greys.forEach((v, n) => this.#greybar(v, n, norm))
@@ -380,10 +573,9 @@
         $('<div>')
           .css('background-color', `#${hash}`)
           .html('&nbsp;')
-          .attr('title', `#${hash} (${this.#distinct[hash]})`)
+          .attr('title', `#${hash}(${this.#distinct[hash]})`)
           .appendTo(cm)
       }
     }
   }
-})()
-
+})

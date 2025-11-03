@@ -15,7 +15,7 @@
         let breadcrumb = `notes/${photoid}`
         $ws.find('>.table.notes').attr({
           breadcrumb,
-          'x-eftch': breadcrumb,
+          'x-fetch': breadcrumb,
         })
       })
     })

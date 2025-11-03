@@ -37,9 +37,17 @@
 
       $(e.currentTarget).find('>.thumbnail').attr('src', `album/${data.id}`)
     })
-    .on('click', `>${img}`, e => {
+    .on('click', `>${record}`, e => {
       e.stopPropagation()
 
-      console.log('what do we do with:', $(e.currentTarget).attr('src'))
+      $(e.currentTarget)
+        .clone(true, true)
+        .appendTo(`body>${table}`)
+        .addClass('full background-image')
+    })
+    .on('click', `>${table}>.full`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget).remove()
     })
 })()

@@ -73,6 +73,7 @@ $(_ => {
       let $tmpl = $(e.currentTarget).find('>.row.x-template')
 
       data.forEach(record => $tmpl
+        // TODO: if id!==null && exists(id) then update
         .clone(true, true)
         .toggleClass('x-template record')
         .data(record)

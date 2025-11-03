@@ -11,7 +11,7 @@ body>.main>.workspace>.table.photoing .workspace.photos {
   display: block;
 }
 
-.table.photos {
+.workspace.photos>.table.photos {
   background-image: radial-gradient(ellipse at bottom right, #bebc1f22 25%, transparent);
   width: 100%;
 
@@ -25,6 +25,11 @@ body>.main>.workspace>.table.photoing .workspace.photos {
       &>.buttonbar {
         text-align: center;
         width: 3em;
+      }
+
+      &>.imgtile {
+        height: auto;
+        width: auto;
       }
 
       &>label {
@@ -48,7 +53,12 @@ body>.main>.workspace>.table.photoing .workspace.photos {
       }
 
       &>.imaging {
+        cursor: pointer;
         margin-left: 1em;
+
+        /* &>input {
+          cursor: pointer;
+        } */
       }
 
       &>.button.camera {
@@ -68,16 +78,6 @@ body>.main>.workspace>.table.photoing .workspace.photos {
           text-align: center;
           vertical-align: middle;
           height: 1.25em;
-        }
-      }
-
-      &>.imgtile {
-        height: auto;
-        width: auto;
-
-        &>.image {
-          width: 200px;
-          height: auto;
         }
       }
     }
@@ -115,8 +115,8 @@ body>.main>.workspace>.table.photoing .workspace.photos {
       }
 
       &>.imgtile {
-        height: auto;
-        width: auto;
+        /* height: auto; */
+        /* width: auto; */
 
         &>.image {
           height: auto;

@@ -12,3 +12,13 @@ DOMRect.prototype.timestampCSS = function (ts) {
 
   return result
 }
+
+if (!HTMLElement.prototype.requestFullscreen) {
+  HTMLElement.prototype.requestFullscreen =
+    HTMLElement.prototype.mozRequestFullScreen ||
+    HTMLElement.prototype.webkitRequestFullscreen ||
+    HTMLElement.prototype.msRequestFullscreen ||
+    function () {
+      $(this).notify('warning', 'requesting fullscreen', 'no method exists for requesting fullscreen')
+    }
+}

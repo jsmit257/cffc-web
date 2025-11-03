@@ -86,11 +86,19 @@ $(_ => {
     //     .data('retry')
     //     .push([url, params])
     // })
-    .on('retry', e => {
-      $(e.delegateTarget)
-        .data('retry')
-        .splice(0)
-        .forEach(fetch)
+    .on('retry', e => $(e.delegateTarget)
+      .data('retry')
+      .splice(0)
+      .forEach(fetch))
+    .on('keydown', e => {
+      if (/Control(Left|Right)/.test(e.code)) {
+        $(document.body).addClass('contexting')
+      }
+    })
+    .on('keyup', e => {
+      if (/Control(Left|Right)/.test(e.code)) {
+        $(document.body).removeClass('contexting')
+      }
     })
 
   $(document.head)

@@ -22,7 +22,7 @@
         let breadcrumb = `photos/${sessionStorage.strain}`
         $ws.find('>.table.photos').attr({
           breadcrumb,
-          'x-eftch': breadcrumb,
+          'x-fetch': breadcrumb,
         })
       })
     })

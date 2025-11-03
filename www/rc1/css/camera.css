@@ -1,59 +1,35 @@
+:root {
+  --svg-line: grey;
+  --svg-line-width: 2px;
+  --svg-fill: #ffffff08;
+}
+
 body>.main>.workspace.camera {
   width: 100%;
 
+  & table {
+    line-height: 2em;
+  }
+
   &>.imgbox {
-    &>.props {
-      /* display: none; */
-      float: right;
-      line-height: 3;
-      width: calc(100% - 26em);
-
-      &>.format {
-        &>span {
-          margin-right: .5em;
-        }
-
-        &>select {
-          padding-left: .5em;
-          padding-right: .5em;
-          /* text-align: center; */
-        }
-      }
-
-      &>.quality {
-        float: right;
-        width: calc(100% - 9em);
-
-
-        &>input {
-          float: none;
-          /* margin-left: 10em; */
-          width: calc(100% - 5em);
-        }
-
-        ;
-      }
-    }
-
     &>.vidcap {
-      /* clear: both; */
       display: none;
       float: left;
-      /* visibility: collapse; */
+      width: 100%;
     }
 
     &>.viddevs {
       float: left;
       padding-bottom: .33em;
       padding-top: .33em;
-      width: 25em;
+      /* width: 25em; */
 
       &>.rows>.row.record>.device {
         border-radius: 10%;
         cursor: pointer;
         line-height: 1.5em;
+        /* margin-right: 1em; */
         padding-bottom: .33em;
-        margin-right: 1em;
         padding-top: .33em;
 
         &::before {
@@ -67,48 +43,112 @@ body>.main>.workspace.camera {
     }
 
     &>.imgedit {
-      border: none;
-      /* clear: both; */
       float: left;
-      /* margin-top: 1em; */
-      padding: 2px;
       overflow: auto;
 
       &>.viewport {
+        /* background-color: #f005; */
         background-attachment: local;
         background-repeat: no-repeat;
-        background-size: contain;
-        border-width: 2px;
-        border-style: dashed;
-        border-color: transparent;
         float: left;
-        overflow: auto;
+        /* overflow: auto; */
+        width: 60%;
+
+        &>svg {
+          background-color: var(--svg-fill);
+          display: block;
+          height: 100%;
+          visibility: hidden;
+          width: 100%;
+          z-index: 1;
+
+          &>defs>linearGradient>stop {
+            stop-color: var(--svg-line);
+
+            &.edge {
+              stop-opacity: .0;
+            }
+          }
+
+          &>circle.corner {
+            fill: var(--svg-fill);
+            r: 4%;
+            stroke: var(--svg-line);
+            stroke-width: var(--svg-line-width);
+
+            &.north {
+              cy: 0;
+            }
+
+            &.south {
+              cy: 100%;
+            }
+
+            &.east {
+              cx: 0;
+            }
+
+            &.west {
+              cx: 100%;
+            }
+          }
+
+          &>rect {
+            &.horiz {
+              fill: url(#hgrad);
+              height: var(--svg-line-width);
+
+              &.half {
+                x: 15%;
+                width: 70%;
+              }
+
+              &.full {
+                x: 0;
+                width: 100%;
+              }
+            }
+
+            &.vert {
+              fill: url(#vgrad);
+              width: 2px;
+
+              &.half {
+                y: 15%;
+                height: 70%;
+              }
+
+              &.full {
+                y: 0;
+                height: 100%;
+              }
+            }
+          }
+        }
+
+        &:hover>svg {
+          visibility: visible;
+        }
 
         &>canvas {
-          border: none;
-          margin: 0;
-          opacity: 0;
-          padding: 0;
+          visibility: hidden;
+          top: 0;
+          left: 0;
+          position: absolute;
         }
-      }
-
-      &.cropping>.viewport {
-        border-color: chartreuse;
-      }
-
-      &.resizing>.viewport {
-        border-color: slateblue;
       }
 
       &>.imgstats {
         float: right;
         font-size: initial;
         max-height: 600px;
-        overflow-y: auto;
         overflow-x: clip;
-        width: calc(100% - 800px);
+        overflow-y: auto;
+        width: 40%;
 
-        &>.row {
+        &>.row.record {
+          cursor: pointer;
+
           &::before {
             content: 'edit';
             display: inline-block;
@@ -145,26 +185,6 @@ body>.main>.workspace.camera {
               content: 'px';
             }
           }
-
-          .kb {
-            width: 4em;
-
-            &.filesize {
-              margin-left: .33em;
-
-              &::before {
-                content: 'approx. size:';
-              }
-            }
-
-            &::after {
-              content: 'kb';
-            }
-          }
-
-          &:last-child::before {
-            content: 'original';
-          }
         }
 
         &>span::before {
@@ -173,33 +193,71 @@ body>.main>.workspace.camera {
         }
       }
 
-      &>.ranges {
+      &>.controls {
+        display: flex;
+        flex-direction: row;
         float: left;
         margin-top: 1em;
         margin-bottom: 1em;
-        width: 100%;
+        width: 60%;
 
-        &>.row {
-          margin-bottom: 2em;
+        &>div {
+          &>* {
+            display: flex;
+          }
 
           &>label {
-            align-items: center;
-            display: flex;
-            flex-direction: row;
             float: left;
-            margin-right: 3em;
-            width: -webkit-fill-available;
+            margin-left: .5em;
+
+            &::before {
+              margin-right: .3em;
+            }
+          }
+
+          &.resize {
+            width: 70%;
+
+            &>label {
+              width: calc(100% - 9em);
+
+              &::before {
+                content: 'resize:';
+              }
+            }
+          }
+
+          &.rotate>label {
+            &::before {
+              content: 'rotate:';
+            }
+
+            &>select {
+              text-align: center;
+              width: 4em;
+            }
           }
 
           &>.button {
-            float: right;
-            font-size: larger;
-            margin-left: -3em;
+            background-image: radial-gradient(ellipse at center, transparent 50%, #ffca00);
+            border-radius: 1em;
             cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+            line-height: 2em;
+            margin-left: 1em;
             text-align: center;
-            width: 3em;
+            width: 5em;
+
+            &.resize {
+              width: 7em;
+            }
           }
         }
+      }
+
+      &>.archive {
+        display: none;
       }
     }
 
@@ -208,29 +266,14 @@ body>.main>.workspace.camera {
       float: left;
     }
 
-    &>.colormap {
-      display: none;
-
-
-
-      &>div {
-        border: 1px solid;
-        float: left;
-        height: 10px;
-        position: relative;
-        width: 10px;
-      }
-    }
-
     &>.greymap {
-      border-color: white;
+      border-color: #4096d9;
       border-radius: .5em;
-      border-style: ridge;
-      border-width: 2px;
+      border-style: inset;
+      border-width: 4px;
       clear: both;
       padding-bottom: .5em;
       padding-right: .33em;
-      width: 50%;
 
       &::before {
         background-color: var(--bg-color);
@@ -315,35 +358,66 @@ body>.main>.workspace.camera {
       }
     }
 
-    &>.audit {
-      align-items: baseline;
-      /* display: none; */
-      /* display: inline-flex; */
-      flex-direction: row;
-      flex-wrap: nowrap;
-      float: left;
-      overflow-x: auto;
-      overflow-y: clip;
-      width: 100%;
+    &>.colormap {
+      display: none;
 
       &>div {
-        float: right;
-
-        &>img {
-          height: 150px;
-          margin-right: .3em;
-        }
+        border: 1px solid;
+        float: left;
+        height: 10px;
+        position: relative;
+        width: 10px;
       }
     }
 
-    &>.buttonbar>.button.reset {
-      float: left;
+    &>.buttonbar {
+      &>.button.reset {
+        float: left;
+      }
+
+      &>.button.savemore {
+        width: 10em;
+      }
+
+      &>.props {
+        float: right;
+        line-height: 3;
+        /* width: calc(100% - 26em); */
+
+        &>.format {
+          float: left;
+          width: 9em;
+
+          &:before {
+            content: 'format: ';
+          }
+
+          &>select {
+            padding-left: .5em;
+            padding-right: .5em;
+          }
+        }
+
+        &>.quality {
+          float: left;
+          width: calc(100% - 9em);
+
+          &:before {
+            content: 'quality:';
+          }
+
+          &>input {
+            float: none;
+            vertical-align: middle;
+            width: calc(100% - 5em);
+          }
+        }
+      }
     }
 
     &.capturing {
       &>.vidcap {
         display: block;
-        width: 800px;
       }
 
       &>.imgedit,

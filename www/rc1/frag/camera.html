@@ -1,20 +1,4 @@
 <div class="table imgbox waiting editing">
-  <div class="props">
-    <label class="format">
-      <span>format:</span>
-      <select>
-        <option selected value="image/webp">webp</option>
-        <option value="image/png">png</option>
-        <option $value="image/jpeg">jpeg</option>
-      </select>
-    </label>
-
-    <label class="quality">
-      <span>quality</span>
-      <input type="range" min="50" max="100" step="1" value="100" tabindex="0">
-    </label>
-  </div>
-
   <div class="table viddevs">
     <div class="rows">
       <div class="row x-template">
@@ -26,7 +10,35 @@
   <video class="vidcap" autoplay tabindex="0"></video>
 
   <div class="table imgedit">
-    <div hmax=800 vmax=600 class="viewport">
+    <div class="viewport">
+      <svg class="grid-overlay" viewbox="0 0 640 480" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hgrad">
+            <stop class="edge" offset="0" />
+            <stop class="center" offset="50%" />
+            <stop class="edge" offset="100%" />
+          </linearGradient>
+
+          <linearGradient id="vgrad" x1="0" y1="0" x2="0" y2="1">
+            <stop class="edge" offset="0" />
+            <stop class="center" offset="50%" />
+            <stop class="edge" offset="100%" />
+          </linearGradient>
+        </defs>
+
+        <circle class="corner north east" />
+        <circle class="corner north west" />
+        <circle class="corner south west" />
+        <circle class="corner south east" />
+
+        <rect y="25%" class="horiz half" />
+        <rect y="50%" class="horiz full" />
+        <rect y="75%" class="horiz half" />
+        <rect x="25%" class="vert half" />
+        <rect x="50%" class="vert full" />
+        <rect x="75%" class="vert half" />
+      </svg>
+
       <canvas tabindex="0"></canvas>
     </div>
 
@@ -35,26 +47,37 @@
         <div class="px width" name="width"></div>
         &times;
         <div class="px height" name="height"></div>
-        <div class="kb filesize" name="size"></div>
+        <!-- <div class="kb filesize" name="size"></div> -->
       </div>
     </div>
 
-    <div class="ranges">
-      <div class="row control">
+    <div class="controls">
+      <div class="resize">
         <label>
-          <span>zoom</span>
-          <input id="scale" type="range" min="100" max="500" step="5" value="100" tabindex="0">
+          <input type="range" min="40" max="100" step="1" value="100" tabindex="0">
         </label>
-        <!-- scissors &#9985; through &#9988;-->
-        <div class="crop button" hover="crop">&sharp;</div>
+        <div class="button resize" title="resize">100%</div>
       </div>
 
-      <div class="row control">
+      <div class="rotate">
         <label>
-          <span>resize</span>
-          <input id="aspect" type="range" min="40" max="100" step="6" value="100" tabindex="0">
+          <select tabindex="0">
+            <option value="0"> --- </option>
+            <option value="1">90&deg;</option>
+            <option value="2">180&deg;</option>
+            <option value="3">270&deg;</option>
+          </select>
         </label>
-        <div class="resize button" hover="resize">&lrarr;</div>
+      </div>
+
+      <div class="crop">
+        <div class="button crop" title="crop">crop</div>
+      </div>
+    </div>
+
+    <div class="archive rows">
+      <div class="row x-template">
+        <img class="snapshot">
       </div>
     </div>
   </div>
@@ -63,13 +86,25 @@
 
   <div class="colormap"></div>
 
-  <div class="rows audit"><!-- XXX: finish me -->
-    <div class="row x-template"></div>
-  </div>
-
   <div class="buttonbar">
     <div class="button text cancel"></div>
     <div class="button text save"></div>
+    <div class="button text savemore">save &amp; more</div>
+
+    <div class="props">
+      <label class="format">
+        <select>
+          <option selected value="image/webp">webp</option>
+          <option value="image/png">png</option>
+          <option $value="image/jpeg">jpeg</option>
+        </select>
+      </label>
+
+      <label class="quality">
+        <input type="range" min="50" max="100" step="1" value="100" tabindex="0">
+      </label>
+    </div>
+
     <div class="button text reset">reset</div>
   </div>
 </div>

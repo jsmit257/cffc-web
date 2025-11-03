@@ -25,15 +25,19 @@
         <input class="humidity" name="humidity" type="number" min="0" max="100" tabindex="0">
       </label>
 
-      <label class="field mtime">
+      <label class="field mtime context">
         <div class="mtime short-date" name="mtime" x-formatter="short-date"></div>
       </label>
 
-      <label class="field ctime">
+      <label class="field ctime context">
         <div class="ctime short-date" name="ctime" x-formatter="short-date"></div>
       </label>
     </div>
   </div>
+
+  <div class="child-table workspace photos" x-child="photo"></div>
+
+  <div class="child-table workspace notes" x-child="note"></div>
 
   <div class="buttonbar">
     <div class="button default text action delete"></div>
