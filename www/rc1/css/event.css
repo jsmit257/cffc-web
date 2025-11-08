@@ -1,3 +1,7 @@
+:root {
+  --event-table-height: 20em;
+}
+
 .workspace.events>.table.events {
   float: left;
   width: 100%;
@@ -8,7 +12,7 @@
   }
 
   &>.rows {
-    height: 20em;
+    height: var(--event-table-height);
   }
 
   &>.columns,
@@ -48,5 +52,50 @@
         display: none;
       }
     }
+  }
+
+  &>.child-table>.table:is(.notes, .photos) {
+    border: none;
+    border-radius: 0;
+  }
+
+  &:is(.photoing, .noting) {
+    &>.rows {
+      height: auto;
+
+      &>.row:not(.selected) {
+        display: none;
+      }
+    }
+  }
+
+  &.photoing>.workspace.photos {
+    display: block;
+
+    &>.table.photos {
+      height: calc(var(--event-table-height) - var(--row-line-height));
+
+      &>.rows {
+        /* 1em each top-/bottom-margin + 1em buttonbar + tableborder and change */
+        height: calc(100% - 4em);
+      }
+    }
+  }
+
+  &.noting>.workspace.notes {
+    display: block;
+
+    &>.table.notes {
+      height: calc(var(--event-table-height) - var(--row-line-height));
+
+      &>.rows {
+        /* 1em each top-/bottom-margin + 1em buttonbar + tableborder and change */
+        height: calc(100% - 4em);
+      }
+    }
+  }
+
+  &>.buttonbar>.button:is(.notes, .photos) {
+    float: left;
   }
 }

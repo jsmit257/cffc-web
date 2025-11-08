@@ -20,7 +20,7 @@
           state,
           // FIXME, or remove me; stack only shows line numbers for 
           //  dynamically loaded scripts, no filename
-          stack: new Error().stack.replace(/^(.*)?\n\s+at/m, ''),
+          stack: (message?.stack ?? new Error().stack).replace(/^(.*)?\n\s+at/m, ''),
         })
         .find('>.row.record')
         .last()

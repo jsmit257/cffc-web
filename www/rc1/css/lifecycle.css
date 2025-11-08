@@ -71,6 +71,10 @@
       &.notes {
         margin-bottom: 2em;
       }
+
+      &.delete {
+        margin-top: 2em;
+      }
     }
   }
 }

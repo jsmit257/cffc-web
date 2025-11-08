@@ -171,7 +171,7 @@ $(_ => {
         .append($(html))
         .removeAttr('x-child') // once is enough
         .trigger('activate', slug)
-      ).then(ws => resolve(ws)
+      ).then($ws => resolve($ws)
       ).catch(ex => $(e.currentTarget).notify('error',
         `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
         ex,
@@ -180,14 +180,17 @@ $(_ => {
     .on('click', `>${hide}`, e => {
       localStorage[e.currentTarget.id] = e.currentTarget.checked
 
-      $('body>.main')[e.currentTarget.checked // withClass doesn't exist yet
+      $(document.body)[e.currentTarget.checked // withClass doesn't exist yet
         ? 'addClass'
         : 'removeClass'
       ](e.currentTarget.id)
     })
 
-  Array('deleted', 'uuid', 'timestamp').forEach(v => {
-    let id = `hide-${v}`
-    localStorage[id] === 'true' && $(`body>${hide}#${id}`).click()
-  })
+  if (typeof localStorage['hide-notification'] === 'undefined') {
+    localStorage['hide-notification'] = true
+  }
+
+  Array('deleted', 'uuid', 'timestamp', 'notification')
+    .map(v => `hide-${v}`)
+    .forEach(id => localStorage[id] === 'true' && $(`body>${hide}#${id}`).click())
 })

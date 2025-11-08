@@ -86,7 +86,7 @@
 
       let $table = $(e.currentTarget.parentNode)
         .trigger('toggle', e.currentTarget)
-        .parents('[breadcrumb]')
+        .parents('[x-fetch]')
         .first()
 
       let body = {}, args
@@ -94,7 +94,7 @@
         .selected()
         .trigger('marshal', body)
         .trigger('default-update', args = [
-          `${$table.attr('breadcrumb')}/${body.id}`.replace(/\/$/, ''),
+          `${$table.attr('x-fetch')}/${body.id}`.replace(/\/$/, ''),
           {
             method: body.id ? 'PATCH' : 'POST',
             body: body,

@@ -120,13 +120,13 @@ body {
       position: relative;
       width: 100%;
     }
+  }
 
-    /* these were mostly added for reports, dtime should work anywhere */
-    &.hide-deleted [dtime],
-    &.hide-timestamp .scalar:is([sort-key="mtime"], [sort-key="ctime"]),
-    &.hide-uuid .scalar[sort-key="id"] {
-      display: none;
-    }
+  &.hide-deleted [dtime],
+  &.hide-timestamp .scalar:is([sort-key="mtime"], [sort-key="ctime"]),
+  &.hide-uuid .scalar[sort-key="id"],
+  &.hide-notification>.table.notification {
+    display: none;
   }
 
   &>.footer {

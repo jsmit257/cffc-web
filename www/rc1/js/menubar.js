@@ -67,13 +67,15 @@ $(_ => {
         .data('camera-consumer', $(`body>${spaces}.active`).removeClass('active'))
         .trigger('enable-workspace', 'camera')
 
-      // FIXME: setTimeout is lame; the interval probably matters less than 
-      //  breaking out of the main thread
+      // FIXME: setTimeout is lame; we can't do this as a `resolve` to `enable-workspace`
+      //  unless we build it into the short return, and there's still a timing issue with
+      //  the javascript loading (it should really happen *after* the html, but that 
+      //  happens elsewhere)
       setTimeout(_ => $(`body>${spaces}.camera`).trigger('init', [
         fetchurl,
         method,
         success,
-      ]), 10)
+      ]), 50)
     })
     .on('un-camera', `>${menubar}`, e => {
       e.stopPropagation()
@@ -82,7 +84,7 @@ $(_ => {
 
       $(e.currentTarget).data('camera-consumer').addClass('active')
     })
-    .on('enable-workspace', `>${menubar}`, (e, slug) => {
+    .on('enable-workspace', `>${menubar}`, (e, slug, resolve = _ => _) => {
       e.stopPropagation()
 
       slug ??= sessionStorage[sessionStorage.menu]
@@ -97,7 +99,7 @@ $(_ => {
         .addClass(`workspace ${slug}`)
         .attr('x-child', slug)
         .appendTo($(`body>${main}`))
-        .trigger('add-child')
+        .trigger('add-child', resolve)
     })
     .on('click', `>${menubar} .menubtn.selected`, e => {
       e.stopPropagation()

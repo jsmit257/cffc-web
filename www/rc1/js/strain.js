@@ -1,16 +1,16 @@
 (_ => {
-  let ws = '.main>.workspace.strain'
-  let table = `${ws}>.table.strain`
-  let cols = `${table}>.columns`
-  let strain = `${table}>.rows`
-  let strainrow = `${strain}>.row.record`
-  let photos = `${strain}>.workspace.photos>.table.photos`
-  let btn = `${table}>.buttonbar>.button`
-  let sa = `${table}>.table.strainattributes`
-  let sadatalist = `${sa}>#strain-attr-names`
-  let attrs = `${sa}>.rows`
-  let attrrows = `${attrs}>.row.record`
-  let sabtns = `${sa}>.buttonbar`
+  const ws = '.main>.workspace.strain'
+  const table = `${ws}>.table.strain`
+  const cols = `${table}>.columns`
+  const strain = `${table}>.rows`
+  const strainrow = `${strain}>.row.record`
+  const photos = `${strain}>.workspace.photos>.table.photos`
+  const btn = `${table}>.buttonbar>.button`
+  const sa = `${table}>.table.strainattributes`
+  const sadatalist = `${sa}>#strain-attr-names`
+  const attrs = `${sa}>.rows`
+  const attrrows = `${attrs}>.row.record`
+  const sabtns = `${sa}>.buttonbar`
 
   $(document.body)
     .on('activate', `>${ws}`, e => {

@@ -14,6 +14,7 @@
       //   .parents('.table')
       //   .first())
     })
+    .on('click', row, e => e.stopPropagation())
     .on('click', `${add}`, e => {
       e.stopPropagation()
 

@@ -16,14 +16,21 @@
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
-      $(`body>${table}>[x-child]`).trigger('add-child', $ws => {
-        let breadcrumb = `notes/${sessionStorage.lifecycle}`
+      $(`body>${table}>[x-child="note"]`).trigger('add-child', $ws => {
+        let breadcrumb = `lifecycle/${sessionStorage.lifecycle}/note`
         $ws.find('>.table.notes').attr({
+          breadcrumb,
+          'x-fetch': `notes/${sessionStorage.lifecycle}`,
+        })
+      })
+
+      $(`body>${table}>[x-child="event"]`).trigger('add-child', $ws => {
+        let breadcrumb = `lifecycle/${sessionStorage.lifecycle}/events`
+        $ws.find('>.table.events').attr({
           breadcrumb,
           'x-fetch': breadcrumb,
         })
       })
-      // $(`body>${table}>[x-child]`).trigger('add-child')
     })
     .on('select', `>${ndxrow}`, e => {
       e.stopPropagation()
@@ -43,7 +50,10 @@
           status: resp.status,
           msg: await resp.text()
         }
-        $(`body>${events}`).attr('breadcrumb', `${url}/events`)
+        $(`body>${events}`).attr({
+          breadcrumb: `${url}/events`,
+          'x-fetch': `${url}/events`,
+        })
         $(`body>${table}`).removeClass('seeking')
         return await resp.json()
       }).then(json => {

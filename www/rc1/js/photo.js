@@ -22,10 +22,10 @@
     .on('select', photorow, e => {
       e.stopPropagation()
 
-      let breadcrumb = `notes/${$(e.currentTarget).attr('id')}`
+      let breadcrumb = `${$(e.currentTarget).parents('[breadcrumb]').attr('breadcrumb')}/note`
       $(note).attr({
         breadcrumb,
-        'x-fetch': breadcrumb,
+        'x-fetch': `notes/${e.currentTarget.id}`,
       })
     })
     .on('click', photorow, e => {

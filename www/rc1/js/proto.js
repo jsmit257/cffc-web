@@ -1,3 +1,11 @@
+"".constructor.prototype.px2int = function () {
+  const result = this
+    .replace(/px/g, '')
+    .split(/\s+/g)
+    .map(v => v * 1)
+  return result.length == 1 ? result[0] : result
+}
+
 Date.prototype.localVal = function () {
   return this.toISOString().slice(0, -1)
 };

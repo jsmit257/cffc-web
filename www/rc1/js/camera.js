@@ -90,33 +90,19 @@ $(_ => {
 
       navigator.mediaDevices.getUserMedia({
         video: { deviceId: e.currentTarget.id },
-      }).then(stream => {
-        cam.srcObject = stream
-        $(`body>${imgbox}`).toggleClass('waiting capturing')
-        // cam.requestFullscreen()
-      }).catch(ex => $(navigator.mediaDevices).notify('error', 'get camera', ex))
-    })
-
-    // capture events
-    .on('click', `>${vidcap}`, e => {
-      e.stopPropagation()
-
-      $(`body>${stats}, body>${archive}, body>${greys}`).trigger('clear')
-
-      $(`body>${canvas}`).trigger('blit', [
-        e.currentTarget,
-        e.currentTarget.videoWidth,
-        e.currentTarget.videoHeight
-      ])
-
-      $(`body>${device}.selected`).trigger('click')
-
-      document.fullscreenElement && document.exitFullscreen()
+      })
+        .then(stream => cam.srcObject = stream)
+        .then(stream => new ImageCapture(stream.getVideoTracks()[0])
+          .getPhotoCapabilities()
+          // make this `$(...).notify()` instead of `console...`, or both, and/or save
+          // max imageWidth/Height to a var for use in takePhoto
+          .then(console.table))
+        .then(_ => $(`body>${imgbox}`).toggleClass('waiting capturing'))
+        // .then(_ => cam.requestFullscreen())
+        .catch(ex => $(navigator.mediaDevices).notify('error', 'get camera', ex))
     })
     .on('stop', `>${vidcap}`, e => {
-      e.stopPropagation()
-
-      let src = e.currentTarget.srcObject
+      const src = e.currentTarget.srcObject
       if (src != null) try {
         $(`body>${imgbox}`).toggleClass('waiting capturing')
         src.getTracks().forEach(track => track.stop())
@@ -127,8 +113,23 @@ $(_ => {
       e.currentTarget.srcObject = null
     })
 
+    // capturing
+    .on('click', `>${vidcap}`, e => {
+      e.stopPropagation()
+
+      $(`body>${stats}, body>${archive}, body>${greys}`).trigger('clear')
+
+      new ImageCapture(e.currentTarget.srcObject.getVideoTracks()[0]).takePhoto()
+        .then(blob => createImageBitmap(blob))
+        .then(bmp => $(`body>${canvas}`).trigger('blit', [bmp, bmp.width, bmp.height]))
+        .then(_ => $(`body>${device}.selected`).trigger('click'))
+        .catch(ex => console.log('takePhoto failed:', ex))
+
+      document.fullscreenElement && document.exitFullscreen()
+    })
+
     // editor actions
-    .on('blit', `>${canvas}`, (e, img, w, h, loaded = imgid => imgid) => {
+    .on('blit', `>${canvas}`, (e, img, w, h, loaded = (imgid, img) => undefined) => {
       const cnv = e.currentTarget
 
       cnv.width = w
@@ -173,8 +174,8 @@ $(_ => {
         $(`body>${stats}`).trigger('send', {
           ...clip,
           virt2cnv: (x, y) => new Object({ // convert virtual (clipped by viewport) to canvas
-            x: x / vpt2virt + x1,
-            y: y / vpt2virt + y1,
+            x: Math.round(x / vpt2virt + x1),
+            y: Math.round(y / vpt2virt + y1),
           }),
           scaleargs: { imgid, x1, y1, x2, y2 },
         })
@@ -225,46 +226,43 @@ $(_ => {
     })
     .on('rotate', `>${canvas}`, (e, theta) => { // only works for multiples of PI/2
       const pic = e.currentTarget,
-        mtrx = ((c, s) => {
-          return (x, y) => [
-            Math.round(Math.abs(x * c + y * s)),
-            Math.round(Math.abs(x * s + y * c)),
-          ]
-        })(Math.cos(theta), Math.sin(theta)),
-        buff = new OffscreenCanvas(...mtrx(pic.width, pic.height)),
+        [w, h] = [pic.width, pic.height],
+        mtrx = ((c, s) => (x, y) => [x * c - y * s, x * s + y * c])
+          (Math.cos(theta), Math.sin(theta)),
+        buff = new OffscreenCanvas(...mtrx(w, h).map(v => Math.round(Math.abs(v)))),
         ctx = buff.getContext('2d', { alpha: false }),
         scaleargs = $(`body>${statrow}.selected`).data().scaleargs,
-        [x1, y1] = mtrx(scaleargs.x1, scaleargs.y1),
-        [x2, y2] = mtrx(scaleargs.x2, scaleargs.y2)
+        [x1, y1] = mtrx(scaleargs.x1 - w / 2, scaleargs.y1 - h / 2),
+        [x2, y2] = mtrx(scaleargs.x2 - w / 2, scaleargs.y2 - h / 2)
 
       ctx.save()
       ctx.translate(Math.floor(buff.width / 2), Math.floor(buff.height / 2))
       ctx.rotate(theta)
-      ctx.drawImage(pic, -pic.width / 2, -pic.height / 2)
+      ctx.drawImage(pic, -w / 2, -h / 2)
       ctx.restore()
 
-      console.table([scaleargs, { x1, y1, x2, y2 }])
       $(pic).trigger('blit', [
         buff,
         buff.width,
         buff.height,
         imgid => $(pic.parentNode).trigger('scale', {
           imgid,
-          ...(_ => x1 < x2 ? { x1, x2 } : { x1: x2, x2: x1 })(),
-          ...(_ => y1 < y2 ? { y1, y2 } : { y1: y2, y2: y1 })(),
+          ...((x1, x2) => x1 < x2 ? { x1, x2 } : { x1: x2, x2: x1 })
+            (x1 + buff.width / 2, x2 + buff.width / 2),
+          ...((y1, y2) => y1 < y2 ? { y1, y2 } : { y1: y2, y2: y1 })
+            (y1 + buff.height / 2, y2 + buff.height / 2),
         }),
       ])
-      // $currstat.remove()
     })
     .on('crop', `>${viewport}`, e => {
-      const vpt = e.currentTarget,
-        pic = vpt.querySelector(':scope>canvas'),
-        virt2cnv = $(`body>${statrow}.selected`).data().virt2cnv,
-        p1 = virt2cnv(0, 0),
-        p2 = virt2cnv(vpt.offsetWidth, vpt.offsetHeight)
+      const cnv = e.currentTarget.querySelector(':scope>canvas'),
+        [p1, p2] = ((vpt, xlate) => [
+          xlate(0, 0),
+          xlate(vpt.offsetWidth, vpt.offsetHeight),
+        ])(e.currentTarget, $(`body>${statrow}.selected`).data().virt2cnv,)
 
-      createImageBitmap(pic, p1.x, p1.y, p2.x, p2.y)
-        .then(bmp => $(pic).trigger('blit', [bmp, p2.x - p1.x, p2.y - p1.y]))
+      createImageBitmap(cnv, p1.x, p1.y, p2.x, p2.y)
+        .then(bmp => $(cnv).trigger('blit', [bmp, p2.x - p1.x, p2.y - p1.y]))
         .catch(ex => $(e.currentTarget).notify('error', 'failed clipping image to viewport', ex))
     })
     .on('click', `>${statrow}:not(.selected)`, e => $(`body>${viewport}`)
@@ -283,7 +281,7 @@ $(_ => {
           x2: img.naturalWidth,
           y2: img.naturalHeight,
         })
-        data.loaded(data.id)
+        data.loaded(data.id, img)
       }
     })
 
@@ -337,27 +335,17 @@ $(_ => {
     .on('click', `>${ctlbtn}.save`, _ => $(`body>${canvas}`)
       .trigger('save', photo => $(`body>${ws}`).trigger('deactivate', photo)))
     .on('save', `>${canvas}`, (e, success) => {
-      e.stopPropagation()
-
       const req = $(`body>${ws}`).data(),  // not an actual Request
-        scaledata = $(`body>${statrow}.selected`).data(),
-        scaleargs = scaledata.scaleargs,
-        virt2cnv = scaledata.virt2cnv,
-        p1 = virt2cnv(scaleargs.x1, scaleargs.y1),
-        p2 = virt2cnv(scaleargs.x2, scaleargs.y2),
-        buff = new OffscreenCanvas(p2.x - p1.x, p2.y - p1.y)
+        [p1, p2] = ((vpt, xlate) => [
+          xlate(0, 0),
+          xlate(vpt.offsetWidth, vpt.offsetHeight),
+        ])($(`body>${viewport}`).get(0), $(`body>${statrow}.selected`).data().virt2cnv),
+        [w, h] = [p2.x - p1.x, p2.y - p1.y],
+        buff = new OffscreenCanvas(w, h)
 
-      buff.getContext('2d', { alpha: false }).drawImage(
-        e.currentTarget,
-        p1.x,
-        p1.y,
-        p2.x,
-        p2.y,
-        0,
-        0,
-        // p2.x - p1.x, // should default to buff.width/.height
-        // p2.y - p1.y,
-      )
+      buff.getContext('2d', {
+        alpha: false
+      }).drawImage(e.currentTarget, p1.x, p1.y, w, h, 0, 0, w, h)
 
       buff.convertToBlob({
         type: $(`body>${props}>.format>select`).val(),
@@ -374,7 +362,7 @@ $(_ => {
             }
             return await resp.json()
           })
-          .then(result => { console.log(photo); success(result[0]) })
+          .then(result => success(result[0])) // result is a list of all photos, newest first
           .catch(ex => $(e.currentTarget).notify('error',
             `${req.method} ${req.fetchurl} statusCode: ${ex.status ?? 'unsent'}`,
             `failed to save image: ${ex}`,
@@ -383,36 +371,35 @@ $(_ => {
 
   // passive events can't `preventDefault()`, so these handlers are 
   // attached directly to the viewport
-  let vpt = $(`body>${viewport}`)
+  setTimeout(_ => $(`body>${viewport}`)
     .on('touchstart', e => {
-      // e = e.originalEvent // jQuery-ism
-      console.log('touchstart', e, e.originalEvent)
+      console.log('touchstart')
     })
-    // .on('touchmove', e => { })
-    .on('touchend', e => {
-      console.log('touchend', e, e.originalEvent)
+    .on('touchmove', e => {
+      e.preventDefault()
+
+      e = e.originalEvent
+      console.log('touchmove')
+      // this doesn't work the same way as wheel
     })
-    .on('pointerup', e => {
-      console.log('pointerup', e, e.originalEvent)
-    })
-    .on('mouseup', e => {
-      console.log('mouseup', e, e.originalEvent)
-    })
-    .on('wheelend', e => {
+    .on('touchend', (e, data = {}) => {
+      delete data.touchend
+
       const $vpt = $(e.currentTarget),
         $grid = $vpt.find('>.grid-overlay'),
-        gridbox = (o => {
+        statdata = $(`body>${statrow}.selected`).data(),
+        [p1, p2] = ((xlate, grid) => [
+          xlate(grid.marginLeft, grid.marginTop),
+          xlate(grid.marginLeft + grid.width, grid.marginTop + grid.height),
+        ])(statdata.virt2cnv, (o => {
           for (const k in o) {
             o[k] = o[k].replace(/px$/, '') * 1
           }
           return o
-        })($grid.css(['marginLeft', 'marginTop', 'width', 'height'])),
-        virt2cnv = $(`body>${statrow}.selected`).data().virt2cnv,
-        p1 = virt2cnv(gridbox.marginLeft, gridbox.marginTop),
-        p2 = virt2cnv(gridbox.marginLeft + gridbox.width, gridbox.marginTop + gridbox.height)
+        })($grid.css(['marginLeft', 'marginTop', 'width', 'height'])))
 
       $vpt.trigger('scale', {
-        imgid: $vpt.attr('imgid'),
+        imgid: statdata.scaleargs.imgid,
         x1: p1.x,
         y1: p1.y,
         x2: p2.x,
@@ -421,6 +408,64 @@ $(_ => {
 
       $grid.css({ width: '', height: '', margin: '' })
     })
+    .on('pointerdown', e => {
+      e.stopPropagation()
+
+      $(e.currentTarget).data({
+        mins: (([w, h]) => Object({
+          x: e.currentTarget.offsetWidth - w,
+          y: e.currentTarget.offsetHeight - h,
+        }))($(e.currentTarget).css('backgroundSize').px2int())
+      })
+    })
+    .on('pointermove', e => {
+      e.stopPropagation()
+
+      const mins = $(e.currentTarget).data().mins
+      if (!mins) {
+        return
+      }
+
+      let [x, y] = $(e.currentTarget).css('backgroundPosition').px2int()
+
+      e = e.originalEvent
+
+      if ((x += e.movementX) > 0) {
+        x = 0
+      } else if (x < mins.x) {
+        x = mins.x
+      }
+      if ((y += e.movementY) > 0) {
+        y = 0
+      } else if (y < mins.y) {
+        y = mins.y
+      }
+
+      $(e.currentTarget).css('background-position', `${x}px ${y}px`)
+    })
+    .on('pointerup', e => {
+      e.stopPropagation()
+
+      delete $(e.currentTarget).data().mins
+
+      const $vpt = $(e.currentTarget),
+        src = (cnv => Object({ w: cnv.width, h: cnv.height }))($(`body>${canvas}`).get(0)),
+        ratio = (([sizew, sizeh]) => Object({ x: src.w / sizew, y: src.h / sizeh }))
+          ($vpt.css('backgroundSize').px2int()),
+        [x1, y1] = (([posx, posy]) => [-posx * ratio.x, -posy * ratio.y])
+          ($vpt.css('backgroundPosition').px2int()),
+        [x2, y2] = (vpt => [x1 + vpt.offsetWidth * ratio.x, y1 + vpt.offsetHeight * ratio.y])
+          ($vpt.get(0))
+
+      $vpt.trigger('scale', {
+        imgid: $(`body>${statrow}.selected`).data('scaleargs').imgid,
+        x1,
+        y1,
+        x2,
+        y2,
+      })
+    })
+    .on('wheelend', (e, data) => $(e.currentTarget).trigger('touchend', data))
     .on('wheel', e => {
       e.preventDefault()
 
@@ -429,20 +474,18 @@ $(_ => {
 
       if (now - (data.wheeltime ?? 0) < 50) {
         return
-      } else if (data.wheelend) {
-        clearTimeout(data.wheelend)
+      } else if (data.touchend) {
+        clearTimeout(data.touchend)
       }
 
       data.wheeltime = now
-      data.wheelend = setTimeout(() => {
-        delete data.wheelend
-        $(e.currentTarget).trigger('wheelend')
-      }, 200)
+      data.touchend = setTimeout(() => $(e.currentTarget).trigger('wheelend', data), 200)
 
-      e.currentTarget.resize({
+      $(e.currentTarget).trigger('slide', {
+        // offsets are sometimes constant across multiple events related by
+        // a continuous movement
         x: e.offsetX,
         y: e.offsetY,
-      }, {
         // delta values are positive moving towards the origin which is top-left
         // in html-parlance; inverting deltaX is the first of several adjustments
         // we make to translate the origin to the center of the viewport so 
@@ -452,57 +495,54 @@ $(_ => {
         dy: e.originalEvent.deltaY,
       })
     })
-    .get(0)
+    .on('slide', (e, { x, y, dx, dy }) => {
+      const $grid = $(e.currentTarget.querySelector(':scope>.grid-overlay')),
+        css = (o => {
+          for (const k in o) {
+            o[k] = o[k].replace(/px$/, '') * 1
+          }
+          return o
+        })($grid.css([
+          'width',
+          'height',
+          'margin-left',
+          'margin-top',
+          'margin-right',
+          'margin-bottom',
+        ])),
+        [w, h] = [e.currentTarget.offsetWidth, e.currentTarget.offsetHeight]
 
-  vpt.resize = function (o, d) {
-    const $grid = $(this.querySelector(':scope>.grid-overlay')),
-      gridbox = (o => {
-        for (const k in o) {
-          o[k] = o[k].replace(/px$/, '') * 1
-        }
-        return o
-      })($grid.css([
-        'width',
-        'height',
-        'margin-left',
-        'margin-top',
-        'margin-right',
-        'margin-bottom',
-      ]))
+      let hmarg = 'margin-right',
+        vmarg = 'margin-top'
 
-    let dx = d.dx,
-      dy = d.dy,
-      hmarg = 'margin-right',
-      vmarg = 'margin-top'
+      if (x - w / 2 < 0) {
+        hmarg = 'margin-left'
+        dx *= -1
+      }
+      if (y - h / 2 > 0) {
+        vmarg = 'margin-bottom'
+        dy *= -1
+      }
 
-    if (o.x - this.offsetWidth / 2 < 0) {
-      hmarg = 'margin-left'
-      dx *= -1
-    }
-    if (o.y - this.offsetHeight / 2 > 0) {
-      vmarg = 'margin-bottom'
-      dy *= -1
-    }
+      // bounds checking
+      if (css[hmarg] - dx < 0) {
+        dx = -css[hmarg]
+      } else if (css.width + dx < 100) {
+        dx = 100 - css.width
+      }
+      if (css[vmarg] - dy < 0) {
+        dy = -css[vmarg]
+      } else if (css.height + dy < 100) {
+        dy = 100 - css.height
+      }
 
-    // bounds checking
-    if (gridbox[hmarg] - dx < 0) {
-      dx = -gridbox[hmarg]
-    } else if (gridbox.width + dx < 100) {
-      dx = 100 - gridbox.width
-    }
-    if (gridbox[vmarg] - dy < 0) {
-      dy = -gridbox[vmarg]
-    } else if (gridbox.height + dy < 100) {
-      dy = 100 - gridbox.height
-    }
+      css[hmarg] = `${Math.round(w - css.width - dx)}px`
+      css[vmarg] = `${Math.round(h - css.height - dy)}px`
+      css.width = `${Math.round(css.width + dx)}px`
+      css.height = `${Math.round(css.height + dy)}px`
 
-    gridbox[hmarg] = `${Math.round(this.offsetWidth - gridbox.width - dx)}px`
-    gridbox[vmarg] = `${Math.round(this.offsetHeight - gridbox.height - dy)}px`
-    gridbox.width = `${Math.round(gridbox.width + dx)}px`
-    gridbox.height = `${Math.round(gridbox.height + dy)}px`
-
-    $grid.css(gridbox)
-  }
+      $grid.css(css)
+    }), 150)
 
   class pixelMap {
     /*

@@ -329,7 +329,7 @@ $(_ => {
       sessionStorage[$(e.currentTarget)
         .parents('[breadcrumb]')
         .first()
-        .attr('breadcrumb')] = e.currentTarget.id
+        .attr('breadcrumb')] = e.currentTarget.id ?? 'foobar'
     })
     .on('click', '.table>.rows>.row.record:not(.selected)', e => {
       e.stopPropagation()
