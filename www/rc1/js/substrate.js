@@ -1,29 +1,26 @@
 (_ => {
-  let ws = '.main>.workspace.substrate'
-  let table = `${ws}>.table.substrate`
-  let sub = `${table}>.rows`
-  let subrow = `${sub}>.row.record`
-  let child = `${table}>.workspace.ingredients>.table.ingredient`
-  let ing = `${child}>.rows`
-  let ingrows = `${ing}>.row.record`
-
-  let selecting = `.substrate .table.ingredient.selecting>.rows>.record`
+  const ws = '.main>.workspace.substrate'
+  const table = `${ws}>.table.substrate`
+  const filter = `${table}>.columns>.type>label>select`
+  const sub = `${table}>.rows`
+  const subrow = `${sub}>.row.record`
+  const child = `${table}>.workspace.ingredients>.table.ingredient`
+  const ing = `${child}>.rows`
+  const ingrows = `${ing}>.row.record`
+  const selecting = `${child}.selecting>.rows>.record`
 
   $(document.body)
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
-      $(`body>${child}`).trigger('activate')
+      setTimeout(_ => {
+        $(`body>${child}`)
+          .removeAttr('breadcrumb')
+          .find('>.rows>.row')
+          .addClass('managed')
 
-      $(`body>${table}>[x-child]`).trigger('add-child', _ => {
-        $(`body>${ing}>.x-template`).addClass('managed')
-        // FIXME: outstanding sync issue, seems like substrate has no rows 
-        //  yet; but when select is called from rows::send, ingredients has 
-        //  no rows; what's the intersection when both tables are settled in
-        $(`${sub}`).selected().data('ingredients')?.forEach(v => {
-          $(`body>${ingrows}#${v.id}`).addClass('selected')
-        })
-      })
+        $(`body>${table}`).selected().trigger('select')
+      }, 500)
     })
     .on('unmarshal', subrow, (e, data) => {
       e.stopPropagation()
@@ -33,17 +30,15 @@
     .on('select', `>${subrow}`, e => {
       e.stopPropagation()
 
-      console.log('select substrate', $(`body>${ingrows}`).length)
       $(`body>${child}`)
         .removeClass('selecting')
         .find('>.rows>.row.selected')
         .removeClass('selected')
 
-      $(e.currentTarget).data('ingredients')?.forEach(v => {
-        $(`body>${ingrows}#${v.id}`).addClass('selected')
-      })
+      $(e.currentTarget).data('ingredients')?.forEach(v =>
+        $(`body>${ingrows}#${v.id}`).addClass('selected'))
     })
-    .on('click', `${selecting}:not(.selected)`, e => {
+    .on('click', `>${selecting}:not(.selected)`, e => {
       e.stopPropagation()
 
       $(e.currentTarget).trigger('update-children', [
@@ -55,7 +50,7 @@
         201,
       ])
     })
-    .on('click', `${selecting}.selected`, e => {
+    .on('click', `>${selecting}.selected`, e => {
       e.stopPropagation()
 
       $(e.currentTarget).trigger('update-children', [
@@ -64,7 +59,7 @@
         200,
       ])
     })
-    .on('update-children', selecting, (e, url, args, ok = 201) => {
+    .on('update-children', `>${selecting}`, (e, url, args, ok = 201) => {
       e.stopPropagation()
 
       fetch(url, args).then(async resp => {
@@ -73,27 +68,25 @@
           message: await resp.text(),
         }
         return await resp.json()
-      }).then(json => {
-        $(e.currentTarget)
-          .toggleClass('selected')
-        $(`body>${subrow}.selected`)
-          .data('ingredients', json.ingredients)
-      }).catch(ex => $(e.currentTarget).notify('error',
+      }).then(json => $(`body>${subrow}.selected`).data('ingredients', json.ingredients)
+      ).then(_ => $(e.currentTarget).toggleClass('selected')
+      ).catch(ex => $(e.currentTarget).notify('error',
         `${args.method} '${url}' statusCode: ${ex.status ?? 'unsent'}`,
         ex,
       ))
     })
-    .on('click', `${child}>.buttonbar`, e => {
+    .on('click', `>${child}>.buttonbar`, e => {
       e.stopPropagation()
 
       $(e.currentTarget.parentNode).toggleClass('selecting')
     })
-    .on('change', `${table}>.columns>.type>label>select`, e => {
+    .on('change', `>${filter}`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget)
-        .parents('.table.substrate')
-        .first()
-        .attr('type-filter', e.currentTarget.value)
+      const $table = $(`body>${table}`).attr('type-filter', e.currentTarget.value)
+
+      if ($table.selected().is(':not(:visible)')) {
+        $table.find('>.rows>.row:visible:first').trigger('select')
+      }
     })
 })()

@@ -2,7 +2,7 @@
   --event-table-height: 20em;
 }
 
-.workspace.events>.table.events {
+.workspace.event>.table.event {
   float: left;
   width: 100%;
 

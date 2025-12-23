@@ -60,7 +60,7 @@ $(_ => {
 
       $(e.currentTarget).trigger('init')
     })
-    .on('camera', `>${menubar}`, (e, fetchurl, method, success) => {
+    .on('camera', `>${menubar}`, (e, initargs = { fetchurl, method, img, success }) => {
       e.stopPropagation()
 
       $(e.currentTarget)
@@ -71,11 +71,7 @@ $(_ => {
       //  unless we build it into the short return, and there's still a timing issue with
       //  the javascript loading (it should really happen *after* the html, but that 
       //  happens elsewhere)
-      setTimeout(_ => $(`body>${spaces}.camera`).trigger('init', [
-        fetchurl,
-        method,
-        success,
-      ]), 50)
+      setTimeout(_ => $(`body>${spaces}.camera`).trigger('init', initargs), 50)
     })
     .on('un-camera', `>${menubar}`, e => {
       e.stopPropagation()
@@ -88,8 +84,6 @@ $(_ => {
       e.stopPropagation()
 
       slug ??= sessionStorage[sessionStorage.menu]
-
-      $(document.body).removeClass('disabled')
 
       if ($(`body>${spaces}.${slug}`).trigger('activate', slug).length) {
         return
@@ -104,18 +98,18 @@ $(_ => {
     .on('click', `>${menubar} .menubtn.selected`, e => {
       e.stopPropagation()
 
-      if ($(e.currentTarget.parentNode.parentNode)
-        .toggleClass('selecting')
-        .hasClass('selecting')
-      ) {
-        // // FIXME: move to enable-workspace?
-        // $(document.body).addClass('disabled')
-      }
+      $(document.body).toggleClass('selecting')
     })
-    .on('click', `>.selecting${ndxbtn}.selected`, e => {
+    .on('click', `>${ndxbtn}.selected, >body.selecting>${itembtn}.selected`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget.parentNode.parentNode).trigger('enable-workspace')
+      if ($(document.body).hasClass('selecting')) {
+        return
+      }
+
+      console.log('slug', $(`body>${itembtn}.selected`).attr('x-stub'))
+      $(e.currentTarget.parentNode.parentNode)
+        .trigger('enable-workspace', $(`body>${itembtn}.selected`).attr('x-stub'))
     })
     .on('click', `>${ndxbtn}:not(.selected)`, e => {
       e.stopPropagation()
@@ -144,12 +138,10 @@ $(_ => {
             .attr(itemkey))
       }
 
-      $(`body>${itembtn}.${menu}[${itemkey}=${slug}]`).addClass('selected')
-    })
-    .on('click', `>.selecting${itembtn}.selected`, e => {
-      e.stopPropagation()
-
-      $(e.currentTarget.parentNode.parentNode).trigger('enable-workspace')
+      $(`body>${itembtn}.${menu}[${itemkey}=${slug}]`)
+        .addClass('selected')
+        .siblings()
+        .removeClass('selected')
     })
     .on('click', `>${itembtn}:not(.selected)`, e => {
       e.stopPropagation()
@@ -160,12 +152,9 @@ $(_ => {
         .addClass('selected')
         .attr('x-stub')
 
-      $(e.currentTarget.parentNode.parentNode)
+      $(document.body)
         .removeClass('selecting')
+        .find('>.menubar')
         .trigger('enable-workspace')
-      // // FIXME: move to enable-workspace?
-      // .parent()
-      // .removeClass('disabled')
-
     })
 })

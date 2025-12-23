@@ -1,25 +1,25 @@
 (_ => {
-  let bar = '.buttonbar'
-  let defaults = `${bar}>.default`
-  let static = `:not(.editing, .adding)>${defaults}`
+  const bar = '.buttonbar'
+  const defaults = `${bar}>.default`
+  const static = `:not(.editing, .adding)>${defaults}`
 
   $(document.body)
     .on('click', `${defaults}.delete`, e => {
       e.stopPropagation()
 
-      let $table = $(e.currentTarget)
+      const $table = $(e.currentTarget)
         .parents('[breadcrumb]')
         .first()
 
-      let $row = $(e.currentTarget).selected()
+      const $row = $(e.currentTarget).selected()
 
-      let url = `${$table.attr('breadcrumb')}/${$row.attr('id')}`
+      const url = `${$table.attr('breadcrumb')}/${$row.attr('id')}`
       $row.trigger('default-remove', url)
     })
     .on('click', `${static}.notes`, e => {
       e.stopPropagation()
 
-      let $parent = $(e.currentTarget)
+      const $parent = $(e.currentTarget)
         .parents('.table')
         .first()
 
@@ -37,7 +37,7 @@
     .on('click', `${static}.photos`, e => {
       e.stopPropagation()
 
-      let $parent = $(e.currentTarget)
+      const $parent = $(e.currentTarget)
         .parents('.table')
         .first()
 
@@ -84,16 +84,16 @@
     .on('click', `${defaults}.save`, e => {
       e.stopPropagation()
 
-      let $table = $(e.currentTarget.parentNode)
+      const $table = $(e.currentTarget.parentNode)
         .trigger('toggle', e.currentTarget)
         .parents('[x-fetch]')
         .first()
 
-      let body = {}, args
+      const body = {}
       $(e.currentTarget)
         .selected()
         .trigger('marshal', body)
-        .trigger('default-update', args = [
+        .trigger('default-update', [
           `${$table.attr('x-fetch')}/${body.id}`.replace(/\/$/, ''),
           {
             method: body.id ? 'PATCH' : 'POST',
@@ -103,12 +103,12 @@
     .on('toggle', bar, (e, caller) => {
       e.stopPropagation()
 
-      let $bar = $(e.currentTarget)
+      const $bar = $(e.currentTarget)
       if (!caller) {
         caller = $bar.find('>.edit').get(0)
       }
 
-      let classes = caller?.className
+      const classes = caller?.className
       if (/\badd\b/.test(classes)) {
         $(caller).toggleClass('add cancel').attr({
           'title': 'cancel',
@@ -120,8 +120,8 @@
           'x-alt': 'edit',
         })
       } else {
-        let $btn = $bar.find('[x-alt]')
-        let alt = $btn.attr('x-alt')
+        const $btn = $bar.find('[x-alt]')
+        const alt = $btn.attr('x-alt')
         $btn
           .toggleClass(`cancel ${alt}`)
           .attr('title', alt)
@@ -141,8 +141,8 @@
         return // unfortunate consequence of the rest of this being so simple
       }
 
-      let classes = e.currentTarget.className
-      let $table = $(e.currentTarget.parentNode)
+      const classes = e.currentTarget.className
+      const $table = $(e.currentTarget.parentNode)
         .trigger('toggle', e.currentTarget)
         .parents('[x-target]')
         .first()

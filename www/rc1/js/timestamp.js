@@ -1,57 +1,57 @@
 $(_ => {
-  let ts = 'body.ts-editing>.timestamp'
-  let title = `${ts}>.title`
-  let toggle = `${title}>.toggle>.relative`
-  let include = `${ts}>.includes>label>.include`
-  let form = `${ts}>.form`
-  let update = `${form}>.relative`
-  let refdate = `${ts}>.absolute>input`
-  let btn = `${ts}>.buttons>.button`
-  let editable = '[ts-edit] [id].editing:not(.adding)'
+  const ts = 'body.ts-editing>.timestamp'
+  const title = `${ts}>.title`
+  const toggle = `${title}>.toggle>.relative`
+  const include = `${ts}>.includes>label>.include`
+  const form = `${ts}>.form`
+  const update = `${form}>.relative`
+  const refdate = `${ts}>.absolute>input`
+  const btn = `${ts}>.buttons>.button`
+  const editable = '.contexting [ts-edit] [id]:not(.adding)'
   // so far, we don't display dtime, so trigger on mtime and 
   // include dtime with the update
-  let stamps = `${editable} .mtime, ${editable} .ctime`
-
-  $(document.body).on('click', stamps, e => {
-    e.stopPropagation()
-
-    if ($(e.delegateTarget).hasClass('ts-editing')) {
-      // warn and bail?
-      $(e.currentTarget).notify('warn', 'editing timestamp', 'editor already open')
-      return
-      // or replace old data with the new one and continue?
-    }
-
-    $(e.delegateTarget).addClass('ts-editing')
-
-    let $fld = $(e.currentTarget)
-    let $ts = $(ts)
-    let data = {
-      $fld,
-      val: $fld.data('src-date'),
-      table: $fld.parents('[ts-edit]').first().attr('ts-edit'),
-      key: $fld.parents('[id]').first().attr('id'),
-    }
-    $ts
-      .data(data)
-      .css($fld.get(0)
-        .getBoundingClientRect()
-        .timestampCSS($ts.get(0)
-          .getBoundingClientRect()))
-
-    $(`${title}>.tablename`).text(data.table)
-    $(toggle).prop('checked', true).trigger('change')
-    $(include).each((_, fld) => $(fld).prop('checked', fld.name === $fld.attr('name')))
-    $(form).trigger('reset')
-    $(refdate).val(data.val.localVal())
-  })
+  const stamps = `${editable} .mtime, ${editable} .ctime`
 
   $(document)
+    // open the editor
+    .on('click', stamps, e => {
+      e.stopPropagation()
+
+      if ($(document.body).hasClass('ts-editing')) {
+        // warn and bail?
+        $(e.currentTarget).notify('warn', 'editing timestamp', 'editor already open')
+        return
+        // or replace old data with the new one and continue?
+      }
+
+      $(document.body).addClass('ts-editing')
+
+      const $fld = $(e.currentTarget)
+      const $ts = $(ts)
+      const data = {
+        $fld,
+        val: $fld.data('src-date'),
+        table: $fld.parents('[ts-edit]').first().attr('ts-edit'),
+        key: $fld.parents('[id]').first().attr('id'),
+      }
+      $ts
+        .data(data)
+        .css($fld.get(0)
+          .getBoundingClientRect()
+          .timestampCSS($ts.get(0).getBoundingClientRect()))
+
+      $(`${title}>.tablename`).text(data.table)
+      $(toggle).prop('checked', true).trigger('change')
+      $(include).each((_, fld) => $(fld).prop('checked', fld.name === $fld.attr('name')))
+      $(form).trigger('reset')
+      $(refdate).val(data.val.localVal())
+    })
+
     // actions
     .on('close', ts, e => {
       e.stopPropagation()
 
-      let $fld = $(e.currentTarget).data('$fld')
+      const $fld = $(e.currentTarget).data('$fld')
 
       $(e.currentTarget).removeData()
 

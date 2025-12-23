@@ -1,4 +1,4 @@
-$(_ => {
+(_ => {
   const ws = '.main>.workspace.camera'
   const imgbox = `${ws}>.imgbox`
   const devs = `${imgbox}>.viddevs>.rows`
@@ -28,16 +28,10 @@ $(_ => {
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
-      // TODO: clear all the things here
-    })
-    .on('init', `>${ws}`, (e, fetchurl, method, success = _ => _) => {
-      e.stopPropagation()
-
-      $(e.currentTarget).data({ fetchurl, method, success })
-
-      $(window).trigger('resize')
-
-      const $devs = $(`body>${devs}`).trigger('clear')
+      const $devs = $(document.body)
+        .find(`>${devs}, >${viewport}, >${stats}, >${archive}, >${greys}`)
+        .trigger('clear')
+        .first() // array ordinal is determined by page layout, *not their order in find(...)
 
       if (!navigator.mediaDevices?.enumerateDevices()
         .then(devices => devices
@@ -63,6 +57,15 @@ $(_ => {
           'querying media devices',
           'no (permissions for) media devices'
         )
+      }
+    })
+    .on('init', `>${ws}`, (e, { fetchurl, method, img, success = _ => _ }) => {
+      e.stopPropagation()
+
+      $(e.currentTarget).data({ fetchurl, method, success })
+
+      if (img) {
+        $(`body>${canvas}`).trigger('blit', [img, img.naturalWidth, img.naturalHeight])
       }
     })
     .on('deactivate', `>${ws}`, (e, photos) => {
@@ -123,7 +126,7 @@ $(_ => {
         .then(blob => createImageBitmap(blob))
         .then(bmp => $(`body>${canvas}`).trigger('blit', [bmp, bmp.width, bmp.height]))
         .then(_ => $(`body>${device}.selected`).trigger('click'))
-        .catch(ex => console.log('takePhoto failed:', ex))
+        .catch(ex => $(e.currentTarget).notify('error', 'takePhoto', ex))
 
       document.fullscreenElement && document.exitFullscreen()
     })
@@ -152,6 +155,7 @@ $(_ => {
 
       $(`body>${control}`).trigger('reset-controls')
     })
+    .on('clear', `>${viewport}`, e => $(e.currentTarget).css('background', ''))
     .on('scale', `>${viewport}`, (e, { imgid, x1 = 0, y1 = 0, x2, y2 }) => {
       [x1, y1, x2, y2] = [
         Math.round(x1),
@@ -312,14 +316,6 @@ $(_ => {
     // audit stuff
     .on('clear', `>${greys}`, e => $(e.currentTarget).empty())
 
-    // DEPRECATED, there's a better way
-    .on('click', `${editor}>.viewport`, e => {
-      let pic = e.currentTarget.querySelector(':scope>canvas')
-      let ctx = pic.getContext('2d', { alpha: false, willReadFrequently: true })
-      let pm = new pixelMap(ctx.getImageData(0, 0, pic.width, pic.height).data)
-      pm.draw($('.colormap').empty().get(0))
-    })
-
     // workspace actions
     .on('click', `>${ctlbtn}.cancel`, e => $(`body>${ws}`).trigger('deactivate'))
     .on('click', `>${ctlbtn}.reset`, e => {
@@ -369,8 +365,8 @@ $(_ => {
           )))
     })
 
-  // passive events can't `preventDefault()`, so these handlers are 
-  // attached directly to the viewport
+  // passive events can't `preventDefault()`, so these handlers are attached 
+  // directly to the viewport (FIXME: does propagation matter?)
   setTimeout(_ => $(`body>${viewport}`)
     .on('touchstart', e => {
       console.log('touchstart')
@@ -408,19 +404,13 @@ $(_ => {
 
       $grid.css({ width: '', height: '', margin: '' })
     })
-    .on('pointerdown', e => {
-      e.stopPropagation()
-
-      $(e.currentTarget).data({
-        mins: (([w, h]) => Object({
-          x: e.currentTarget.offsetWidth - w,
-          y: e.currentTarget.offsetHeight - h,
-        }))($(e.currentTarget).css('backgroundSize').px2int())
-      })
-    })
+    .on('pointerdown', e => $(e.currentTarget).data({
+      mins: (([w, h]) => Object({
+        x: e.currentTarget.offsetWidth - w,
+        y: e.currentTarget.offsetHeight - h,
+      }))($(e.currentTarget).css('backgroundSize').px2int())
+    }))
     .on('pointermove', e => {
-      e.stopPropagation()
-
       const mins = $(e.currentTarget).data().mins
       if (!mins) {
         return
@@ -444,8 +434,6 @@ $(_ => {
       $(e.currentTarget).css('background-position', `${x}px ${y}px`)
     })
     .on('pointerup', e => {
-      e.stopPropagation()
-
       delete $(e.currentTarget).data().mins
 
       const $vpt = $(e.currentTarget),
@@ -467,7 +455,7 @@ $(_ => {
     })
     .on('wheelend', (e, data) => $(e.currentTarget).trigger('touchend', data))
     .on('wheel', e => {
-      e.preventDefault()
+      // e.preventDefault()
 
       let data = $(e.currentTarget).data()
       let now = new Date().getTime()
@@ -618,4 +606,4 @@ $(_ => {
       }
     }
   }
-})
+})()

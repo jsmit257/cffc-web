@@ -80,7 +80,11 @@ $(_ => {
         .insertBefore($tmpl)
         .trigger('unmarshal', record))
 
-      $(e.currentTarget).selected($(e.currentTarget).breadcrumb())
+      try {
+        $(e.currentTarget).selected($(e.currentTarget).breadcrumb())
+      } catch (ex) {
+        throw new Error('failed to set selected', { cause: ex })
+      }
     })
     .on('unmarshal', record, (e, data) => {
       let $row = $(e.currentTarget).attr({
@@ -264,34 +268,30 @@ $(_ => {
         .parents('.editing')
         .first()
 
-      fetch(url, {
-        ...params,
-        body: JSON.stringify(params.body),
-      }).then(async resp => {
-        switch (resp.status) {
-          case 200:
-          case 201: return await resp.json()
-          case 204: return {
-            ...$(e.currentTarget).data(),
-            ...params.body
+      fetch(url, { ...params, body: JSON.stringify(params.body) })
+        .then(async resp => {
+          switch (resp.status) {
+            case 200:
+            case 201: return await resp.json()
+            case 204: return {
+              ...$(e.currentTarget).data(),
+              ...params.body
+            }
+            default: throw {
+              status: resp.status,
+              message: await resp.text(),
+            }
           }
-          default: throw {
-            status: resp.status,
-            message: await resp.text(),
-          }
-        }
-      }).then(json => sessionStorage.setItem($(e.currentTarget)
-        .data(json)
-        .parents('[breadcrumb]')
-        .first()
-        .attr('breadcrumb'),
-        json.id)
+        })
+        .then(json => json.id ? json : json?.at(0))
+        .then(json => $(e.currentTarget).data(json).breadcrumb(json.id ?? 'quux'))
         // might be nice to re-sort and scroll-to as needed
-      ).catch(ex => $(e.currentTarget).notify('error',
-        `${params.method} ${url} statusCode: ${ex.status ?? 'unsent'}`,
-        ex,
-        params)
-      ).finally(_ => { $table.trigger('disable-record') })
+        .catch(ex => $(e.currentTarget).notify('error',
+          `${params.method} ${url} statusCode: ${ex.status ?? 'unsent'}`,
+          ex,
+          params)
+        )
+        .finally(_ => { $table.trigger('disable-record') })
     })
     .on('default-remove', '.table>.rows>.row.record.selected', (e, url) => {
       e.stopPropagation()
@@ -320,16 +320,20 @@ $(_ => {
     .on('select', '.table:not(.editing, .adding)>.rows>.row.record:not(.managed)', e => {
       e.stopPropagation()
 
-      $(e.currentTarget.parentNode)
-        .find('>.selected')
+      // $(e.currentTarget.parentNode)
+      //   .find('>.selected')
+      //   .removeClass('selected')
+
+      $(e.currentTarget)
+        .addClass('selected')
+        .breadcrumb(e.currentTarget.id || 'foobar')
+        .siblings('.selected')
         .removeClass('selected')
 
-      $(e.currentTarget).addClass('selected')
-
-      sessionStorage[$(e.currentTarget)
-        .parents('[breadcrumb]')
-        .first()
-        .attr('breadcrumb')] = e.currentTarget.id ?? 'foobar'
+      // sessionStorage[$(e.currentTarget)
+      //   .parents('[breadcrumb]')
+      //   .first()
+      //   .attr('breadcrumb')] = e.currentTarget.id || 'foobar'
     })
     .on('click', '.table>.rows>.row.record:not(.selected)', e => {
       e.stopPropagation()

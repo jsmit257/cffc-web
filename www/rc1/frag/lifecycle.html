@@ -67,12 +67,12 @@
       <input class="bulk_cost" name="bulk_cost" type="number" min="0" step="0.01" value="0.00" tabindex="0">
     </label>
 
-    <label class="field hover">
+    <label class="field hover mtime">
       <div class="label">Modified</div>
       <div class="mtime short-date" name="mtime" x-formatter="short-date"></div>
     </label>
 
-    <label class="field hover">
+    <label class="field hover ctime">
       <div class="label">Created</div>
       <div class="ctime short-date" name="ctime" x-formatter="short-date"></div>
     </label>
@@ -89,5 +89,5 @@
     <div class="button default text action delete"></div>
   </div>
 
-  <div class="child-table workspace active events" x-child="event"></div>
+  <div class="child-table workspace active event" x-child="event"></div>
 </div>

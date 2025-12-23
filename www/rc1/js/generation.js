@@ -1,30 +1,20 @@
 (_ => {
-  let ws = '.main>.workspace.generation'
-  let table = `${ws}>.table.generation`
-  let ndx = `${table}>.rows.ndx`
-  let ndxrow = `${ndx}>.row.record`
-  let gen = `${table}>.singleton.generation`
-  let progeny = `${gen}>.field>.progeny`
-  let srctable = `${table}>.workspace.sources>.table.sources`
-  let srcrows = `${srctable}>.rows>.row.record`
-  let events = `${table}>.child-table>.events>.rows`
-  let eventrows = `${events}>.row.record`
+  const ws = '.main>.workspace.generation'
+  const table = `${ws}>.table.generation`
+  const ndx = `${table}>.rows.ndx`
+  const ndxrow = `${ndx}>.row.record`
+  const gen = `${table}>.singleton.generation`
+  const progeny = `${gen}>.field>.progeny`
+  const srctable = `${table}>.workspace.sources>.table.sources`
+  const srcrows = `${srctable}>.rows>.row.record`
+  const events = `${table}>.child-table>.event>.rows`
+  const eventrows = `${events}>.row.record`
 
   $(document.body)
     .on('activate', `>${ws}`, e => {
       e.stopPropagation()
 
       $(`body>${progeny}`).trigger('fetch')
-
-      $(`body>${table}>[x-child]`).trigger('add-child')
-
-      //       $(e.currentTarget)
-      //         .find('>.table.generation>.child-table.sources')
-      //         .trigger('add-child')
-      // 
-      //       $(e.currentTarget)
-      //         .find('>.table.generation>.child-table.events')
-      //         .trigger('add-child')
     })
     .on('select', `>${ndxrow}`, e => {
       // .on('click', `>${ndxrow}:not(.selected)`, e => {

@@ -1,19 +1,13 @@
 (_ => {
-  let ws = '.child-table.notes'
-  let table = `${ws}>.table.notes`
-  let row = `${table}>.rows>.row.record`
-  let note = `${row}>label>textarea`
-  let btn = `${row}>.rowbar>.button`
-  let add = `${table}>.buttonbar>.add`
+  const ws = '.child-table.notes'
+  const table = `${ws}>.table.notes`
+  const row = `${table}>.rows>.row.record`
+  const note = `${row}>label>textarea`
+  const btn = `${row}>.rowbar>.button`
+  const add = `${table}>.buttonbar>.add`
 
   $(document.body)
-    .on('activate', `${ws}`, e => {
-      e.stopPropagation()
-
-      // console.log('activating notes', $(e.currentTarget)
-      //   .parents('.table')
-      //   .first())
-    })
+    .on('activate', `${ws}`, e => e.stopPropagation())
     .on('click', row, e => e.stopPropagation())
     .on('click', `${add}`, e => {
       e.stopPropagation()

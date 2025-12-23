@@ -17,25 +17,16 @@
       e.stopPropagation()
 
       $(sadatalist).trigger('fetch')
-
-      $(`body>${strain}>[x-child]`).trigger('add-child', $ws => {
-        let breadcrumb = `photos/${sessionStorage.strain}`
-        $ws.find('>.table.photos').attr({
-          breadcrumb,
-          'x-fetch': breadcrumb,
-        })
-      })
     })
     .on('select', `>${strainrow}`, e => {
       e.stopPropagation()
 
       let id = $(e.currentTarget).data('id')
 
-      // FIXME: same problem with clutter as notes child in lifecycle, et al
-      let breadcrumb = `photos/${id}`
+      let breadcrumb = `strain/${id}/photo`
       $(`body>${photos}`).attr({
         breadcrumb,
-        'x-fetch': breadcrumb,
+        'x-fetch': `photos/${id}`,
       })
 
       $(e.currentTarget)

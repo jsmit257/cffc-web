@@ -7,25 +7,17 @@
   let note = `${photo}>child-table.notes>.table.notes`
 
   $(document.body)
-    .on('activate', ws, e => {
-      e.stopPropagation()
-
-      $(e.currentTarget).find('[x-child]').trigger('add-child', $ws => {
-        let photoid = sessionStorage[`photos/${sessionStorage.strain}`]
-        let breadcrumb = `notes/${photoid}`
-        $ws.find('>.table.notes').attr({
-          breadcrumb,
-          'x-fetch': breadcrumb,
-        })
-      })
-    })
+    .on('activate', ws, e => e.stopPropagation())
     .on('select', photorow, e => {
       e.stopPropagation()
 
-      let breadcrumb = `${$(e.currentTarget).parents('[breadcrumb]').attr('breadcrumb')}/note`
+      const breadbase = $(e.currentTarget).parents('[breadcrumb]').attr('breadcrumb'),
+        id = e.currentTarget.id,
+        breadcrumb = `${breadbase}/${id}/note`
+
       $(note).attr({
         breadcrumb,
-        'x-fetch': `notes/${e.currentTarget.id}`,
+        'x-fetch': `notes/${id}`,
       })
     })
     .on('click', photorow, e => {
@@ -121,29 +113,22 @@
     .on('click', `${photorow}>.camera`, e => {
       e.stopPropagation()
 
-      let $row = $(e.currentTarget.parentNode)
+      let $row = $(e.currentTarget.parentNode),
+        $img = $row.find('>.imgtile>.image')
 
-      // console.log('well, that didnt last long', [
-      //   `${$row
-      //     .parents('[x-fetch]')
-      //     .first()
-      //     .attr('x-fetch')}/${$row.attr('id')}`
-      //     .replace(/\/undefined$/, ''),
-      //   $row.hasClass('adding') ? "POST" : "PATCH",
-      //   photos => $row.data(photos).trigger('disable-record'),
-      // ], $('body>.menubar'))
-      $('body>.menubar').trigger('camera', [
-        `${$row
+      $('body>.menubar').trigger('camera', {
+        fetchurl: `${$row
           .parents('[x-fetch]')
           .first()
           .attr('x-fetch')}/${$row.attr('id')}`
           .replace(/\/undefined$/, ''),
-        $row.hasClass('adding') ? "POST" : "PATCH",
-        photos => $row
+        method: $row.hasClass('adding') ? "POST" : "PATCH",
+        img: $img.attr('src') && $img.get(0),
+        success: photos => $row
           .data(photos)
           .trigger('disable-record')
           .find('>.rowbar')
           .trigger('toggle'),
-      ])
+      })
     })
 })()

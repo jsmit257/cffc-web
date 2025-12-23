@@ -122,6 +122,10 @@ body {
     }
   }
 
+  &.selecting>.main {
+    display: none;
+  }
+
   &.hide-deleted [dtime],
   &.hide-timestamp .scalar:is([sort-key="mtime"], [sort-key="ctime"]),
   &.hide-uuid .scalar[sort-key="id"],
@@ -135,10 +139,15 @@ body {
     float: left;
     left: 0;
     position: fixed;
-    z-index: var(--z-menu);
+    z-index: var(--z-disabled);
 
     &>ul {
       float: left;
+    }
+
+    &>.powered-by,
+    &>.cookie-bar {
+      z-index: var(--z-menu);
     }
 
     &>.cookie-bar {

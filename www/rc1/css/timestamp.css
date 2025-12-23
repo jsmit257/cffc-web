@@ -1,3 +1,8 @@
+.contexting [ts-edit] label:is(.mtime, .ctime) {
+  background-color: #00ff000c;
+  z-index: var(--z-enabled);
+}
+
 .timestamp {
   background-color: #022845ed;
   border-color: ghostwhite;

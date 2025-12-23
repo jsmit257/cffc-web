@@ -1,38 +1,5 @@
-body>.menubar {
-  font-size: larger;
-  font-weight: bold;
-  height: auto;
-  line-height: 3;
-  position: fixed;
-  top: 0;
-  width: 60%;
-  z-index: var(--z-menu);
-
-  & .menubtn {
-    clear: both;
-    cursor: pointer;
-    display: none;
-    padding-left: 1em;
-    width: 100%;
-
-    &::before {
-      color: transparent;
-      content: var(--css-bullet);
-      float: left;
-      padding-right: 1em;
-    }
-
-    &:hover {
-      background-image: linear-gradient(0deg, transparent, #fff1 50%, transparent);
-      font-weight: bold;
-    }
-
-    &.selected {
-      display: inline-block;
-    }
-  }
-
-  &.selecting>:is(.ndx, .items)>.menubtn {
+body {
+  &.selecting>.menubar>:is(.ndx, .items)>.menubtn {
     display: inline-block;
 
     &.selected::before {
@@ -40,30 +7,65 @@ body>.menubar {
     }
   }
 
-  &.menu-main>.items>:not(.main),
-  &.menu-aux>.items>:not(.aux),
-  &.menu-reporting>.items>:not(.reporting) {
-    display: none;
-  }
+  &>.menubar {
+    font-size: larger;
+    font-weight: bold;
+    height: auto;
+    line-height: 3;
+    position: fixed;
+    top: 0;
+    width: 60%;
+    z-index: var(--z-menu);
 
-  &>:is(.ndx, .items) {
-    position: relative;
-  }
+    & .menubtn {
+      clear: both;
+      cursor: pointer;
+      display: none;
+      padding-left: 1em;
+      width: 100%;
 
-  &>.ndx {
-    border-radius: 3em 0 0 3em;
-    float: left;
-    min-width: 12rem;
-    width: 10%;
+      &::before {
+        color: transparent;
+        content: var(--css-bullet);
+        float: left;
+        padding-right: 1em;
+      }
 
-    &>.menubtn {
-      text-align: center;
+      &:hover {
+        background-image: linear-gradient(0deg, transparent, #fff1 50%, transparent);
+        font-weight: bold;
+      }
+
+      &.selected {
+        display: inline-block;
+      }
     }
-  }
 
-  &>.items {
-    border-radius: 0 3em 3em 0;
-    float: left;
-    width: 87.5%;
+    &.menu-main>.items>:not(.main),
+    &.menu-aux>.items>:not(.aux),
+    &.menu-reporting>.items>:not(.reporting) {
+      display: none;
+    }
+
+    &>:is(.ndx, .items) {
+      position: relative;
+    }
+
+    &>.ndx {
+      border-radius: 3em 0 0 3em;
+      float: left;
+      min-width: 12rem;
+      width: 10%;
+
+      &>.menubtn {
+        text-align: center;
+      }
+    }
+
+    &>.items {
+      border-radius: 0 3em 3em 0;
+      float: left;
+      width: 87.5%;
+    }
   }
 }

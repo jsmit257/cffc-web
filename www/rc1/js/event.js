@@ -1,15 +1,9 @@
 (_ => {
-  let table = '.table.events'
-  let eventrow = `${table}>.rows>.row.record`
+  const table = '.table.event'
+  const eventrow = `${table}>.rows>.row.record`
 
   $(document.body)
-    .on('activate', '.child-table.events', (e, slug) => {
-      e.stopPropagation()
-
-      $(e.currentTarget)
-        .find(`>${table}>[x-child]`)
-        .trigger('add-child', _ => $(e.currentTarget).selected().trigger('select'))
-    })
+    .on('activate', '.child-table.event', (e, slug) => e.stopPropagation())
     .on('select', `${eventrow}`, e => {
       e.stopPropagation()
 

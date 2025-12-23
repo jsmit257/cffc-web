@@ -40,12 +40,12 @@ $(_ => {
           state,
         ])
       })
-      return $(this)
+      return this
     },
     selected: function (...ids) {
       let $root, $result
       if (!($root = $(this.find(this.attr('x-target')))).length) {
-        let $table = this.parents('[x-target]').first()
+        const $table = this.parents('[x-target]').first()
         if (!$($root = $table.find($table.attr('x-target')).first()).length) {
           return $('nothing')
         }
@@ -57,13 +57,28 @@ $(_ => {
         ? $result
         : $root.find('>.row.record').first().trigger('select')
     },
-    breadcrumb: function (id) {
-      let key = this.attr('breadcrumb') ?? this
+    breadcrumb: function (id = 'unset') {
+      if (typeof this.parents('.table').attr('no-breadcrumb') !== 'undefined') {
+        return this
+        // return id === 'unset' ? this : undefined
+      }
+
+      const key = this.attr('breadcrumb') ?? this
         .parents('[breadcrumb]')
         .first()
         .attr('breadcrumb')
 
-      return sessionStorage[key] = id ?? sessionStorage[key]
+      if (!key) {
+        throw new Error(`breadcrumb key for '${this.parents('.table').attr('class')}' is null`)
+      } else if (id === 'unset') {
+        return sessionStorage[key]
+      } else if (!id) {
+        throw new Error(`breadcrumb value for '${this.parents('.table').attr('class')}' is null`)
+      }
+
+      sessionStorage[key] = id
+
+      return this
     },
   })
 

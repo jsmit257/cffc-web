@@ -95,7 +95,7 @@ body>.alert {
   padding: .5em;
   position: absolute;
   width: 35%;
-  z-index: 5;
+  z-index: var(--z-error);
 
   &::before {
     background-image: radial-gradient(circle at center, darkgrey 50%, transparent 69%);

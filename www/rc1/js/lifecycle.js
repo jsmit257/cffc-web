@@ -1,74 +1,54 @@
 (_ => {
-  let ws = '.main>.workspace.lifecycle'
-  let table = `${ws}>.table.lifecycle`
-  let ndx = `${table}>.rows.ndx`
-  let ndxrow = `${ndx}>.row.record`
-  let lifecycle = `${table}>.singleton.lifecycle`
-  let events = `${table}>.child-table.events>.table.events`
-  let eventrow = `${events}>.rows>.row.record`
-  let notes = `${table}>.child-table.notes>.notes`
-
-  let yield = `${lifecycle}>label>.yield`
-  let count = `${lifecycle}>label>.count`
-  let gross = `${lifecycle}>label>.gross`
+  const ws = '.main>.workspace.lifecycle'
+  const table = `${ws}>.table.lifecycle`
+  const ndx = `${table}>.rows.ndx`
+  const ndxrow = `${ndx}>.row.record`
+  const lifecycle = `${table}>.singleton.lifecycle`
+  const events = `${table}>.child-table.event>.table.event`
+  const eventrow = `${events}>.rows>.row.record`
+  const notes = `${table}>.child-table.notes>.notes`
+  const yield = `${lifecycle}>label>.yield`
+  const count = `${lifecycle}>label>.count`
+  const gross = `${lifecycle}>label>.gross`
 
   $(document.body)
-    .on('activate', `>${ws}`, e => {
-      e.stopPropagation()
-
-      $(`body>${table}>[x-child="note"]`).trigger('add-child', $ws => {
-        let breadcrumb = `lifecycle/${sessionStorage.lifecycle}/note`
-        $ws.find('>.table.notes').attr({
-          breadcrumb,
-          'x-fetch': `notes/${sessionStorage.lifecycle}`,
-        })
-      })
-
-      $(`body>${table}>[x-child="event"]`).trigger('add-child', $ws => {
-        let breadcrumb = `lifecycle/${sessionStorage.lifecycle}/events`
-        $ws.find('>.table.events').attr({
-          breadcrumb,
-          'x-fetch': breadcrumb,
-        })
-      })
-    })
+    .on('activate', `>${ws}`, e => e.stopPropagation())
     .on('select', `>${ndxrow}`, e => {
       e.stopPropagation()
 
-      let breadcrumb = `notes/${$(e.currentTarget).data('id')}`
-      $(`body>${notes}`).attr({
-        breadcrumb,
-        'x-fetch': breadcrumb,
-      })
-    })
-    .on('select', `>${ndxrow}`, e => {
-      e.stopPropagation()
+      const id = $(e.currentTarget).data('id'),
+        url = `${sessionStorage[sessionStorage.menu]}/${id}`
 
-      let url = `${sessionStorage[sessionStorage.menu]}/${$(e.currentTarget).data('id')}`
       fetch(url).then(async resp => {
         if (resp.status !== 200) throw {
           status: resp.status,
           msg: await resp.text()
         }
+
+        $(`body>${notes}`).attr({
+          breadcrumb: `${url}/note`,
+          'x-fetch': `notes/${id}`,
+        })
+
         $(`body>${events}`).attr({
-          breadcrumb: `${url}/events`,
+          breadcrumb: `${url}/event`,
           'x-fetch': `${url}/events`,
         })
+
         $(`body>${table}`).removeClass('seeking')
+
         return await resp.json()
-      }).then(json => {
-        return {
-          yield: 0,
-          count: 0,
-          gross: 0,
-          bulk_cost: 0,
-          strain_cost: 0,
-          grain_cost: 0,
-          ...json,
-        }
-      }).then(json => {
-        $(`body>${lifecycle}`).data(json).trigger('unmarshal', json)
-      }).catch(ex => $(e.currentTarget).notify('error',
+      }).then(json => new Object({
+        yield: 0,
+        count: 0,
+        gross: 0,
+        bulk_cost: 0,
+        strain_cost: 0,
+        grain_cost: 0,
+        ...json,
+      })
+      ).then(json => $(`body>${lifecycle}`).data(json).trigger('unmarshal', json)
+      ).catch(ex => $(e.currentTarget).notify('error',
         `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
         ex,
       ))
@@ -84,7 +64,6 @@
 
       $(e.currentTarget.parentNode.parentNode).toggleClass('seeking')
     })
-
     .on('clear', `>${lifecycle}`, e => {
       e.stopPropagation()
 
