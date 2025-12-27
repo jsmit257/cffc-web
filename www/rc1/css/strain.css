@@ -34,7 +34,7 @@
         display: none;
       }
 
-      &>.workspace.photos>.table.photos {
+      &>.workspace.photo>.table.photo {
         height: calc(var(--default-table-height) - var(--row-line-height));
 
         &>.rows {

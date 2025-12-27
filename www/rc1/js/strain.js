@@ -4,7 +4,7 @@
   const cols = `${table}>.columns`
   const strain = `${table}>.rows`
   const strainrow = `${strain}>.row.record`
-  const photos = `${strain}>.workspace.photos>.table.photos`
+  const photos = `${strain}>.workspace.photo>.table.photo`
   const btn = `${table}>.buttonbar>.button`
   const sa = `${table}>.table.strainattributes`
   const sadatalist = `${sa}>#strain-attr-names`

@@ -59,8 +59,7 @@ $(_ => {
     },
     breadcrumb: function (id = 'unset') {
       if (typeof this.parents('.table').attr('no-breadcrumb') !== 'undefined') {
-        return this
-        // return id === 'unset' ? this : undefined
+        return id === 'unset' ? undefined : this
       }
 
       const key = this.attr('breadcrumb') ?? this

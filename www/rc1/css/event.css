@@ -54,7 +54,7 @@
     }
   }
 
-  &>.child-table>.table:is(.notes, .photos) {
+  &>.child-table>.table:is(.note, .photo) {
     border: none;
     border-radius: 0;
   }
@@ -69,10 +69,10 @@
     }
   }
 
-  &.photoing>.workspace.photos {
+  &.photoing>.workspace.photo {
     display: block;
 
-    &>.table.photos {
+    &>.table.photo {
       height: calc(var(--event-table-height) - var(--row-line-height));
 
       &>.rows {
@@ -82,10 +82,10 @@
     }
   }
 
-  &.noting>.workspace.notes {
+  &.noting>.workspace.note {
     display: block;
 
-    &>.table.notes {
+    &>.table.note {
       height: calc(var(--event-table-height) - var(--row-line-height));
 
       &>.rows {

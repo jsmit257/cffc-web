@@ -1,3 +1,8 @@
+:root {
+  --gallery-image-width: 200px;
+  --gallery-tile-height: var(--gallery-image-width);
+}
+
 ::-webkit-scrollbar-track {
   border-radius: 5px;
 }
@@ -17,7 +22,6 @@
   box-sizing: border-box;
   font-variant: slashed-zero;
   font-family: system-ui;
-  /* position: relative; */
 }
 
 .imgtile {
@@ -68,4 +72,3 @@ input::file-selector-button {
 select>option {
   background-color: var(--bg-color);
 }
-

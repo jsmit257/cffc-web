@@ -2,15 +2,15 @@
   --note-row-height: 4.5em;
 }
 
-body>.main>.workspace>.table>.child-table.notes {
+body>.main>.workspace>.table>.child-table.note {
   display: none;
 }
 
-body>.main>.workspace>.table.noting>.workspace.notes {
+body>.main>.workspace>.table.noting>.workspace.note {
   display: block;
 }
 
-.table.notes {
+.table.note {
   background-image: radial-gradient(#8a2be222 25%, transparent);
 
   &>.rows {

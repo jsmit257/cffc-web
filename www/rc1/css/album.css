@@ -3,34 +3,17 @@
 }
 
 .main>.workspace.album>.table.album {
-  &>.full {
-    font-size: 300%;
-    height: auto;
-    padding-top: 1em;
-    position: absolute;
-    width: 100%;
-    z-index: var(--z-info);
-
-    &>.rowbar {
-      display: block;
-      height: auto;
-      width: var(--gallery-rowbar-width);
-    }
-
-    &>.thumbnail {
-      width: calc(100% - var(--gallery-rowbar-width) * 2);
-    }
-  }
-
   &>.rows>.row.record {
     border-color: lightskyblue;
     border-style: inset;
+    border-width: 2px;
     float: left;
-    margin-left: 20px;
-    margin-top: 20px;
+    margin-left: 10px;
+    margin-top: 10px;
     width: auto;
 
-    &>.rowbar {
+    &>.rowbar,
+    &>.detail {
       display: none;
     }
 
@@ -45,6 +28,76 @@
 
     &>.thumbnail {
       cursor: pointer;
+    }
+
+    &.full {
+      border: none;
+      cursor: default;
+      height: var(--default-table-height);
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      width: 100%;
+      z-index: var(--z-info);
+
+      &>.rowbar,
+      &>.detail {
+        display: block;
+      }
+
+      &>.rowbar {
+        height: auto;
+        width: var(--gallery-rowbar-width);
+      }
+
+      &>.thumbnail {
+        height: 75%;
+        margin-left: 1em;
+        margin-right: 1em;
+        width: auto;
+      }
+
+      &>.ctime,
+      &>.mtime {
+        float: left;
+        width: 100%;
+
+        &::before {
+          margin-right: .33em;
+        }
+
+        &>div {
+          display: inline;
+        }
+      }
+
+      &>.ctime::before {
+        content: 'Created:'
+      }
+
+      &>.mtime::before {
+        content: 'Modified:'
+      }
+
+      &>.owner {
+        &>[name="parenttype"] {
+          &::first-letter {
+            text-transform: capitalize;
+          }
+
+          &::after {
+            content: ':'
+          }
+        }
+
+        &>[name="link"] {
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
     }
   }
 }

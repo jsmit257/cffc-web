@@ -1,10 +1,10 @@
 (_ => {
-  let ws = '.child-table.photos'
-  let photo = `${ws}>.table.photos`
+  let ws = '.child-table.photo'
+  let photo = `${ws}>.table.photo`
   let photorow = `${photo}>.rows>.row`
   let image = `${photorow}>.imgtile>.image`
   let rowbtn = `${photorow}>.rowbar>.button`
-  let note = `${photo}>child-table.notes>.table.notes`
+  let note = `${photo}>child-table.note>.table.note`
 
   $(document.body)
     .on('activate', ws, e => e.stopPropagation())
@@ -35,7 +35,7 @@
 
       $(e.currentTarget)
         .find('>.imgtile>.image')
-        .attr('src', `/album/${data.image}`)
+        .attr('src', `album/${data.image}`)
     })
 
     .on('click', `${rowbtn}.back`, e => {

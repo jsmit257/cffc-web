@@ -2,8 +2,6 @@
   --bg-color: #0a1020;
   --fg-color: aliceblue;
   --color-disabled: color-mix(in srgb, var(--fg-color) 50%, transparent);
-  --gallery-image-width: 200px;
-  --gallery-tile-height: var(--gallery-image-width);
 
   /* highest order, above everything */
   --z-error: 7;

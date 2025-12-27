@@ -1,5 +1,5 @@
 $(_ => {
-  let record = '.table>.rows>.row.record, .table>.singleton'
+  const record = '.table>.rows>.row.record, .table>.singleton'
 
   $(document.body)
     // initialize tables
@@ -36,20 +36,21 @@ $(_ => {
         .find('>.columns>[sort-order]')
         .removeAttr('sort-order')
 
-      let url = e.currentTarget.attributes['x-fetch'].value
-      fetch(url).then(async resp => {
-        if (resp.status !== 200) throw {
-          status: resp.status,
-          message: await resp.text(),
-        }
-        return resp.json()
-      }).then((resp = []) => resolve($(e.currentTarget)
-        .find(e.currentTarget.attributes['x-target'].value)
-        .trigger('clear')
-        .trigger('send', resp))
-      ).catch(ex => $(e.currentTarget).notify('error',
-        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
-        ex))
+      const url = e.currentTarget.attributes['x-fetch'].value
+      fetch(url)
+        .then(async resp => {
+          if (resp.status !== 200) throw {
+            status: resp.status,
+            message: await resp.text(),
+          }
+          return resp.json()
+        })
+        .then((resp = []) => $(e.currentTarget)
+          .find(e.currentTarget.attributes['x-target'].value)
+          .trigger('clear')
+          .trigger('send', resp))
+        .then(resolve)
+        .catch(ex => $(e.currentTarget).notify('error', `GET ${url}`, ex))
     })
     .on('fetch-multi', '.table>.rows>.row.record, .table>.singleton', (e, url) => {
       e.stopPropagation()
@@ -70,7 +71,7 @@ $(_ => {
     .on('send', '.table>.rows', (e, ...data) => {
       e.stopPropagation()
 
-      let $tmpl = $(e.currentTarget).find('>.row.x-template')
+      const $tmpl = $(e.currentTarget).find('>.row.x-template')
 
       data.forEach(record => $tmpl
         // TODO: if id!==null && exists(id) then update

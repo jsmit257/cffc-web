@@ -161,22 +161,22 @@ $(_ => {
       })
 
       let url = `./frag/${slug}.html`
-      fetch(url).then(async resp => {
-        if (resp.status !== 200) throw {
-          status: resp.status,
-          message: await resp.text(),
-        }
-        return await resp.text()
-      }).then(html => $(e.currentTarget)
-        .removeAttr('x-child') // once is enough
-        .append($(html))
-        .trigger('grandchildren', slug)
-        .trigger('activate', slug)
-      ).then($ws => resolve($ws)
-      ).catch(ex => $(e.currentTarget).notify('error',
-        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
-        ex,
-      ))
+      fetch(url)
+        .then(async resp => {
+          if (resp.status !== 200) throw {
+            url: resp.url,
+            status: resp.status,
+            message: await resp.text(),
+          }
+          return await resp.text()
+        })
+        .then(html => $(e.currentTarget)
+          .removeAttr('x-child') // once is enough
+          .append($(html))
+          .trigger('grandchildren', slug)
+          .trigger('activate', slug))
+        .then(resolve)
+        .catch(ex => $(e.currentTarget).notify('error', `GET ${url}`, ex))
     })
     .on('grandchildren', spaces, (e, slug) => {
       e.stopPropagation()

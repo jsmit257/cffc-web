@@ -1,4 +1,4 @@
-<div class="table album" no-breadcrumb>
+<div class="table album" x-fetch="photoalbum" x-target=">.rows" no-breadcrumb>
   <div class="rows">
     <div class="row hover x-template imgtile">
       <div class="buttonbar rowbar">
@@ -9,13 +9,18 @@
         each one is the full-size image download scaled in the UI
         -->
       <img class="thumbnail image">
+
+      <div class="detail mtime short-date" name="mtime" x-formatter="short-date"></div>
+
+      <div class="detail ctime short-date" name="ctime" x-formatter="short-date"></div>
+
+      <div class="detail owner">
+        <div class="parent" name="parenttype"></div>
+        <div class="parent" name="link"></div>
+      </div>
       <!-- 
         think about adding space for notes, then it becomes like the regular 
-        photos interface w/o the ability to edit (since the photo lacks the 
-        context to whihc it was added)
-
-        also, the `id` attr is just the filename, so that isn't useful for finding
-        associated records in the database, not with the current API, at least
+        photos interface
         -->
     </div>
   </div>

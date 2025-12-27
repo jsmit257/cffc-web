@@ -5,7 +5,7 @@
     }
 
     &>.singleton.lifecycle,
-    &>.child-table.notes,
+    &>.child-table.note,
     &>.buttonbar {
       display: none;
     }
@@ -17,20 +17,20 @@
 
   &.seeking>.rows.ndx,
   &>.singleton.lifecycle,
-  &>.child-table.notes,
+  &>.child-table.note,
   &>.buttonbar {
     height: 29rem;
   }
 
   &>.singleton.lifecycle,
-  &>.child-table.notes,
+  &>.child-table.note,
   &>.buttonbar {
     margin-top: -2.5em;
     padding-top: 2.5em;
   }
 
   &>.singleton.lifecycle,
-  &>.child-table.notes {
+  &>.child-table.note {
     width: calc(100% - 6em);
   }
 
@@ -48,7 +48,7 @@
     }
   }
 
-  &>.child-table.notes>.table.notes {
+  &>.child-table.note>.table.note {
     &>.rows {
       /*       
        not a perfect fit, but it's a multiple of row-height with room for 

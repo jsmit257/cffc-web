@@ -1,6 +1,6 @@
 (_ => {
-  const ws = '.child-table.notes'
-  const table = `${ws}>.table.notes`
+  const ws = '.child-table.note'
+  const table = `${ws}>.table.note`
   const row = `${table}>.rows>.row.record`
   const note = `${row}>label>textarea`
   const btn = `${row}>.rowbar>.button`

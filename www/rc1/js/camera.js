@@ -365,7 +365,7 @@
           )))
     })
 
-  // passive events can't `preventDefault()`, so these handlers are attached 
+  // passive events can't `preventDefault()`, so these handlers are attached
   // directly to the viewport (FIXME: does propagation matter?)
   setTimeout(_ => $(`body>${viewport}`)
     .on('touchstart', e => {

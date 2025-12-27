@@ -6,7 +6,7 @@
   const lifecycle = `${table}>.singleton.lifecycle`
   const events = `${table}>.child-table.event>.table.event`
   const eventrow = `${events}>.rows>.row.record`
-  const notes = `${table}>.child-table.notes>.notes`
+  const notes = `${table}>.child-table.note>.table.note`
   const yield = `${lifecycle}>label>.yield`
   const count = `${lifecycle}>label>.count`
   const gross = `${lifecycle}>label>.gross`

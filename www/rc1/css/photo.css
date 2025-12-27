@@ -2,16 +2,16 @@
   --photo-row-height: 4.5em;
 }
 
-body>.main>.workspace>.table .child-table.photos {
+body>.main>.workspace>.table .child-table.photo {
   display: none;
   width: 100%;
 }
 
-body>.main>.workspace>.table.photoing .workspace.photos {
+body>.main>.workspace>.table.photoing .workspace.photo {
   display: block;
 }
 
-.workspace.photos>.table.photos {
+.workspace.photo>.table.photo {
   background-image: radial-gradient(ellipse at bottom right, #bebc1f22 25%, transparent);
   width: 100%;
 
@@ -55,10 +55,6 @@ body>.main>.workspace>.table.photoing .workspace.photos {
       &>.imaging {
         cursor: pointer;
         margin-left: 1em;
-
-        /* &>input {
-          cursor: pointer;
-        } */
       }
 
       &>.button.camera {

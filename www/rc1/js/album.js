@@ -2,48 +2,54 @@
   let ws = '.main>.workspace.album'
   let table = `${ws}>.table.album`
   let record = `${table}>.rows>.row.record`
-  let img = `${record}>img`
+  let img = `${record}.full>img`
+  let link = `${record}>.owner>[name="link"]`
 
   $(document.body)
-    .on('activate', `>${ws}`, e => {
-      e.stopPropagation()
-
-      // console.log('activating album/gallery')
-    })
-    .on('fetch', `>${table}`, (e, resolve) => {
-      e.stopPropagation()
-
-      // using nginx autoindex output for now, so no default fetch, but
-      // table `send` is still useful, with a little finesse
-      fetch('album').then(async (resp) => {
-        if (resp.status !== 200) throw {
-          sc: resp.status,
-          messsage: resp.text(),
-        }
-        return await resp.text()
-      }).then(html => $(new DOMParser().parseFromString(html, 'text/html'))
-        .find('pre>a:not([href="../"])')
-        .map((_, v) => { return { id: v.getAttribute('href') } })
-      ).then(data => $(e.currentTarget).find('>.rows')
-        .trigger('clear')
-        .trigger('send', data)
-      ).catch(ex => $(e.currentTarget).notify('error',
-        `GET album statusCode: ${ex.status ?? 'unsent'}`,
-        ex,
-      ))
-    })
+    .on('activate', `>${ws}`, e => e.stopPropagation())
     .on('unmarshal', `>${record}`, (e, data) => {
       e.stopPropagation()
 
-      $(e.currentTarget).find('>.thumbnail').attr('src', `album/${data.id}`)
+      const $row = $(e.currentTarget),
+        $owner = $row.find('>.owner')
+
+      $row.find('>.thumbnail').attr('src', `album/${data.image}`)
+
+      $owner.find('>[name="parenttype"]').text(data.owner.parent_type)
+      $owner.find('>[name="link"]').text(data.owner.label)
     })
     .on('click', `>${record}`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget)
-        .clone(true, true)
-        .appendTo(`body>${table}`)
-        .addClass('full background-image')
+      $(e.currentTarget).toggleClass('full background-image selected')
+    })
+    .on('click', `>${img}`, e => {
+      e.stopPropagation()
+
+      console.log('fullscreen image')
+    })
+    .on('click', `>${link}`, e => {
+      e.stopPropagation()
+
+      const {
+        parent_type,
+        parent_id,
+        owner_id,
+      } = $(e.currentTarget.parentNode.parentNode).data().owner
+
+      let selector = `body>.main>.workspace.${parent_type}>.table.${parent_type}`
+
+      sessionStorage.menu = 'main'
+      sessionStorage.main = parent_type
+      sessionStorage[parent_type] = parent_id ?? owner_id
+      if (owner_id) {
+        sessionStorage[`${parent_type}/${parent_id}/event`] = owner_id
+        selector += `>.workspace.event>.table.event`
+      }
+
+      $('body>.menubar').trigger('init')
+
+      setTimeout(_ => $(`${selector}>.buttonbar>.button.photos`).click(), 100)
     })
     .on('click', `>${table}>.full`, e => {
       e.stopPropagation()

@@ -37,7 +37,9 @@ $(_ => {
         .find('>div>.selected')
         .removeClass('selected')
 
-      $(e.currentTarget).addClass(`menu-${menu}`)
+      $(e.currentTarget)
+        .removeClass('menu-main menu-aux menu-reporting')
+        .addClass(`menu-${menu}`)
         .find(`[category="${menu}"], .${menu}[${itemkey}="${slug}"]`)
         .addClass('selected')
 
@@ -100,14 +102,13 @@ $(_ => {
 
       $(document.body).toggleClass('selecting')
     })
-    .on('click', `>${ndxbtn}.selected, >body.selecting>${itembtn}.selected`, e => {
+    .on('click', `>${ndxbtn}.selected, >${itembtn}.selected`, e => {
       e.stopPropagation()
 
-      if ($(document.body).hasClass('selecting')) {
+      if ($(e.delegateTarget).hasClass('selecting')) {
         return
       }
 
-      console.log('slug', $(`body>${itembtn}.selected`).attr('x-stub'))
       $(e.currentTarget.parentNode.parentNode)
         .trigger('enable-workspace', $(`body>${itembtn}.selected`).attr('x-stub'))
     })
@@ -140,7 +141,7 @@ $(_ => {
 
       $(`body>${itembtn}.${menu}[${itemkey}=${slug}]`)
         .addClass('selected')
-        .siblings()
+        .siblings('.selected')
         .removeClass('selected')
     })
     .on('click', `>${itembtn}:not(.selected)`, e => {

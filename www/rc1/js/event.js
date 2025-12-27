@@ -12,12 +12,12 @@
         $table = $eventrow.parents(table),
         breadroot = `${$table.attr('breadcrumb')}/${id}`
 
-      $table.find('>.workspace.photos>.table.photos').attr({
+      $table.find('>.workspace.photo>.table.photo').attr({
         breadcrumb: `${breadroot}/photo`,
         'x-fetch': `photos/${id}`,
       })
 
-      $table.find('>.workspace.notes>.table.notes').attr({
+      $table.find('>.workspace.note>.table.note').attr({
         breadcrumb: `${breadroot}/note`,
         'x-fetch': `notes/${id}`,
       })
