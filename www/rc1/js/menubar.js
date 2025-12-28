@@ -38,7 +38,6 @@ $(_ => {
         .removeClass('selected')
 
       $(e.currentTarget)
-        .removeClass('menu-main menu-aux menu-reporting')
         .addClass(`menu-${menu}`)
         .find(`[category="${menu}"], .${menu}[${itemkey}="${slug}"]`)
         .addClass('selected')

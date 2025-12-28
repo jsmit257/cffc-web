@@ -99,6 +99,9 @@ $(_ => {
         let $fld = $row.find(`>.field>[name="${k}"], >[name="${k}"]`)
 
         switch (($fld.get(0) || { nodeName: 'x-none' }).nodeName.toLowerCase()) {
+          case 'img':
+            $fld.trigger('send', v)
+            break
           case 'select':
             $fld.trigger('send', [v])
             if (v.id) {

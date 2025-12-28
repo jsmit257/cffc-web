@@ -2,12 +2,7 @@
   --photo-row-height: 4.5em;
 }
 
-body>.main>.workspace>.table .child-table.photo {
-  display: none;
-  width: 100%;
-}
-
-body>.main>.workspace>.table.photoing .workspace.photo {
+.workspace>.table.photoing>.workspace.photo {
   display: block;
 }
 
@@ -32,7 +27,7 @@ body>.main>.workspace>.table.photoing .workspace.photo {
         width: auto;
       }
 
-      &>label {
+      &>.field {
         &>[x-formatter="short-date"] {
 
           &::before {
@@ -110,14 +105,9 @@ body>.main>.workspace>.table.photoing .workspace.photo {
         display: none;
       }
 
-      &>.imgtile {
-        /* height: auto; */
-        /* width: auto; */
-
-        &>.image {
-          height: auto;
-          width: 350px;
-        }
+      &>.imgtile>.image {
+        height: auto;
+        width: 350px;
       }
 
       &.editing {
@@ -132,7 +122,7 @@ body>.main>.workspace>.table.photoing .workspace.photo {
     }
 
     &>.buttonbar {
-      display: none;
+      visibility: hidden;
     }
   }
 }

@@ -24,12 +24,7 @@
         .first()
 
       if (!$parent.hasClass('noting')) $parent
-        .find('.table.note')
-        // // need a better way than .first() to find the one and only 
-        // // table that this button is related to; probably a selector
-        // // attribute on the button; for now, it gets the right result,
-        // // along with some unnecessary calls to other tables
-        // .first()
+        .find('>.workspace.note>.table.note')
         .trigger('fetch')
         .removeClass('editing adding')
         .find('.editing')
@@ -47,7 +42,7 @@
         .first()
 
       if (!$parent.hasClass('photoing')) $parent
-        .find('.table.photo')
+        .find('>.workspace.photo>.table.photo')
         .trigger('fetch')
         .addClass('gallery')
         .removeClass('detail noting editing adding')

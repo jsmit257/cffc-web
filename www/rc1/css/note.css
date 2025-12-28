@@ -2,11 +2,7 @@
   --note-row-height: 4.5em;
 }
 
-body>.main>.workspace>.table>.child-table.note {
-  display: none;
-}
-
-body>.main>.workspace>.table.noting>.workspace.note {
+.workspace>.table.noting>.workspace.note {
   display: block;
 }
 

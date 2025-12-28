@@ -7,7 +7,17 @@
   let note = `${photo}>child-table.note>.table.note`
 
   $(document.body)
-    .on('activate', ws, e => e.stopPropagation())
+    .on('activate', ws, e => {
+      e.stopPropagation()
+
+      const $ws = $(e.currentTarget)
+      if ($ws.parent().hasClass('main')) {
+        $ws
+          .find('>.table.photo')
+          .attr('x-fetch', 'photoalbum')
+          .trigger('fetch')
+      }
+    })
     .on('select', photorow, e => {
       e.stopPropagation()
 
@@ -28,14 +38,6 @@
         .first()
         .find('>.gallery')
         .toggleClass('detail gallery')
-    })
-
-    .on('unmarshal', photorow, (e, data) => {
-      e.stopPropagation()
-
-      $(e.currentTarget)
-        .find('>.imgtile>.image')
-        .attr('src', `album/${data.image}`)
     })
 
     .on('click', `${rowbtn}.back`, e => {

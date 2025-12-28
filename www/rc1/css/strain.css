@@ -1,8 +1,6 @@
 :root {
   --strain-rows-width: 66%;
-  /* not working right */
   --attr-table-width: calc(100% - var(--strain-rows-width));
-  /* --attr-table-width: 34%; */
 }
 
 .workspace.strain>.table.strain {
@@ -33,14 +31,13 @@
       &>.row:not(.selected) {
         display: none;
       }
+    }
 
-      &>.workspace.photo>.table.photo {
-        height: calc(var(--default-table-height) - var(--row-line-height));
+    &>.workspace.photo {
+      width: var(--strain-rows-width);
 
-        &>.rows {
-          /* 1em each top-/bottom-margin + 1em buttonbar + tableborder and change */
-          height: calc(100% - 4em);
-        }
+      &>.table.photo>.rows {
+        height: calc(var(--default-table-height) - var(--row-line-height) - 6em - 1px);
       }
     }
   }

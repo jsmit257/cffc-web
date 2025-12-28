@@ -9,21 +9,26 @@
       </div>
 
       <div class="field imgtile">
-        <img class="image">
+        <img class="image" name="image" x-image-path="album">
       </div>
+
+      <!-- <div class="detail owner"> -->
+      <!-- <div class="parent" name="parenttype"></div> -->
+      <!-- <div class="parent" name="link"></div> -->
+      <!-- </div> -->
 
       <label class="field imaging">
         <input class="photo" type="file" accept="image/*" tabindex="0"></textarea>
       </label>
       <div class="button icon camera imaging">camera</div>
 
-      <label class="field break">
+      <div class="field">
         <div class="mtime" name="mtime" x-formatter="short-date"></div>
-      </label>
+      </div>
 
-      <label class="field">
+      <div class="field">
         <div class="ctime" name="ctime" x-formatter="short-date"></div>
-      </label>
+      </div>
     </div>
   </div>
 

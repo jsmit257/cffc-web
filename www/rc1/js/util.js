@@ -116,8 +116,14 @@ $(_ => {
     .on('format', 'div', (e, v) => {
       e.stopPropagation()
 
-      let $fld = $(e.currentTarget).data('original', v)
+      const $fld = $(e.currentTarget).data('original', v)
       $fld.trigger($fld.attr('x-formatter') ?? 'text', v)
+    })
+    .on('send', 'img', (e, v) => {
+      e.stopPropagation()
+
+      const $fld = $(e.currentTarget)
+      $fld.attr('src', `${$fld.attr('x-image-path')}/${v}`)
     })
 
     // custom select/render options per-entity type
