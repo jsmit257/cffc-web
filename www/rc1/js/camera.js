@@ -346,23 +346,22 @@
       buff.convertToBlob({
         type: $(`body>${props}>.format>select`).val(),
         quality: $(`body>${props}>.quality>input`).val(),
+      }).then(blob => fetch(req.fetchurl, {
+        method: req.method,
+        body: (part => (part.append('file', blob), part))(new FormData()),
       })
-        .then(blob => fetch(req.fetchurl, {
-          method: req.method,
-          body: (part => (part.append('file', blob), part))(new FormData()),
-        })
-          .then(async resp => {
-            if ([200, 201].indexOf(resp.status) === -1) throw {
+        .then(async resp => {
+          switch (resp.status) {
+            case 200:
+            case 201: return await resp.json() // result is a list of all photos, newest first
+            default: throw {
               status: resp.status,
               message: await resp.text()
             }
-            return await resp.json()
-          })
-          .then(result => success(result[0])) // result is a list of all photos, newest first
-          .catch(ex => $(e.currentTarget).notify('error',
-            `${req.method} ${req.fetchurl} statusCode: ${ex.status ?? 'unsent'}`,
-            `failed to save image: ${ex}`,
-          )))
+          }
+        })
+        .then(success)
+        .catch(ex => $(e.currentTarget).notify('error', `${req.method} ${req.fetchurl}`, ex)))
     })
 
   // passive events can't `preventDefault()`, so these handlers are attached

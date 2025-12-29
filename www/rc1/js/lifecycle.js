@@ -32,7 +32,7 @@
 
         $(`body>${events}`).attr({
           breadcrumb: `${url}/event`,
-          'x-fetch': `${url}/events`,
+          'x-fetch': `/events/${id}`,
         })
 
         $(`body>${table}`).removeClass('seeking')

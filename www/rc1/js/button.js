@@ -7,14 +7,14 @@
     .on('click', `${defaults}.delete`, e => {
       e.stopPropagation()
 
-      const $table = $(e.currentTarget)
-        .parents('[breadcrumb]')
-        .first()
+      const baseurl = $(e.currentTarget)
+        .parents('[x-fetch]')
+        .attr('x-fetch')
+        .replace(/^(\/?[^\/]+)s/, '$1')
 
       const $row = $(e.currentTarget).selected()
 
-      const url = `${$table.attr('breadcrumb')}/${$row.attr('id')}`
-      $row.trigger('default-remove', url)
+      $row.trigger('default-remove', `${baseurl}/${$row.attr('id')}`)
     })
     .on('click', `${static}.notes`, e => {
       e.stopPropagation()
@@ -84,17 +84,18 @@
     .on('click', `${defaults}.save`, e => {
       e.stopPropagation()
 
-      const $table = $(e.currentTarget.parentNode)
+      const baseurl = $(e.currentTarget.parentNode)
         .trigger('toggle', e.currentTarget)
         .parents('[x-fetch]')
-        .first()
+        .attr('x-fetch')
+        .replace(/^(\/?[^\/]+)s/, '$1')
 
       const body = {}
       $(e.currentTarget)
         .selected()
         .trigger('marshal', body)
         .trigger('default-update', [
-          `${$table.attr('x-fetch')}/${body.id}`.replace(/\/$/, ''),
+          `${baseurl}/${body.id}`.replace(/\/$/, ''),
           {
             method: body.id ? 'PATCH' : 'POST',
             body: body,

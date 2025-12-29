@@ -88,6 +88,8 @@ $(_ => {
       }
     })
     .on('unmarshal', record, (e, data) => {
+      data ??= $(e.currentTarget).data()
+
       let $row = $(e.currentTarget).attr({
         id: data.id,
         dtime: data.dtime,
@@ -288,13 +290,11 @@ $(_ => {
           }
         })
         .then(json => json.id ? json : json?.at(0))
-        .then(json => $(e.currentTarget).data(json).breadcrumb(json.id ?? 'quux'))
+        .then(json => $(e.currentTarget)
+          .trigger('unmarshal', json)
+          .breadcrumb(json.id))
         // might be nice to re-sort and scroll-to as needed
-        .catch(ex => $(e.currentTarget).notify('error',
-          `${params.method} ${url} statusCode: ${ex.status ?? 'unsent'}`,
-          ex,
-          params)
-        )
+        .catch(ex => $(e.currentTarget).notify('error', `${params.method} ${url}`, ex, params))
         .finally(_ => { $table.trigger('disable-record') })
     })
     .on('default-remove', '.table>.rows>.row.record.selected', (e, url) => {

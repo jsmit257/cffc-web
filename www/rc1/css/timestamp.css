@@ -1,5 +1,5 @@
 .contexting [ts-edit] label:is(.mtime, .ctime) {
-  background-color: #00ff000c;
+  /* background-color: #00ff000c; */
   z-index: var(--z-enabled);
 }
 

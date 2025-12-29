@@ -146,9 +146,12 @@ $(_ => {
         .addClass('active')
         .siblings('.active')
         .removeClass('active')
+    })
+    .on('activate', '.workspace', (e, slug) => {
+      e.stopPropagation()
 
-      $space
-        .find(`>.table.${slug}`)
+      $(e.currentTarget)
+        .find(`>.table.${slug}[x-fetch]`)
         .trigger('fetch')
     })
     .on('add-child', '[x-child]', (e, resolve = _ => _) => {

@@ -1,6 +1,6 @@
 :root {
   --generation-area-height: 12em;
-  --sources-area-height: 14em;
+  --sources-area-height: 12em;
 }
 
 .workspace.generation>.table.generation {

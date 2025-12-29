@@ -125,4 +125,8 @@
       visibility: hidden;
     }
   }
+
+  &.editing>.rows>.selected>.buttonbar>.notes {
+    display: none;
+  }
 }

@@ -1,10 +1,11 @@
 (_ => {
-  let ws = '.child-table.photo'
-  let photo = `${ws}>.table.photo`
-  let photorow = `${photo}>.rows>.row`
-  let image = `${photorow}>.imgtile>.image`
-  let rowbtn = `${photorow}>.rowbar>.button`
-  let note = `${photo}>child-table.note>.table.note`
+  const ws = '.child-table.photo'
+  const photo = `${ws}>.table.photo`
+  const editable = `${photo}.detail, ${photo}.detail>.rows>.row.selected`
+  const photorow = `${photo}>.rows>.row.record`
+  const image = `${photorow}>.imgtile>.image`
+  const rowbtn = `${photorow}>.rowbar>.button`
+  const note = `${photo}>.child-table.note>.table.note`
 
   $(document.body)
     .on('activate', ws, e => {
@@ -17,16 +18,31 @@
           .attr('x-fetch', 'photoalbum')
           .trigger('fetch')
       }
+
+      // // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observe#monitoring_attribute_values
+      // new MutationObserver((mutationList, observer) => {
+      //   for (const mutation of mutationList) {
+      //     // if (mutation.removedNodes.length) {
+      //     //   console.log(new Error('debug').stack)
+      //     //   debugger
+      //     // }
+      //     if (mutation.type === 'attributes') {
+      //       // source was changed
+      //     }
+      //   }
+      // }).observe($(`${photo}>.rows`).get(0), {
+      //   // childList: true,
+      //   attributeFilter: ['src'],
+      // })
     })
     .on('select', photorow, e => {
       e.stopPropagation()
 
       const breadbase = $(e.currentTarget).parents('[breadcrumb]').attr('breadcrumb'),
-        id = e.currentTarget.id,
-        breadcrumb = `${breadbase}/${id}/note`
+        id = e.currentTarget.id
 
       $(note).attr({
-        breadcrumb,
+        breadcrumb: `${breadbase}/${id}/note`,
         'x-fetch': `notes/${id}`,
       })
     })
@@ -43,63 +59,66 @@
     .on('click', `${rowbtn}.back`, e => {
       e.stopPropagation()
 
-      $(e.currentTarget.parentNode)
-        .find('>.cancel')
-        .click()
-
-      $(e.currentTarget.parentNode.parentNode)
-        .parents('.detail')
-        .first()
+      const $table = $(e.currentTarget)
+        .parents(editable)
+        .removeClass('editing')
+        .last() // list is indexed in the order they're encountered
         .toggleClass('detail gallery')
+
+      if ($table.hasClass('adding')) {
+        $table.removeClass('adding')
+        e.currentTarget.parentNode.parentNode.remove()
+      }
+    })
+    .on('click', `${rowbtn}.state`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget)
+        .toggleClass('edit cancel')
+        .parents(editable)
+        .toggleClass('editing')
+    })
+    .on('click', `${rowbtn}.edit`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget).attr('title', 'cancel')
     })
     .on('click', `${rowbtn}.cancel`, e => {
       e.stopPropagation()
 
-      if ($(e.currentTarget.parentNode.parentNode).hasClass('adding')) {
-        // this selector isn't anchored to anything because the row is 
-        // already removed and we can't get to its (ex-)parent any other 
-        // way; unlikely to be a problem, but worth a note just in case
-        $(photo).toggleClass('gallery detail')
+      const $table = $(e.currentTarget)
+        .attr('title', 'edit')
+        .parents('.detail')
+        .first()
+
+      if ($table.hasClass('adding')) {
+        $table.toggleClass('detail gallery editing adding')
+        $(e.currentTarget.parentNode.parentNode).remove()
       }
     })
-    .on('click', `${rowbtn}.action`, e => {
+    .on('click', `${rowbtn}.delete`, e => {
       e.stopPropagation()
 
-      let $btn = $(e.currentTarget)
-      let $row = $(e.currentTarget.parentNode.parentNode)
-      let method = $btn.hasClass('delete')
-        ? 'DELETE'
-        : $row.hasClass('adding')
-          ? "POST"
-          : "PATCH"
-      let body
+      const $row = $(e.currentTarget.parentNode.parentNode),
+        $table = $row.parents('.detail').first()
 
-      if ($row.hasClass('editing')) {
-        let file = $row.find('>.imaging>.photo').get(0).files[0]
-        body = new FormData()
-        body.append('file', file, file.name)
+      if ($table.hasClass('adding')) {
+        $(e.currentTarget).siblings('.cancel').click()
+        return
       }
 
-      let url = `${$row.parents('[x-fetch]')
-        .first()
-        .attr('x-fetch')}/${$row.attr('id')}`.replace(/\/undefined$/, '')
-      fetch(url, { method, body }).then(async resp => {
-        if (resp.error) throw {
-          status: resp.status,
-          message: await resp.text()
-        }
-        return await resp.json()
-      }).then(json => $row.data(json[0]).trigger('disable-record')
-      ).then($row => $row.find('>.rowbar').trigger('toggle')
-      ).catch(ex => $(e.currentTarget).notify('error',
-        `${method} ${url} statusCode: ${ex.status ?? 'unsent'}`,
-        ex,
-      )).finally(_ => method === 'DELETE'
-        && $(e.currentTarget)
-          .parents('.detail')
-          .toggleClass('gallery detail')
-          .selected()
-          .trigger('remove-record'))
+      const url = `${$table.attr('x-fetch')}/${$row.attr('id')}`
+      fetch(url, { method: 'DELETE' })
+        .then(async resp => {
+          if (resp.status !== 200) throw {
+            status: resp.status,
+            message: await resp.text()
+          }
+          return await resp.json()
+        })
+        .then(_ => $table.toggleClass('detail gallery'))
+        .then(_ => $row.remove())
+        .catch(ex => $(e.currentTarget).notify('error', `DELETE ${url}`, ex))
     })
     .on('click', `${photo}>.buttonbar>.add`, e => {
       e.stopPropagation()
@@ -107,10 +126,81 @@
       $(e.currentTarget.parentNode.parentNode)
         .toggleClass('gallery detail')
         .find('>.rows')
-        .first()
-        .trigger('new-record')
-        .find('>.selected>.rowbar')
-        .trigger('toggle')
+        .trigger('new-record', $row => $row
+          // this is a hack b/c new-record sets editing on and state::click 
+          // toggles it off, so unset it and let state::click toggle it back on
+          .removeClass('editing')
+          .find('>.rowbar>.state')
+          .click())
+
+      // more hacking, all because of stete::click
+      $(e.currentTarget.parentNode.parentNode).addClass('editing')
+    })
+    .on('fetch', photorow, (e, { url, method, file }) => {
+      e.stopPropagation()
+
+      fetch(url, {
+        method: method,
+        body: (form => (form.append('file', file), form))(new FormData()),
+      })
+        .then(async resp => {
+          switch (resp.status) {
+            case 200:
+            case 201: return await resp.json()
+            default: throw {
+              status: resp.status,
+              message: await resp.text(),
+            }
+          }
+        })
+        .then(json => $(e.currentTarget).data(json[0]))
+        .then($row => $row
+          .trigger('unmarshal')
+          .removeClass('editing adding')
+          .find('>.rowbar>.cancel')
+          .toggleClass('cancel edit')
+          .attr('title', 'edit'))
+        .catch(ex => $(e.currentTarget).notify('error', `${method} ${url}`, ex))
+    })
+    .on('change', `${photorow}>.imaging>.photo`, e => {
+      e.stopPropagation()
+
+      if (!e.currentTarget.files.length) {
+        return
+      }
+
+      const id = e.currentTarget.parentNode.parentNode.id,
+        files = Array.from(e.currentTarget.files),
+        $table = $(e.currentTarget).parents('[x-fetch]').first()
+
+      e.currentTarget.value = null
+
+      let method = 'POST',
+        url = $table.attr('x-fetch')
+
+      const updates = files.slice(1).map(file =>
+        (args => _ => $table.find('>.rows').trigger(
+          'new-record',
+          $newrow => $newrow.trigger('fetch', args),
+        ))({ url, method, file })
+      )
+
+      const $row = $(e.currentTarget).parents('.row.record')
+
+      if (id) {
+        url = `${url}/${id}`
+        method = 'PATCH'
+      }
+
+      updates.unshift(_ => $row.trigger('fetch', {
+        url,
+        method,
+        file: files[0],
+      }))
+
+      updates.forEach(update => update())
+
+      $table.removeClass('editing adding')
     })
     .on('click', `${photorow}>.camera`, e => {
       e.stopPropagation()
@@ -126,11 +216,12 @@
           .replace(/\/undefined$/, ''),
         method: $row.hasClass('adding') ? "POST" : "PATCH",
         img: $img.attr('src') && $img.get(0),
-        success: photos => $row
-          .data(photos)
-          .trigger('disable-record')
-          .find('>.rowbar')
-          .trigger('toggle'),
+        success: (...photos) => $row
+          .data(photos[0])
+          .trigger('disable-record') // this is bubbling up to the table
+          .find('>.rowbar>.cancel')
+          .toggleClass('cancel edit')
+          .attr('title', 'edit'),
       })
     })
 })()
