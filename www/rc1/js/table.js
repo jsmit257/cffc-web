@@ -233,7 +233,7 @@ $(_ => {
         .prependTo(e.currentTarget)
         .trigger('enable-record')
 
-      $newrow.find('input:not([type="radio"]), select').val('')
+      $newrow.find('input:not([type="radio"]):not(.no-clear), select:not(.no-clear)').val('')
 
       success($newrow)
     })

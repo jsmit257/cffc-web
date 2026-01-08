@@ -349,18 +349,16 @@
       }).then(blob => fetch(req.fetchurl, {
         method: req.method,
         body: (part => (part.append('file', blob), part))(new FormData()),
-      })
-        .then(async resp => {
-          switch (resp.status) {
-            case 200:
-            case 201: return await resp.json() // result is a list of all photos, newest first
-            default: throw {
-              status: resp.status,
-              message: await resp.text()
-            }
+      }).then(async resp => {
+        switch (resp.status) {
+          case 200:
+          case 201: return await resp.json() // result is a list of all photos, newest first
+          default: throw {
+            status: resp.status,
+            message: await resp.text()
           }
-        })
-        .then(success)
+        }
+      }).then(success)
         .catch(ex => $(e.currentTarget).notify('error', `${req.method} ${req.fetchurl}`, ex)))
     })
 

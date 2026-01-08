@@ -150,4 +150,69 @@ $(_ => {
       .text(`${data.name} | Vendor: ${(data.vendor || { name: 'interim' }).name}`))
     .on('extend', 'select[render="x-basic"]>option', (e, data) => $(e.currentTarget)
       .text(data))
+
+    .on('img-convert', 'img', (e, { format, scale = 1.0, cb }) => {
+      $(document.body).trigger('bitmap-convert', {
+        bmp: e.currentTarget,
+        format,
+        scale,
+        cb,
+      })
+    })
+    .on('blob-convert', (e, { blob, format, scale = 1.0, cb }) => {
+      if (scale > 1.0) {
+        throw new Error('upscaling not allowed')
+      } else if (!(cb instanceof Function)) {
+        throw new Error('cb must be a function')
+      } else if (blob.type === (format ?? blob.type) && scale === 1.0) {
+        console.log('returning original blob')
+        cb(blob)
+        return
+      }
+
+      createImageBitmap(blob)
+        .then(bmp => $(document.body).trigger('bitmap-convert', {
+          bmp,
+          format,
+          scale,
+          cb,
+        }))
+    })
+    .on('bitmap-convert', (e, { bmp, format, scale = 1.0, cb }) => {
+      const [w, h] = [
+        (bmp.naturalWidth ?? bmp.width) * scale,
+        (bmp.naturalHeight ?? bmp.height) * scale,
+      ],
+        cnv = new OffscreenCanvas(w, h),
+        ctx = cnv.getContext('2d', { alpha: true })
+
+      ctx.drawImage(bmp, 0, 0, w, h)
+
+      // down-scaling buys roughly the same advantage as reducing quality
+      // so we don't parameterize quality for this function
+      cnv.convertToBlob({ type: format })
+        .then(cb)
+        // // some sample callbacks
+        // blob => {
+        //   const img = new Image()
+        //   img.src = URL.createObjectURL(blob)
+        //   // ...
+        // }
+        // blob => {
+        //   const file = new File([blob], 'file.ext', {
+        //     type: blob.type,
+        //     lastModified: new Date(),
+        //   })
+        //   // ...
+        // }
+        .catch(ex => { throw new Error('failed to convert image', { cause: ex }) })
+    })
+
+    .on('imgtile-zoom', '.imgtile', e => {
+      $(e.currentTarget)
+        .clone(true, true)
+        .appendTo(document.body)
+        .toggleClass('field imgtile imgtile-fullscreen background-image')
+    })
+    .on('click', '.imgtile-fullscreen', e => $(e.currentTarget).remove())
 })

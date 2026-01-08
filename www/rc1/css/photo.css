@@ -22,14 +22,36 @@
         width: 3em;
       }
 
-      &>.imgtile {
-        height: auto;
-        width: auto;
+      &>.imaging {
+        float: left;
+
+        &.format {
+          &::before {
+            content: 'Change format:';
+          }
+
+          &>select {
+            text-align: center;
+          }
+        }
+
+        &.scale {
+          &::before {
+            content: 'Scale image:'
+          }
+
+          &::after {
+            content: '%'
+          }
+
+          &>input {
+            text-align: right;
+          }
+        }
       }
 
       &>.field {
         &>[x-formatter="short-date"] {
-
           &::before {
             display: block;
             float: left;
@@ -49,26 +71,26 @@
 
       &>.imaging {
         cursor: pointer;
+        display: none;
         margin-left: 1em;
-      }
 
-      &>.button.camera {
-        cursor: pointer;
-        float: left;
-        font-size: large;
+        &>.button.camera {
+          cursor: pointer;
+          float: left;
+          font-size: large;
 
-        &::after {
-          background-image: radial-gradient(circle, #ffff00ab, transparent 55%);
-          border-radius: 1em;
-          color: honeydew;
-          content: var(--css-camera);
-          font-size: 200%;
-          font-weight: 500;
-          width: 1.25em;
-          display: inline-block;
-          text-align: center;
-          vertical-align: middle;
-          height: 1.25em;
+          &::after {
+            background-image: radial-gradient(circle, #ffff00ab, transparent 55%);
+            border-radius: 1em;
+            color: honeydew;
+            content: var(--css-camera);
+            display: inline-block;
+            font-size: 200%;
+            font-weight: 500;
+            text-align: center;
+            vertical-align: middle;
+            width: 1.25em;
+          }
         }
       }
     }
@@ -101,13 +123,13 @@
         background: none;
       }
 
-      &>.imaging {
-        display: none;
-      }
+      &>.imgtile {
+        z-index: initial;
 
-      &>.imgtile>.image {
-        height: auto;
-        width: 350px;
+        &>.image {
+          height: auto;
+          width: 350px;
+        }
       }
 
       &.editing {

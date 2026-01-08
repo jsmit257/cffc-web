@@ -1,11 +1,11 @@
 (_ => {
   const ws = '.child-table.photo'
-  const photo = `${ws}>.table.photo`
-  const editable = `${photo}.detail, ${photo}.detail>.rows>.row.selected`
-  const photorow = `${photo}>.rows>.row.record`
-  const image = `${photorow}>.imgtile>.image`
+  const table = `${ws}>.table.photo`
+  const editable = `${table}.detail, ${table}.detail>.rows>.row.selected`
+  const photorow = `${table}>.rows>.row.record`
+  const tile = `${photorow}>.imgtile`
   const rowbtn = `${photorow}>.rowbar>.button`
-  const note = `${photo}>.child-table.note>.table.note`
+  const note = `${table}>.child-table.note>.table.note`
 
   $(document.body)
     .on('activate', ws, e => {
@@ -50,10 +50,18 @@
       e.stopPropagation()
 
       $(e.currentTarget)
-        .parents('.workspace')
+        .parents('.gallery')
         .first()
-        .find('>.gallery')
         .toggleClass('detail gallery')
+
+      $(e.currentTarget)
+        .find('>.rowbar>.cancel')
+        .toggleClass('cancel edit')
+        .attr('title', 'edit')
+    })
+    .on('click', `${table}.detail>.rows>.selected>.imgtile`, e => {
+      e.stopPropagation()
+      $(e.currentTarget).trigger('imgtile-zoom')
     })
 
     .on('click', `${rowbtn}.back`, e => {
@@ -120,7 +128,7 @@
         .then(_ => $row.remove())
         .catch(ex => $(e.currentTarget).notify('error', `DELETE ${url}`, ex))
     })
-    .on('click', `${photo}>.buttonbar>.add`, e => {
+    .on('click', `${table}>.buttonbar>.add`, e => {
       e.stopPropagation()
 
       $(e.currentTarget.parentNode.parentNode)
@@ -139,11 +147,20 @@
     .on('fetch', photorow, (e, { url, method, file }) => {
       e.stopPropagation()
 
-      fetch(url, {
-        method: method,
-        body: (form => (form.append('file', file), form))(new FormData()),
-      })
-        .then(async resp => {
+      const $row = $(e.currentTarget),
+        format = $row.find('>.format>select').val().replace(/original/, file.type)
+
+      $(document.body).trigger('blob-convert', {
+        blob: file,
+        format: format,
+        scale: $row.find('>.scale>input').val() / 100.0,
+        cb: blob => fetch(url, {
+          method: method,
+          body: (form => (form.append('file', new File([blob], `image.${format}`, {
+            type: blob.type,
+            lastModified: file.lastModified,
+          })), form))(new FormData()),
+        }).then(async resp => {
           switch (resp.status) {
             case 200:
             case 201: return await resp.json()
@@ -152,15 +169,14 @@
               message: await resp.text(),
             }
           }
-        })
-        .then(json => $(e.currentTarget).data(json[0]))
-        .then($row => $row
+        }).then(json => $row.data(json[0])
           .trigger('unmarshal')
           .removeClass('editing adding')
           .find('>.rowbar>.cancel')
           .toggleClass('cancel edit')
-          .attr('title', 'edit'))
-        .catch(ex => $(e.currentTarget).notify('error', `${method} ${url}`, ex))
+          .attr('title', 'edit')
+        ).catch(ex => $(e.currentTarget).notify('error', `${method} ${url}`, ex))
+      })
     })
     .on('change', `${photorow}>.imaging>.photo`, e => {
       e.stopPropagation()
@@ -202,10 +218,10 @@
 
       $table.removeClass('editing adding')
     })
-    .on('click', `${photorow}>.camera`, e => {
+    .on('click', `${photorow}>.imaging.camera`, e => {
       e.stopPropagation()
 
-      let $row = $(e.currentTarget.parentNode),
+      const $row = $(e.currentTarget.parentNode),
         $img = $row.find('>.imgtile>.image')
 
       $('body>.menubar').trigger('camera', {

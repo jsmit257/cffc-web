@@ -38,7 +38,7 @@ $(_ => {
         .removeClass('selected')
 
       $(e.currentTarget)
-        .addClass(`menu-${menu}`)
+        .attr('menu', menu)
         .find(`[category="${menu}"], .${menu}[${itemkey}="${slug}"]`)
         .addClass('selected')
 
@@ -55,9 +55,7 @@ $(_ => {
       }
       sessionStorage[category] = item
 
-      $(e.currentTarget)
-        .removeClass('menu-main menu-aux menu-reporting')
-        .addClass(`menu-${category}`)
+      $(e.currentTarget).attr('menu', category)
 
       $(e.currentTarget).trigger('init')
     })
@@ -111,6 +109,12 @@ $(_ => {
       $(e.currentTarget.parentNode.parentNode)
         .trigger('enable-workspace', $(`body>${itembtn}.selected`).attr('x-stub'))
     })
+    .on('mouseover', `>${ndxbtn}`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget.parentNode.parentNode)
+        .attr('menu', $(e.currentTarget).attr('category'))
+    })
     .on('click', `>${ndxbtn}:not(.selected)`, e => {
       e.stopPropagation()
 
@@ -119,10 +123,6 @@ $(_ => {
       let menu = sessionStorage.menu = $(e.currentTarget)
         .addClass('selected')
         .attr('category')
-
-      $(e.currentTarget.parentNode.parentNode)
-        .removeClass('menu-main menu-aux menu-reporting')
-        .addClass(`menu-${menu}`)
 
       let slug = sessionStorage[menu] ?? (sessionStorage[menu] =
         $(`body>${itembtn}.${menu}`)

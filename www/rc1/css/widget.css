@@ -25,6 +25,7 @@
 }
 
 .imgtile {
+  cursor: pointer !important;
   display: flex !important;
   height: var(--gallery-tile-height) !important;
   align-items: center;
@@ -33,6 +34,25 @@
   &>.image {
     height: auto;
     width: var(--gallery-image-width);
+  }
+}
+
+.imgtile-fullscreen {
+  align-items: center;
+  bottom: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  overflow-y: auto;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: var(--z-info);
+
+  &>.image {
+    height: auto;
+    width: 75%;
   }
 }
 

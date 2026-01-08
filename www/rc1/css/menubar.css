@@ -41,9 +41,9 @@ body {
       }
     }
 
-    &.menu-main>.items>:not(.main),
-    &.menu-aux>.items>:not(.aux),
-    &.menu-reporting>.items>:not(.reporting) {
+    &[menu="main"]>.items>:not(.main),
+    &[menu="aux"]>.items>:not(.aux),
+    &[menu="reporting"]>.items>:not(.reporting) {
       display: none;
     }
 

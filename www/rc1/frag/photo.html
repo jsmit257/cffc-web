@@ -12,16 +12,32 @@
         <img class="image" name="image" x-image-path="album">
       </div>
 
-      <label class="field imaging">
+      <label class="imaging break">
         <input class="photo" type="file" accept="image/*" tabindex="0" multiple></textarea>
       </label>
-      <div class="button icon camera imaging">camera</div>
 
-      <div class="field">
+      <label class="format imaging break">
+        <select class="no-clear" tabindex="0">
+          <option value="original" selected>original</option>
+          <option value="image/webp">webp</option>
+          <option value="image/png">png</option>
+          <option value="image/jpeg">jpeg</option>
+        </select>
+      </label>
+
+      <label class="scale imaging break">
+        <input class="no-clear" type="number" min="25" max="100" step="1" value="100" tabindex="0">
+      </label>
+
+      <div class="imaging camera">
+        <div class="button icon camera break">camera</div>
+      </div>
+
+      <div class="field break">
         <div class="mtime" name="mtime" x-formatter="short-date"></div>
       </div>
 
-      <div class="field">
+      <div class="field break">
         <div class="ctime" name="ctime" x-formatter="short-date"></div>
       </div>
     </div>
