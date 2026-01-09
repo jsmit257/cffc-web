@@ -1,0 +1,111 @@
+:root {
+  --note-row-height: 4.5em;
+}
+
+.workspace>.table.noting>.workspace.note {
+  display: block;
+}
+
+.table.note {
+  background-image: radial-gradient(#8a2be222 25%, transparent);
+
+  &>.rows {
+    margin-bottom: 1em;
+    margin-top: 1em;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &>.row.record {
+      height: var(--note-row-height);
+
+      &>label {
+        &.note {
+          height: auto;
+          width: 60%;
+        }
+
+        &.break {
+          clear: right;
+          display: block;
+          float: none;
+          /* seems like z-index could cause trouble */
+          z-index: -1;
+        }
+
+        &>.note {
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          background-color: transparent;
+          border-color: transparent;
+          border-radius: 5px;
+          color: inherit;
+          /* float: left; */
+          font-size: inherit;
+          height: 4.5em;
+          width: 100%;
+        }
+
+        &>[x-formatter="short-date"] {
+
+          &::before {
+            display: block;
+            float: left;
+            margin-left: 1em;
+            width: 4.5em;
+          }
+
+          &.mtime::before {
+            content: 'Modified: ';
+          }
+
+          &.ctime::before {
+            content: 'Created: ';
+          }
+        }
+      }
+
+      &>.rowbar {
+        margin-right: 1em;
+        opacity: 0;
+        width: 2em;
+        /* z-index: 1; */
+        /* position: relative; */
+
+        &>.button {
+          clear: right;
+        }
+      }
+
+      &:hover>.rowbar {
+        opacity: .33;
+      }
+
+      &.selected {
+        background-image: none;
+
+        &>.rowbar {
+          opacity: 1;
+        }
+      }
+
+      &.editing>label>.note {
+        border-color: blueviolet;
+      }
+    }
+  }
+
+  &>.buttonbar {
+    bottom: 0;
+    position: absolute;
+
+    &>.add {
+      width: 100%;
+      line-height: var(--buttonbar-height);
+
+      &::before {
+        margin-right: .33em;
+      }
+    }
+  }
+}

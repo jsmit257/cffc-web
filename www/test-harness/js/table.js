@@ -72,6 +72,10 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
       .trigger('edit')
 
     $selected
+      .find('select[url]')
+      .trigger('refresh')
+
+    $selected
       .find('input, select')
       .first()
       .focus()
@@ -118,13 +122,17 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
       .prependTo($table)
       .addClass('selected editing')
 
+    $row
+      .find('select[url]')
+      .trigger('refresh')
+
     if ($selected.length !== 0) {
       $row.insertBefore($selected)
     }
 
     $selected = $row
 
-    $row.find('input, select')
+    $selected.find('input, select')
       .first()
       .focus()
 
@@ -226,8 +234,6 @@ $(_ => $('body>.main>.workspace>div .table>.rows, body>.template>.table>.rows')
 
     let $row = $(e.currentTarget)
 
-    // back where we started with the uuid table; set additional attribute
-    // handlers in subsequent 'send' events
     $row
       .data('row', data)
       .attr({

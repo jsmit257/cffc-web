@@ -227,7 +227,7 @@ $(_ => {
         }
       }
     })
-    .on('click', '>.entity>.ndx>.row', (e, parent) => {
+    .on('click', '>.entity>.ndx>.row', e => {
       e.stopPropagation()
 
       let entityname = $(e.delegateTarget).attr('name')

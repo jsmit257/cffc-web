@@ -1,0 +1,13 @@
+.workspace.ingredient>.table.ingredient {
+
+  &>.columns>.name,
+  &>.rows>.row>.name {
+    width: 100%;
+  }
+
+  &>.buttonbar {
+    &>.insub {
+      display: none;
+    }
+  }
+}

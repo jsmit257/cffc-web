@@ -3,3 +3,9 @@
 /minify
 /nginx/certs
 !/nginx/certs/init
+
+!/www/rc1/
+
+www/test-harness/css/images/background/image.avif
+www/rc1/css/images/background/image.avif
+

@@ -1,0 +1,31 @@
+<div class="table album" x-fetch="photoalbum" x-target=">.rows" no-breadcrumb>
+  <div class="rows">
+    <div class="row hover x-template">
+      <div class="buttonbar rowbar">
+        <div title="back" class="button icon back"></div>
+        <!-- <div title="edit" class="button icon state edit"></div> -->
+        <!-- <div title="delete" class="button icon delete"></div> -->
+        <div title="notes" class="button default icon notes"></div>
+      </div>
+
+      <div class="field imgtile">
+        <img class="image" name="image" x-image-path="album">
+      </div>
+
+      <div class="detail owner">
+        <div class="parent" name="parenttype"></div>
+        <div class="parent" name="link"></div>
+      </div>
+
+      <div class="field mtime detail">
+        <div class="mtime short-date" name="mtime" x-formatter="short-date"></div>
+      </div>
+
+      <div class="field ctime detail">
+        <div class="ctime short-date" name="ctime" x-formatter="short-date"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="child-table workspace note" x-child="note"></div>
+</div>

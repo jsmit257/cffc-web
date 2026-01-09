@@ -1,0 +1,172 @@
+:root {
+  --ingredients-width: 31%;
+  --substrates-width: 69%;
+  /* --name-color: red; */
+  /* --type-color: blue; */
+  /* --vendor-color: green; */
+}
+
+.workspace.substrate>.table.substrate {
+
+  &[type-filter="liquid"] .row:not(.liquid),
+  &[type-filter="grain"] .row:not(.grain),
+  &[type-filter="bulk"] .row:not(.bulk),
+  &[type-filter="plating"] .row:not(.plating) {
+    display: none;
+  }
+
+  & :is(.columns, .rows>.row) {
+    &>.name {
+      background-color: var(--name-color);
+    }
+
+    &>.type {
+      background-color: var(--type-color);
+    }
+
+    &>.vendor {
+      background-color: var(--vendor-color);
+    }
+  }
+
+  &>.columns {
+    &>.name {
+      width: calc(var(--substrates-width) * .3955);
+    }
+
+    &>.type {
+      width: calc(var(--substrates-width) * .247);
+
+      &>label>select {
+        text-align: center;
+        margin-left: .5em;
+      }
+    }
+
+    &>.vendor {
+      width: calc(var(--substrates-width) * .347);
+    }
+
+    &>.ingredient {
+      width: var(--ingredients-width);
+    }
+  }
+
+  &>.rows {
+    /* margin-right: 1%; */
+    width: var(--substrates-width);
+
+    &>.row.record {
+
+      &>.name {
+        width: 40%;
+      }
+
+      &>.type {
+        width: 25%;
+      }
+
+      &>.vendor {
+        width: 35%;
+      }
+    }
+  }
+
+  &>.buttonbar>.report {
+    float: left;
+  }
+
+  &>.workspace.ingredients {
+    border: 0;
+    float: left;
+    height: var(--default-table-height);
+    margin-top: 0;
+    padding-top: 0;
+    width: var(--ingredients-width);
+
+    &>.table.ingredient {
+      /* background-color: #f001; */
+      height: 100%;
+      width: 100%;
+
+      &>.columns {
+        display: none;
+
+        &>.name {
+          width: 100%;
+        }
+      }
+
+      &>.rows {
+        height: 100%;
+        width: calc(100% - 2em);
+        margin-right: .5em;
+        /* padding-right: 3em; */
+        float: left;
+
+        &>.row.record {
+          display: none;
+
+          &>.name {
+            width: 100%;
+          }
+        }
+
+        &>.row.record.selected {
+          display: revert;
+        }
+      }
+
+      &>.buttonbar {
+        float: right;
+        /* font-weight: bolder; */
+        /* margin-right: .5em; */
+        padding-left: .75em;
+        text-align: center;
+        width: 1em;
+        height: 100%;
+
+        &>.button.default {
+          display: none;
+        }
+
+        &>.button {
+          align-items: center;
+          display: flex;
+          font-family: sans-serif;
+          font-size: larger;
+          font-weight: bold;
+          height: 100%;
+          vertical-align: middle;
+        }
+
+        &>.expand {
+          color: mediumspringgreen;
+        }
+
+        &>.collapse {
+          color: red;
+          display: none;
+        }
+      }
+    }
+
+    &>.table.selecting>.rows>.row.record {
+      display: revert;
+    }
+
+    &>.table.ingredient:not(.selecting) .row.record.selected {
+      background-image: none;
+    }
+
+    &>.table.ingredient.selecting>.buttonbar {
+      &>.collapse {
+        display: flex;
+      }
+
+      &>.expand {
+        display: none;
+      }
+    }
+  }
+}

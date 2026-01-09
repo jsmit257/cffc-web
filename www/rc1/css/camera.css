@@ -1,0 +1,433 @@
+:root {
+  --svg-line: grey;
+  --svg-line-width: 2px;
+  --svg-fill: #ffffff08;
+}
+
+body>.main>.workspace.camera {
+  width: 100%;
+
+  & table {
+    line-height: 2em;
+  }
+
+  &>.imgbox {
+    &>.vidcap {
+      display: none;
+      float: left;
+      width: 100%;
+    }
+
+    &>.viddevs {
+      float: left;
+      padding-bottom: .33em;
+      padding-top: .33em;
+      /* width: 25em; */
+
+      &>.rows>.row.record>.device {
+        border-radius: 10%;
+        cursor: pointer;
+        line-height: 1.5em;
+        /* margin-right: 1em; */
+        padding-bottom: .33em;
+        padding-top: .33em;
+
+        &::before {
+          color: transparent;
+          display: inline-block;
+          content: '◉';
+          text-align: left;
+          width: 1em;
+        }
+      }
+    }
+
+    &>.imgedit {
+      float: left;
+      overflow: auto;
+
+      &>.viewport {
+        /* background-color: #f005; */
+        background-attachment: local;
+        background-repeat: no-repeat;
+        float: left;
+        /* overflow: auto; */
+        width: 60%;
+
+        &>svg {
+          background-color: var(--svg-fill);
+          display: block;
+          height: 100%;
+          visibility: hidden;
+          width: 100%;
+          z-index: 1;
+
+          &>defs>linearGradient>stop {
+            stop-color: var(--svg-line);
+
+            &.edge {
+              stop-opacity: .0;
+            }
+          }
+
+          &>circle.corner {
+            fill: var(--svg-fill);
+            r: 4%;
+            stroke: var(--svg-line);
+            stroke-width: var(--svg-line-width);
+
+            &.north {
+              cy: 0;
+            }
+
+            &.south {
+              cy: 100%;
+            }
+
+            &.east {
+              cx: 0;
+            }
+
+            &.west {
+              cx: 100%;
+            }
+          }
+
+          &>rect {
+            &.horiz {
+              fill: url(#hgrad);
+              height: var(--svg-line-width);
+
+              &.half {
+                x: 15%;
+                width: 70%;
+              }
+
+              &.full {
+                x: 0;
+                width: 100%;
+              }
+            }
+
+            &.vert {
+              fill: url(#vgrad);
+              width: 2px;
+
+              &.half {
+                y: 15%;
+                height: 70%;
+              }
+
+              &.full {
+                y: 0;
+                height: 100%;
+              }
+            }
+          }
+        }
+
+        &:hover>svg {
+          visibility: visible;
+        }
+
+        &>canvas {
+          visibility: hidden;
+          top: 0;
+          left: 0;
+          position: absolute;
+        }
+      }
+
+      &>.imgstats {
+        float: right;
+        font-size: initial;
+        max-height: 600px;
+        overflow-x: clip;
+        overflow-y: auto;
+        width: 40%;
+
+        &>.row.record {
+          cursor: pointer;
+
+          &::before {
+            content: 'edit';
+            display: inline-block;
+            text-align: right;
+            width: 4em;
+          }
+
+          &:first-child::before {
+            content: 'original';
+          }
+
+          &>div {
+            display: inline-block;
+
+            &::before,
+            &::after {
+              white-space: nowrap;
+            }
+          }
+
+          .px {
+            width: 4.3em;
+            display: inline-block;
+
+            &.width::before {
+              content: 'w:';
+            }
+
+            &.height::before {
+              content: 'h:';
+            }
+
+            &::after {
+              content: 'px';
+            }
+          }
+        }
+
+        &>span::before {
+          margin-right: .25em;
+          font-size: smaller;
+        }
+      }
+
+      &>.controls {
+        display: flex;
+        flex-direction: row;
+        float: left;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        width: 60%;
+
+        &>div {
+          &>* {
+            display: flex;
+          }
+
+          &>label {
+            float: left;
+            margin-left: .5em;
+
+            &::before {
+              margin-right: .3em;
+            }
+          }
+
+          &.resize {
+            width: 70%;
+
+            &>label {
+              width: calc(100% - 9em);
+
+              &::before {
+                content: 'resize:';
+              }
+            }
+          }
+
+          &.rotate>label {
+            &::before {
+              content: 'rotate:';
+            }
+
+            &>select {
+              text-align: center;
+              width: 4em;
+            }
+          }
+
+          &>.button {
+            background-image: radial-gradient(ellipse at center, transparent 50%, #ffca00);
+            border-radius: 1em;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+            line-height: 2em;
+            margin-left: 1em;
+            text-align: center;
+            width: 5em;
+
+            &.resize {
+              width: 7em;
+            }
+          }
+        }
+      }
+
+      &>.archive {
+        display: none;
+      }
+    }
+
+    &>.greymap,
+    &>.colormap {
+      float: left;
+    }
+
+    &>.greymap {
+      border-color: #4096d9;
+      border-radius: .5em;
+      border-style: inset;
+      border-width: 4px;
+      clear: both;
+      padding-bottom: .5em;
+      padding-right: .33em;
+
+      &::before {
+        background-color: var(--bg-color);
+        border-radius: .33em;
+        content: 'greyscale distribution';
+        margin-left: 1em;
+        position: relative;
+        padding: .1em;
+        top: -.75em;
+      }
+
+      &>div {
+        background-color: #d3d3d344;
+        border-radius: 0 .75em .75em 0;
+        text-overflow: clip;
+        margin-bottom: .2em;
+        margin-left: 0em;
+        flex-flow: nowrap;
+        display: flex;
+        font-size: 80%;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        margin-right: .5em;
+        justify-content: space-between;
+        align-items: center;
+
+        &[tenth="0"]::before {
+          content: '<10%';
+        }
+
+        &[tenth="1"]::before {
+          content: '<20%';
+        }
+
+        &[tenth="2"]::before {
+          content: '<30%';
+        }
+
+        &[tenth="3"]::before {
+          content: '<40%';
+        }
+
+        &[tenth="4"]::before {
+          content: '<50%';
+        }
+
+        &[tenth="5"]::before {
+          content: '<60%';
+        }
+
+        &[tenth="6"]::before {
+          content: '<70%';
+        }
+
+        &[tenth="7"]::before {
+          content: '<80%';
+        }
+
+        &[tenth="8"]::before {
+          content: '<90%';
+        }
+
+        &[tenth="9"]::before {
+          content: '<100%';
+        }
+
+        &[tenth="sum"]::before {
+          content: 'avg';
+        }
+
+        &::before {
+          background-color: #003050;
+          border-radius: 0 .75em .75em 0;
+          color: lightgrey;
+          display: inline-block;
+          font-size: 80%;
+          padding-right: .5em;
+          text-align: right;
+          vertical-align: text-bottom;
+          width: 3.5em;
+        }
+      }
+    }
+
+    &>.colormap {
+      display: none;
+
+      &>div {
+        border: 1px solid;
+        float: left;
+        height: 10px;
+        position: relative;
+        width: 10px;
+      }
+    }
+
+    &>.buttonbar {
+      &>.button.reset {
+        float: left;
+      }
+
+      &>.button.savemore {
+        width: 10em;
+      }
+
+      &>.props {
+        float: right;
+        line-height: 3;
+        /* width: calc(100% - 26em); */
+
+        &>.format {
+          float: left;
+          width: 9em;
+
+          &:before {
+            content: 'format: ';
+          }
+
+          &>select {
+            padding-left: .5em;
+            padding-right: .5em;
+          }
+        }
+
+        &>.quality {
+          float: left;
+          width: calc(100% - 9em);
+
+          &:before {
+            content: 'quality:';
+          }
+
+          &>input {
+            float: none;
+            vertical-align: middle;
+            width: calc(100% - 5em);
+          }
+        }
+      }
+    }
+
+    &.capturing {
+      &>.vidcap {
+        display: block;
+      }
+
+      &>.imgedit,
+      &>.greymap {
+        display: none;
+      }
+
+      &>.viddevs>.rows>.row.record.selected>.device::before {
+        color: red;
+      }
+    }
+  }
+}

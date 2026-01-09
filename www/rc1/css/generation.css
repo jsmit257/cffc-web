@@ -1,0 +1,57 @@
+:root {
+  --generation-area-height: 12em;
+  --sources-area-height: 12em;
+}
+
+.workspace.generation>.table.generation {
+  &.seeking {
+    &>.rows.ndx {
+      height: calc(var(--buttonbar-height) + (var(--generation-area-height) + var(--sources-area-height)) * 4 / 5);
+      margin-bottom: 2em;
+
+      &>.row.record {
+        display: block;
+      }
+    }
+
+    &>.singleton.generation,
+    &>.workspace.sources,
+    &>.buttonbar {
+      display: none;
+    }
+  }
+
+  &>.rows.ndx {
+    z-index: var(--z-ndx);
+  }
+
+  &>.singleton.generation {
+    height: var(--generation-area-height);
+    margin-bottom: 2em;
+    margin-top: -2em;
+    padding-top: 3em;
+
+    &.generation {
+      &>.field {
+        &.progeny {
+          z-index: 1 !important;
+        }
+      }
+    }
+  }
+
+  &>.workspace.sources {
+    float: left;
+    height: auto;
+    margin-top: 1em;
+  }
+
+  &>.buttonbar>.report,
+  &>.buttonbar>.strain {
+    float: left;
+  }
+
+  &>.buttonbar>.strain[strain-id="#"] {
+    visibility: hidden;
+  }
+}

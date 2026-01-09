@@ -1,0 +1,198 @@
+body>.notification {
+  background-color: #3b141482;
+  border-radius: .5em;
+  float: left;
+  padding-bottom: 9em;
+  padding-top: .5em;
+  width: 100%;
+
+  &.auditing {
+    display: block;
+  }
+
+  &>.fieldnames {
+    float: left;
+    font-weight: bold;
+    line-height: 1.4;
+    margin-bottom: .5em;
+    padding-left: .5em;
+    text-align: center;
+    width: 100%;
+
+    &>div {
+      float: inherit;
+      text-decoration: underline;
+    }
+  }
+
+  &>.rows>.row.record {
+    &.error {
+      color: #ffa9a9;
+    }
+
+    &.warn {
+      color: #ffd79f;
+    }
+
+    &.info {
+      color: #aaff9f;
+    }
+
+    &.debug {
+      color: #9fd7ff;
+    }
+
+    &>div {
+      overflow: hidden;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &>.fieldnames,
+  &>.rows>.row.record {
+    &>div {
+      text-align: center;
+
+      &[name="when"] {
+        width: 11em;
+      }
+
+      &[name="action"] {
+        text-align: left;
+        width: 15em;
+      }
+
+      &[name="message"] {
+        text-align: left;
+        width: 48%;
+      }
+
+      &[name="severity"] {
+        width: 5em;
+      }
+
+      &[name="response"] {
+        width: 10em;
+      }
+    }
+  }
+}
+
+/* .notification>.row {} */
+
+body>.alert {
+  background-color: #c2c2c2ee;
+  border-color: #0007;
+  border-radius: 1em;
+  border-style: solid;
+  border-width: 9px;
+  color: #000000;
+  font-size: larger;
+  max-width: 35em;
+  min-width: 30em;
+  padding: .5em;
+  position: absolute;
+  width: 35%;
+  z-index: var(--z-error);
+
+  &::before {
+    background-image: radial-gradient(circle at center, darkgrey 50%, transparent 69%);
+    border-radius: .5em;
+    color: #ffffffb0;
+    content: '?';
+    display: block;
+    float: left;
+    font-size: 400%;
+    height: 1.2em;
+    line-height: 1.2;
+    margin-top: .5em;
+    position: absolute;
+    text-align: center;
+    width: 1.2em;
+  }
+
+  &.error::before {
+    background-image: radial-gradient(circle at center, red 50%, transparent 69%);
+    content: '\d7';
+  }
+
+  &.warn::before {
+    background-image: radial-gradient(circle at center, #df4a00 50%, transparent 69%);
+    content: '!';
+  }
+
+  &.info::before {
+    background-image: radial-gradient(circle at center, green 50%, transparent 69%);
+    content: '!';
+  }
+
+  &.ask::before {
+    background-image: radial-gradient(circle at center, blue 50%, transparent 69%);
+    content: '?';
+  }
+
+  &>.field {
+    margin-left: 6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 22em;
+  }
+
+  &>.dialog-button {
+    align-content: center;
+    background-color: #d1ad6a;
+    border: 2px outset;
+    border-radius: .75em;
+    cursor: pointer;
+    float: right;
+    line-height: 1.5em;
+    margin-left: .5em;
+    text-align: center;
+    width: 4em;
+  }
+
+  &>div {
+    &::before {
+      display: inline-block;
+      width: 3.3em;
+    }
+
+    &[name="message"] {
+      font-style: italic;
+      height: 4em;
+      margin-bottom: 1em;
+      margin-top: .33em;
+      overflow-x: hidden;
+      overflow-y: auto;
+      /* text-overflow: unset; */
+      white-space: break-spaces;
+    }
+
+    &[name="when"]::before {
+      content: 'time:';
+    }
+
+    &[name="severity"]::before {
+      content: 'level:';
+    }
+
+    &[name="action"]::before {
+      content: 'action:';
+    }
+  }
+
+  &>.timeout {
+    color: slategrey;
+    float: left;
+    line-height: 1.5em;
+    text-align: right;
+    width: 2em;
+
+    &::after {
+      content: 's';
+    }
+  }
+}

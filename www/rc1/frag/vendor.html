@@ -1,0 +1,26 @@
+<div class="table vendor soft-delete" x-fetch="vendors" x-target=".rows" breadcrumb="vendor">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+    <div class="column website" sort-key="website">Website</div>
+  </div>
+
+  <div class="rows">
+    <div class="row hover x-template">
+      <label class="field">
+        <input class="name" name="name" tabindex="0">
+      </label>
+
+      <label class="field">
+        <input class="website clickable" name="website" tabindex="0">
+      </label>
+    </div>
+  </div>
+
+  <div class="buttonbar">
+    <div class="button default text action delete"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text control add"></div>
+    <div class="button default text refresh"></div>
+    <div class="button default text report" x-report="vendor"></div>
+  </div>
+</div>

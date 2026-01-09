@@ -1,0 +1,167 @@
+(_ => {
+  const bar = '.buttonbar'
+  const defaults = `${bar}>.default`
+  const static = `:not(.editing, .adding)>${defaults}`
+
+  $(document.body)
+    .on('click', `${defaults}.delete`, e => {
+      e.stopPropagation()
+
+      const baseurl = $(e.currentTarget)
+        .parents('[x-fetch]')
+        .attr('x-fetch')
+        .replace(/^(\/?[^\/]+)s/, '$1')
+
+      const $row = $(e.currentTarget).selected()
+
+      $row.trigger('default-remove', `${baseurl}/${$row.attr('id')}`)
+    })
+    .on('click', `${static}.notes`, e => {
+      e.stopPropagation()
+
+      const $parent = $(e.currentTarget)
+        .parents('.table')
+        .first()
+
+      if (!$parent.hasClass('noting')) $parent
+        .find('>.workspace.note>.table.note')
+        .trigger('fetch')
+        .removeClass('editing adding')
+        .find('.editing')
+        .removeClass('editing adding')
+        .find('.rowbar')
+        .trigger('reset')
+
+      $parent.toggleClass('noting')
+    })
+    .on('click', `${static}.photos`, e => {
+      e.stopPropagation()
+
+      const $parent = $(e.currentTarget)
+        .parents('.table')
+        .first()
+
+      if (!$parent.hasClass('photoing')) $parent
+        .find('>.workspace.photo>.table.photo')
+        .trigger('fetch')
+        .addClass('gallery')
+        .removeClass('detail noting editing adding')
+        .find('.editing')
+        .removeClass('editing adding')
+        .find('.rowbar')
+        .trigger('reset') // XXX: what about this?
+
+      $parent.toggleClass('photoing')
+    })
+    .on('click', `${static}.refresh`, e => {
+      e.stopPropagation()
+
+      $(e.currentTarget)
+        .parents('[breadcrumb][x-target]')
+        .first()
+        .trigger('fetch')
+    })
+    .on('click', `${static}.report`, e => {
+      e.stopPropagation()
+
+      console.log('clicking report', $(e.currentTarget)
+        .parents('[breadcrumb][x-target]')
+        .first())
+
+      $('body>.menubar').trigger('restore', [
+        'reporting',
+        $(e.currentTarget).attr('x-report'),
+        $(e.currentTarget).breadcrumb(),
+      ])
+      // // FIXME: override for events, more or less
+      // sessionStorage[`reports/eventtype/${$table.find('.selected>.eventtype')}`]
+      // $('body>.menubar').trigger('restore', [
+      //   'reporting',
+      //   'eventtype',
+      //   $row.find('>.eventtype>select').val(),
+      // ])
+    })
+    .on('click', `${defaults}.save`, e => {
+      e.stopPropagation()
+
+      const baseurl = $(e.currentTarget.parentNode)
+        .trigger('toggle', e.currentTarget)
+        .parents('[x-fetch]')
+        .attr('x-fetch')
+        .replace(/^(\/?[^\/]+)s/, '$1')
+
+      const body = {}
+      $(e.currentTarget)
+        .selected()
+        .trigger('marshal', body)
+        .trigger('default-update', [
+          `${baseurl}/${body.id}`.replace(/\/$/, ''),
+          {
+            method: body.id ? 'PATCH' : 'POST',
+            body: body,
+          }])
+    })
+    .on('toggle', bar, (e, caller) => {
+      e.stopPropagation()
+
+      const $bar = $(e.currentTarget)
+      if (!caller) {
+        caller = $bar.find('>.edit').get(0)
+      }
+
+      const classes = caller?.className
+      if (/\badd\b/.test(classes)) {
+        $(caller).toggleClass('add cancel').attr({
+          'title': 'cancel',
+          'x-alt': 'add',
+        })
+      } else if (/\bedit\b/.test(classes)) {
+        $(caller).toggleClass('edit cancel').attr({
+          'title': 'cancel',
+          'x-alt': 'edit',
+        })
+      } else {
+        const $btn = $bar.find('[x-alt]')
+        const alt = $btn.attr('x-alt')
+        $btn
+          .toggleClass(`cancel ${alt}`)
+          .attr('title', alt)
+          .removeAttr('x-alt')
+      }
+
+      if ($bar.find('>.action').toggleClass('delete save').hasClass('delete')) {
+        $bar.find('>.action').attr('title', 'delete')
+      } else {
+        $bar.find('>.action').attr('title', 'save')
+      }
+    })
+    .on('click', `${defaults}.control`, e => { // handles add, edit and cancel
+      e.stopPropagation()
+
+      if ($(e.currentTarget).css('cursor') === 'not-allowed') {
+        return // unfortunate consequence of the rest of this being so simple
+      }
+
+      const classes = e.currentTarget.className
+      const $table = $(e.currentTarget.parentNode)
+        .trigger('toggle', e.currentTarget)
+        .parents('[x-target]')
+        .first()
+
+      if (/\badd\b/.test(classes)) {
+        $table
+          .find($table.attr('x-target'))
+          .first()
+          .trigger('new-record')
+      } else if (/\bedit\b/.test(classes)) {
+        $table.selected().trigger('enable-record')
+      } else if ($table.hasClass('adding')) { // button must be cancel
+        $table
+          .removeClass('editing adding')
+          .selected()
+          .trigger('remove-record')
+      } else {
+        $table.trigger('disable-record')
+      }
+    })
+})()

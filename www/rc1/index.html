@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="background-image">
+
+<head>
+  <title>release candidate 1</title>
+
+  <meta charset="UTF-8">
+  <meta name="description" content="watch your fungus grow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+  <!-- <script src="./js/jquery-slim-min.js"></script> -->
+
+  <!-- begin:minify.js -->
+  <script src="./js/proto.js" defer></script>
+  <script src="./js/util.js" defer></script>
+  <script src="./js/index.js" defer></script>
+  <script src="./js/menubar.js" defer></script>
+  <script src="./js/table.js" defer></script>
+  <script src="./js/alert.js" defer></script>
+  <script src="./js/button.js" defer></script>
+  <script src="./js/timestamp.js" defer></script>
+  <!-- end:minify.js -->
+
+  <link rel="manifest" href="./manifest.json">
+
+  <link rel="preload" href="./css/images/background/image.avif" as="image">
+
+  <!-- begin:minify.css -->
+  <link rel="preload" href="./css/index.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/widget.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/menubar.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/table.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/alert.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/button.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/timestamp.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <link rel="preload" href="./css/slider.css" as="style" onload="this.onloqd=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/widget.css">
+    <link rel="stylesheet" href="./css/menubar.css">
+    <link rel="stylesheet" href="./css/table.css">
+    <link rel="stylesheet" href="./css/alert.css">
+    <link rel="stylesheet" href="./css/button.css">
+    <link rel="stylesheet" href="./css/timestamp.css">
+    <link rel="stylesheet" href="./css/slider.css">
+  </noscript>
+  <!-- end:minify.css -->
+</head>
+
+<body>
+  <div class="login"></div>
+
+  <div class="menubar background-image">
+    <div class="ndx">
+      <div class="menubtn" category="main">main</div>
+      <div class="menubtn" category="aux">aux</div>
+      <div class="menubtn" category="reporting">reporting</div>
+    </div>
+
+    <div class="items">
+      <div class="menubtn main" x-stub="lifecycle">lifecycle</div>
+      <div class="menubtn main" x-stub="generation">generation</div>
+      <div class="menubtn main" x-stub="strain">strain</div>
+      <div class="menubtn main" x-stub="substrate">substrate</div>
+      <div class="menubtn main" x-stub="ingredient">ingredient</div>
+      <div class="menubtn main" x-stub="stage">stage</div>
+      <div class="menubtn main" x-stub="vendor">vendor</div>
+      <div class="menubtn main" x-stub="eventtype">eventtype</div>
+
+      <div class="menubtn aux" x-stub="album">gallery</div>
+      <div class="menubtn aux" x-stub="camera">camera</div>
+
+      <div class="menubtn reporting" x-stub="reporting" x-report="lifecycle">lifecycle</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="generation">generation</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="strain">strain</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="substrate">substrate</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="vendor">vendor</div>
+      <div class="menubtn reporting" x-stub="reporting" x-report="eventtype">event type</div>
+    </div>
+  </div>
+
+  <div class="main"></div>
+
+  <div class="table notification" no-breadcrumb>
+    <div class="fieldnames">
+      <div name="when">when?</div>
+      <div name="action">doing what?</div>
+      <div name="message">what happened?</div>
+      <div name="severity">how bad?</div>
+      <div name="response">resolved by?</div>
+    </div>
+
+    <div class="rows">
+      <div class="row x-template">
+        <div name="when" class="field short-date" x-formatter="short-date"></div>
+        <div name="action" class="field"></div>
+        <div name="message" class="field" x-formatter="html"></div>
+        <div name="severity" class="field"></div>
+        <div name="response" class="field">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="cookie-bar background-image">
+      <ul class="list">
+        <li>
+          <label>
+            <input type="checkbox" id="hide-deleted">
+            <span>deleted</span>
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" id="hide-uuid">
+            <span>ID</span>
+          </label>
+        </li>
+        <li>
+          <label for="hide-timestamp">
+            <input type="checkbox" id="hide-timestamp">
+            <span>timestamp</span>
+          </label>
+        </li>
+        <li>
+          <label for="hide-notification">
+            <input type="checkbox" id="hide-notification">
+            <span>notification</span>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <div class="powered-by background-image">
+      <ul>
+        <li>
+          <div class="short-text">Huautla</div>
+          <div class="long-text">
+            <a href="https://github.com/jsmit257/huautla">Huautla</a>
+            <a href="https://jsmit257.github.io/huautla">(README)</a>
+          </div>
+        </li>
+        <li>
+          <div class="short-text">CFFC</div>
+          <div class="long-text">
+            <a href="https://github.com/jsmit257/centerforfunguscontrol">CFFC</a>
+            <a href="https://jsmit257.github.io/centerforfunguscontrol">(README)</a>
+          </div>
+        </li>
+        <li>
+          <div class="short-text">CFFC-Web</div>
+          <div class="long-text">
+            <a href="https://github.com/jsmit257/cffc-web">CFFC-Web</a>
+            <a href="https://jsmit257.github.io/cffc-web">(README)</a>
+            <a href="https://jsmit257.github.io/cffc-web/standalone">(Standalone)</a>
+          </div>
+        </li>
+        <li>
+          <div class="short-text">Userservice</div>
+          <div class="long-text">
+            <a href="https://github.com/jsmit257/userservice">Userservice</a>
+            <a href="https://jsmit257.github.io/userservice">(README)</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="timestamp absolute">
+    <div class="title">
+      <label class="toggle">
+        <input class="relative" type="checkbox" tabindex="0">
+      </label>
+      reference timestamp <span class="tablename"></span>
+    </div>
+
+    <div class="includes">
+      <label>
+        <input class="include mtime" name="mtime" type="checkbox" tabindex="0"> mtime
+      </label>
+      <label>
+        <input class="include ctime" name="ctime" type="checkbox" tabindex="0"> ctime
+      </label>
+      <label>
+        <input class="include dtime" name="dtime" type="checkbox" tabindex="0"> dtime
+      </label>
+    </div>
+
+    <div class="form">
+      <div class="x-template relative">
+        <label>
+          <input type="number" class="delta" min="-60" max="60" value="0" tabindex="0">
+        </label>
+
+        <label>
+          <select tabindex="0">
+            <option value="hour" selected>hour</option>
+            <option value="day">day</option>
+            <option value="week">week</option>
+            <option value="month">month</option>
+            <option value="year">year</option>
+          </select>
+        </label>
+
+        <div class="ctrl delete">--</div>
+      </div>
+    </div>
+    <div class="ctrl add">+</div>
+
+    <label class="absolute">
+      <input type="datetime-local" tabindex="0">
+    </label>
+
+    <div class="buttons">
+      <div class="button cancel text" tabindex="0">cancel</div>
+      <div class="button edit text" tabindex="0">update</div>
+      <div class="button reset text" tabindex="0">reset</div>
+    </div>
+  </div>
+
+  <script type="text/javascript" defer>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register("./js/sw.js").then(
+        (reg) => console.log("Service worker registered:", reg),
+        (err) => console.error(`Service worker registration failed: ${err}`))
+    }
+    $(_ => setTimeout(_ => $(`body>.menubar`).trigger('init'), 50))
+  </script>
+</body>
+
+</html>

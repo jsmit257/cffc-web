@@ -1,0 +1,101 @@
+:root {
+  --event-table-height: 20em;
+}
+
+.workspace.event>.table.event {
+  float: left;
+  width: 100%;
+
+  &>.columns>.full {
+    width: 100%;
+    text-decoration: underline;
+  }
+
+  &>.rows {
+    height: var(--event-table-height);
+  }
+
+  &>.columns,
+  &>.rows>.row {
+    &>.eventtype {
+      /* background-color: #f883; */
+      width: 30%;
+    }
+
+    &>.eventattrs {
+      /* background-color: #8f83; */
+      cursor: default;
+      width: 21%;
+      float: left;
+      text-align: center;
+    }
+
+    &>.severity::after {
+      content: '/';
+    }
+
+    &>:is(.temperature, .humidity) {
+      /* background-color: #f8f3; */
+      width: 14%;
+
+      &>input {
+        text-align: center;
+      }
+    }
+
+    &>:is(.mtime, .ctime) {
+      /* background-color: #ff83; */
+      text-align: center;
+      width: 20%;
+
+      &.ctime {
+        display: none;
+      }
+    }
+  }
+
+  &>.child-table>.table:is(.note, .photo) {
+    border: none;
+    border-radius: 0;
+  }
+
+  &:is(.photoing, .noting) {
+    &>.rows {
+      height: auto;
+
+      &>.row:not(.selected) {
+        display: none;
+      }
+    }
+  }
+
+  &.photoing>.workspace.photo {
+    display: block;
+
+    &>.table.photo {
+      height: calc(var(--event-table-height) - var(--row-line-height));
+
+      &>.rows {
+        /* 1em each top-/bottom-margin + 1em buttonbar + tableborder and change */
+        height: calc(100% - 4em);
+      }
+    }
+  }
+
+  &.noting>.workspace.note {
+    display: block;
+
+    &>.table.note {
+      height: calc(var(--event-table-height) - var(--row-line-height));
+
+      &>.rows {
+        /* 1em each top-/bottom-margin + 1em buttonbar + tableborder and change */
+        height: calc(100% - 4em);
+      }
+    }
+  }
+
+  &>.buttonbar>.button:is(.notes, .photos) {
+    float: left;
+  }
+}

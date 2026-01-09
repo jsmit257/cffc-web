@@ -6,16 +6,8 @@ $(_ => {
     rownames[(len + rownames.indexOf(curr) + Number(dir)) % len])(rownames.length)
 
   $(window)
-    .on('focus', e => {
-      e.stopPropagation();
-
-      $('body>.login').trigger('check-valid')
-    })
-    .on('blur', e => { // cheap logout function, but unlikely use-case
-      e.stopPropagation();
-
-      $('body>.login').trigger('check-valid')
-    })
+    .on('focus', e => (e.stopPropagation(), $('body>.login').trigger('check-valid')))
+    .on('blur', e => (e.stopPropagation(), $('body>.login').trigger('check-valid')))
     .trigger('focus')  // someday i'll figure out why both of these are needed
     .focus()
 
@@ -40,7 +32,7 @@ $(_ => {
           .trigger('forbidden', opts)
           .find('body>.login')
           .trigger('activate')
-      } else if (xhr.status != 302) {
+      } else if (xhr.status != 302 && !/^\/?auth/.test(opts.url)) {
         $(document.body).find('>.notification').trigger('activate', [
           'error',
           `${opts.method} - ${opts.url}`,
@@ -127,31 +119,26 @@ $(_ => {
       .trigger('fetch', [$(n).attr('x-frag'), ...data])))
 
   $('[x-frag]')
-    .on('fetch', (e, frag, ...data) => $(e.currentTarget)
-      .trigger('decorate', [
-        e.currentTarget.attributes['x-style'] || `./css/${frag}.css`,
-        e.currentTarget.attributes['x-script'] || `./js/${frag}.js`
-      ])
-      .trigger('activate', data))
-    // ($.ajax({
-    //   url: `./frag/_${frag}.html`,
-    //   method: 'GET',
-    //   success: html => $(e.currentTarget)
-    //     .empty()
-    //     .html(html)
-    //     .trigger('decorate', [
-    //       e.currentTarget.attributes['x-style'] || `./css/${frag}.css`,
-    //       e.currentTarget.attributes['x-script'] || `./js/${frag}.js`
-    //     ])
-    //     .trigger('activate'),
-    //   error: console.log,
-    // }))
-    .on('decorate', (e, link, script) =>
-      $(document.head).append($('<link>').attr({
+    .on('fetch', (e, frag, ...data) => $.ajax({
+      url: `./frag/${frag}.html`,
+      method: 'GET',
+      success: html => $(e.currentTarget)
+        // .empty()
+        // .html(html)
+        .trigger('decorate', [
+          e.currentTarget.attributes['x-style'] || `./css/${frag}.css`,
+          e.currentTarget.attributes['x-script'] || `./js/${frag}.js`
+        ])
+        .trigger('activate'),
+      error: console.log,
+    }))
+    .on('decorate', (e, link, script) => $(document.head)
+      .append($('<link>').attr({
         href: link,
         rel: 'stylesheet',
         as: 'style',
-      })).append($('<script>').attr({
+      }))
+      .append($('<script>').attr({
         src: script,
         type: 'text/javascript',
       })))

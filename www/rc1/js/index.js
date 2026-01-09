@@ -1,0 +1,207 @@
+$(_ => {
+  const spaces = '.workspace'
+  const hide = '.footer>.cookie-bar>.list>li>label>input'
+  const noretry = ['valid']
+
+  window.fetch = (windowFetch => async (url, params) => windowFetch(url, params).then(resp => {
+    switch (resp.status) {
+      case 502:
+        $(document).trigger(resp.status, [url.replace(/^\/*/, ''), params])
+        break
+      case 403:
+        document.location = resp.headers.get('Location')
+
+      // for historical reasons failed auths send a `redirect` even though
+      // they don't actually redirect at a network level - they're treated
+      // as an alternate sort of success
+      // case 3xx:
+
+      case 400:
+      case 404: // anything special about this one?
+      case 405: // `resp.text()` doesn't matter here
+      case 500:
+      // if we make handlers for above 4xx-5xx statuses, they might need 
+      // to include the response and also need to be async; for now, just
+      // letting them fall through to the client where they can call 
+      // `notify()` from the element that initited the call (if that matters)
+      default:
+      // 2xx (and 3xx and the other 4xx-5xx for the time being)
+      // console.log('not forbidden/bad gateway', resp.status, url, params)
+    }
+
+    return resp
+  }).catch(ex => { throw ex }))(window.fetch)
+
+  fetch('settings/authn_path').then(async resp => {
+    switch (resp.status) {
+      case 404: break // no auth server available, assume that's on purpose
+      case 200: return await resp.json()
+      default: throw {
+        status: resp.status,
+        method: 'GET',
+        url: resp.url,
+        message: await resp.json()
+      }
+    }
+  }).then(valid => $(window)
+    .on('check-valid', e => {
+      fetch(valid.value).then(async resp => {
+        switch (resp.status) {
+          case 204: break
+          case 200: document.location = resp.url
+          default: throw {
+            status: resp.status,
+            message: await resp.text()
+          }
+        }
+      }).catch(({ method, url, ...ex }) => $(document.body).notify('error',
+        `GET ${valid.value} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
+    })
+    .on('focus', e => (e.stopPropagation(), $(window).trigger('check-valid')))
+    .on('blur', e => (e.stopPropagation(), $(window).trigger('check-valid')))
+    .trigger('check-valid')
+  ).catch(ex => console.log('error fetching settings', ex)) // alert isn't available yet
+
+  $(document)
+    .data('retry', [])
+    .on('502', (e, url, params) => {
+      if (url === 'valid') {
+        // disable auth check?
+      } else {
+        // something's really wrong, e.g.: the API host is still authing
+        // but the webserver doesn't have a route to the auth server
+      }
+      throw { // remove this throw when the above is properly implemented
+        status: 502,
+        message: "bad gateway (see index.js)",
+      }
+    })
+    // .on('403', (e, url, params) => {
+    //   noretry.includes(url) || $(e.currentTarget)
+    //     .data('retry')
+    //     .push([url, params])
+    // })
+    .on('retry', e => $(e.delegateTarget)
+      .data('retry')
+      .splice(0)
+      .forEach(fetch))
+    .on('keydown', e => {
+      if (/Control(Left|Right)/.test(e.code)) {
+        $(document.body).addClass('contexting')
+      }
+    })
+    .on('keyup', e => {
+      if (/Control(Left|Right)/.test(e.code)) {
+        $(document.body).removeClass('contexting')
+      }
+    })
+
+  $(document.head)
+    .on('add-script', (e, slug) => {
+      let url = `./js/${slug}.js`
+      fetch(url).then(async resp => {
+        if (!resp.ok) throw {
+          status: resp.status,
+          message: await resp.text()
+        }
+        return resp.text()
+      }).then(text =>
+        $('<script>')
+          .attr('name', slug)
+          .text(text)
+          .appendTo(e.currentTarget)
+      ).catch(ex => $(e.currentTarget).notify('error',
+        `GET ${url} statusCode: ${ex.status ?? 'unsent'}`,
+        ex,
+      ))
+    })
+    .on('add-resource', (e, cfg) => {
+      if (cfg?.src && $(e.currentTarget).find(`script[name="${cfg.src}"]`).length === 0) {
+        $(e.currentTarget).trigger('add-script', cfg.src)
+      }
+
+      if (cfg?.href && $(e.currentTarget).find(`link[href="./css/${cfg.href}.css"]`).length === 0) {
+        $('<link>')
+          .attr({
+            href: `./css/${cfg.href}.css`,
+            rel: 'stylesheet',
+            as: 'style',
+          })
+          .appendTo(e.currentTarget)
+      }
+    })
+
+  $(document.body)
+    .on('activate', `>.main>${spaces}`, (e, slug) => {
+      e.stopPropagation()
+
+      const $space = $(e.currentTarget)
+      if ($space.hasClass('active')) {
+        return
+      }
+
+      $space
+        .addClass('active')
+        .siblings('.active')
+        .removeClass('active')
+    })
+    .on('activate', '.workspace', (e, slug) => {
+      e.stopPropagation()
+
+      $(e.currentTarget)
+        .find(`>.table.${slug}[x-fetch]`)
+        .trigger('fetch')
+    })
+    .on('add-child', '[x-child]', (e, resolve = _ => _) => {
+      e.stopPropagation()
+
+      let slug = e.currentTarget.attributes['x-child'].value
+      $(document.head).trigger('add-resource', {
+        src: slug,
+        href: slug,
+      })
+
+      let url = `./frag/${slug}.html`
+      fetch(url)
+        .then(async resp => {
+          if (resp.status !== 200) throw {
+            url: resp.url,
+            status: resp.status,
+            message: await resp.text(),
+          }
+          return await resp.text()
+        })
+        .then(html => $(e.currentTarget)
+          .removeAttr('x-child') // once is enough
+          .append($(html))
+          .trigger('grandchildren', slug)
+          .trigger('activate', slug))
+        .then(resolve)
+        .catch(ex => $(e.currentTarget).notify('error', `GET ${url}`, ex))
+    })
+    .on('grandchildren', spaces, (e, slug) => {
+      e.stopPropagation()
+
+      $(e.currentTarget)
+        .find(`>.table.${slug} [x-child]`)
+        .trigger('add-child')
+    })
+    .on('click', `>${hide}`, e => {
+      localStorage[e.currentTarget.id] = e.currentTarget.checked
+
+      $(document.body)[e.currentTarget.checked // withClass doesn't exist yet
+        ? 'addClass'
+        : 'removeClass'
+      ](e.currentTarget.id)
+    })
+
+  if (typeof localStorage['hide-notification'] === 'undefined') {
+    localStorage['hide-notification'] = true
+  }
+
+  Array('deleted', 'uuid', 'timestamp', 'notification')
+    .map(v => `hide-${v}`)
+    .forEach(id => localStorage[id] === 'true' && $(`body>${hide}#${id}`).click())
+})

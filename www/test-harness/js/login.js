@@ -5,7 +5,7 @@ $(_ => $('body>.login')
     .find('input#username')
     .val(username)
     // - sets login-menu>control text 
-    // - re-sets localStorage
+    // - re-sets sessionStorage
     // - if found, sets login ID attr
     .trigger('keyup'))
   .on('check-valid', e => $.ajax({
@@ -13,9 +13,8 @@ $(_ => $('body>.login')
     method: 'GET',
     statusCode: {
       302: _ => $(e.currentTarget).trigger('deactivate'),
-      403: _ => $(e.delegateTarget).trigger('activate'),
+      403: _ => $(e.currentTarget).trigger('activate'),
     },
-    // error: _ => _,
   }))
   .on('activate', e => {
     if ($('body').hasClass('authing')) {
@@ -116,11 +115,11 @@ $(_ => $('body>.login')
     $(e.currentTarget).data('last', now) // here, or in success only?
 
     $.ajax({
-      url: `/auth/${val}`,
+      url: `auth/${val}`,
       method: "GET",
       success: auth => {
         $login.attr('id', auth.id)
-        localStorage.setItem("username", val)
+        sessionStorage.setItem("username", val)
       },
       error: _ => $login
         .removeAttr('id')
@@ -149,7 +148,7 @@ $(_ => $('body>.login')
     let $login = $(e.delegateTarget)
 
     $.ajax({
-      url: "/auth",
+      url: "auth",
       method: 'POST',
       data: JSON.stringify({
         id: $login.attr('id'),
@@ -312,4 +311,4 @@ $(_ => $('body>.login')
     .find('>.form')
     .removeClass('forgetting'))
 
-  .trigger('init', localStorage.username))
+  .trigger('init', sessionStorage.username))

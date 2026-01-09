@@ -1,0 +1,154 @@
+.contexting [ts-edit] label:is(.mtime, .ctime) {
+  /* background-color: #00ff000c; */
+  z-index: var(--z-enabled);
+}
+
+.timestamp {
+  background-color: #022845ed;
+  border-color: ghostwhite;
+  border-radius: .75em;
+  border-style: inset;
+  border-width: 2px;
+  font-size: smaller;
+  padding: .5em;
+  position: absolute;
+  width: 375px !important;
+  z-index: 1;
+
+  &.relative>.title>.toggle::after {
+    content: 'hide';
+  }
+
+  &.absolute {
+    line-height: 5;
+
+    &>.absolute {
+      display: inline;
+    }
+  }
+
+  &.absolute>.title>.toggle::after {
+    content: 'show';
+  }
+
+  &>div {
+    float: left;
+
+    &.title {
+      font-style: italic;
+      line-height: initial;
+      margin-bottom: 0.3em;
+      opacity: .6;
+      text-align: center;
+      width: 100%;
+    }
+  }
+
+  & input,
+  & select {
+    appearance: auto;
+    font-size: initial;
+    text-align: center;
+  }
+
+  & option {
+    background-color: #663558dd;
+  }
+
+  &>.includes {
+    font-variant: small-caps;
+
+    &>label {
+      display: block;
+      line-height: 1;
+    }
+  }
+
+  &>.form>.relative {
+    border-bottom: 1px solid white;
+    border-radius: .5em;
+    line-height: 1;
+    width: 100%;
+
+    &>label {
+      &>input {
+        text-align: center;
+      }
+
+      &>select {
+        text-align: left;
+      }
+    }
+  }
+
+
+  & .ctrl {
+    background-color: #db0000;
+    border: 2px solid orangered;
+    border-radius: .453em;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1;
+    margin-left: .5em;
+    text-align: center;
+    width: 1em;
+
+    &.add {
+      background-color: #0000be;
+      margin-left: 0.5em;
+      margin-top: 3px;
+      border: 2px solid cyan;
+    }
+  }
+
+  &>.buttons {
+    line-height: 1;
+    margin-top: .5em;
+    width: 100%;
+
+    &>div {
+      border-radius: .5em;
+      border-style: outset;
+      border-width: 3px;
+      cursor: pointer;
+      float: right;
+      font-size: smaller;
+      margin-left: 2%;
+      text-align: center;
+      width: 4em;
+
+      &.reset {
+        float: left;
+      }
+    }
+  }
+}
+
+/* ??? */
+.timestamp .relative.plural option::after {
+  content: 's';
+  /* background: orange; */
+  /* float: left; */
+  /* display: block; */
+  /* position: absolute; */
+}
+
+.timestamp>.ctrl.add,
+.timestamp>.absolute,
+.timestamp>.form {
+  display: none;
+  float: left;
+}
+
+.timestamp.relative>.ctrl.add,
+.timestamp.relative>.form {
+  display: block;
+}
+
+.timestamp.relative>.form {
+  display: block;
+  height: 5em;
+  margin-left: 2em;
+  overflow-y: auto;
+}

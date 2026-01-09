@@ -2,28 +2,26 @@
   let fmt = (v, r) => v.toFixed ? v.toFixed(r) : v
 
   let $lifecycle = $('body>.main>.workspace>.lifecycle')
-    .on('activate', e => {
-      $('.table.lifecycle select.strains').trigger('refresh')
-
-      $.ajax({
-        url: '/substrates',
-        method: 'GET',
-        success: data => $table
-          .find('>.row>.field>.substrate')
-          .send(data),
-        error: (xhr, status, err) => $('body>.notification').trigger('activate', [
-          'error',
-          `GET - /substrates`,
-          err,
-        ]),
+    .one('activate', _ => {
+      $tableremove.get(0).jsonData = ($ndx, $fields) => JSON.stringify({
+        id: $ndx.find('>.selected').attr('id'),
+        location: $fields.find('>.location').val(),
+        strain_cost: $fields.find('>.strain_cost').val(),
+        grain_cost: $fields.find('>.grain_cost').val(),
+        bulk_cost: $fields.find('>.bulk_cost').val(),
+        yield: $fields.find('>.yield').val(),
+        count: $fields.find('>.count').val(),
+        gross: $fields.find('>.gross').val(),
+        strain: $fields.find('>.strains>option:selected').data('record'),
+        grain_substrate: $fields.find('>.grain_substrate>option:selected').data('record'),
+        bulk_substrate: $fields.find('>.bulk_substrate>option:selected').data('record'),
       })
-
-      $ndx.trigger('refresh')
     })
+    .on('activate', e => $ndx.trigger('refresh'))
 
   let $ndx = $lifecycle.find('.table.lifecycle>.rows.ndx')
     .on('add', e => {
-      $table
+      $tableremove
         .trigger('send')
         .trigger('set-editing', 'add')
 
@@ -45,21 +43,40 @@
         .removeClass('selected')
         .click()
     })
-    .on('click', '>.row', e => {
-      if (e.isPropagationStopped()) {
-        return false
-      }
-
-      $table
+    .on('click', '>.row', e => e.isPropagationStopped()
+      || $tableremove
         .trigger('set-editing', false)
-        .trigger('refresh', { url: `/lifecycle/${$(e.currentTarget).attr('id')}` })
-    })
+        .trigger('refresh', { url: `/lifecycle/${$(e.currentTarget).attr('id')}` }))
 
-  let $table = $lifecycle.find('.table.lifecycle>.rows.lc')
+  let $tableremove = $lifecycle.find('.table.lifecycle>.rows.lc')
     .off('click')
     .off('send')
+    .on('refresh-substrate', e => $.ajax({
+      url: '/substrates',
+      method: 'GET',
+      success: data => {
+        let $sub = $(e.currentTarget).find('>.row>.field>.substrate')
+        let val = $sub.val()
+
+        $sub
+          .each((_, v) => v.saveid = v.value)
+          .send(data)
+          .each((_, v) => v.value = v.saveid)
+
+      },
+      error: (xhr, status, err) => xhr.status === 403 ||
+        $('body>.notification').trigger('activate', [
+          'error',
+          `GET - /substrates`,
+          err,
+        ]),
+    }))
     .on('send', (e, lc = {
-      strain: { name: 'New', vendor: {} },
+      strain: {
+        name: 'New',
+        vendor: {},
+        ctime: 'singularity'
+      },
       grain_substrate: { vendor: {} },
       bulk_substrate: { vendor: {} },
       mtime: new Date().toISOString(),
@@ -86,13 +103,19 @@
         .find('.columns>.column>span.title')
         .text(`${lc.strain.name} - ${new Date(lc.ctime).toLocaleString()}`)
 
-      fields.forEach(n => $table.find(`>.row>.field>.${n}`).val(lc[n] || 0))
+      simpletxt.forEach(n => $table.find(`>.row>.field>.${n}`).val(lc[n] || 0))
 
       $table.find('.row>.field>.yield').trigger('change')
 
-      $table.find('.row>.field>.strains').val(lc.strain.id)
-      $table.find('.row>.field>.grain_substrate').val(lc.grain_substrate.id)
-      $table.find('.row>.field>.bulk_substrate').val(lc.bulk_substrate.id)
+      $table.find('.row>.field>.strains')
+        .send(lc.strain)
+        .val(lc.strain.id)
+      $table.find('.row>.field>.grain_substrate')
+        .send(lc.grain_substrate)
+        .val(lc.grain_substrate.id)
+      $table.find('.row>.field>.bulk_substrate')
+        .send(lc.bulk_substrate)
+        .val(lc.bulk_substrate.id)
 
       $table.find('.row>.field>.mtime').trigger('format', lc.mtime)
       $table.find('.row>.field>.ctime').trigger('format', lc.ctime)
@@ -103,21 +126,29 @@
         .removeClass('noting photoing')
     })
     .on('change', '.yield, .count, .gross', e => {
-      let gross = $(e.delegateTarget).find('>.row>.field>.gross').val()
-      let count = $(e.delegateTarget).find('>.row>.field>.count').val()
-      let yield = $(e.delegateTarget).find('>.row>.field>.yield').val()
+      let $fields = $(e.delegateTarget).find('>.row>.field')
+      let gross = $fields.find('>.gross').val()
+      let count = $fields.find('>.count').val()
+      let yield = $fields.find('>.yield').val()
 
-      $table.find('.row>.field>.dry-weight').text(fmt(yield / gross * 100, 3))
-      $table.find('.row>.field>.per-kilo').text(fmt(count / yield * 1000, 2))
+      $fields.find('>.dry-weight').text(fmt(yield / gross * 100, 3))
+      $fields.find('>.per-kilo').text(fmt(count / yield * 1000, 2))
     })
-    .on('edit', (e, args) => $(e.currentTarget)
-      .trigger('set-editing', 'edit')
-      .find('>.row>.field>.mtime')
-      .trigger('format', new Date().toISOString()))
+    .on('edit', (e, args) => {
+      let $fields = $(e.currentTarget)
+        .trigger('set-editing', 'edit')
+        .find('>.row>.field')
+
+      $fields.find('>.mtime').trigger('format')
+    })
     .on('set-editing', (e, status) => {
       e.stopPropagation()
 
       let $table = $(e.currentTarget)
+
+      status && $table
+        .trigger('refresh-substrate')
+        .find('>.row>.field>.strains').trigger('refresh')
 
       $table[!status ? "removeClass" : "addClass"](`editing ${status || "add edit"}`)
         .parent()
@@ -143,55 +174,27 @@
 
   let $tablebar = $lifecycle.find('.table.lifecycle>.buttonbar')
     .on('click', '>.edit.active', e => {
-      $table.trigger('edit', {
+      let $fields = $tableremove.find('>.row>.field')
+      console.log()
+      $tableremove.trigger('edit', {
         url: `/lifecycle/${$ndx.find('>.selected').attr('id')}`,
-        cancel: _ => $table.trigger('resend'),
-        data: _ => JSON.stringify({
-          id: $ndx.find('>.selected').attr('id'),
-          location: $table.find('.row>.field>.location').val(),
-          strain_cost: parseFloat($table.find('.row>.field>.strain_cost').val()) || 0,
-          grain_cost: parseFloat($table.find('.row>.field>.grain_cost').val()) || 0,
-          bulk_cost: parseFloat($table.find('.row>.field>.bulk_cost').val()) || 0,
-          yield: parseFloat($table.find('.row>.field>.yield').val()) || 0,
-          count: parseFloat($table.find('.row>.field>.count').val()) || 0,
-          gross: parseFloat($table.find('.row>.field>.gross').val()) || 0,
-          strain: {
-            id: $table.find('.row>.field>.strains').val(),
-          },
-          grain_substrate: {
-            id: $table.find('.row>.field>.grain_substrate').val(),
-          },
-          bulk_substrate: {
-            id: $table.find('.row>.field>.bulk_substrate').val(),
-          },
-        }),
-        success: _ => $table.trigger('set-editing', false),
-        error: console.log, //_ => $table.trigger('resend'),
+        cancel: _ => $tableremove.trigger('resend'),
+        data: _ => $tableremove.get(0).jsonData($ndx, $fields),
+        success: data => $tableremove
+          .trigger('set-editing', false)
+          // data doesn't have events, so we have to set the time this way
+          .find('>.row>.field>.mtime')
+          .trigger("format", data.mtime),
+        error: console.log,
       })
     })
     .on('click', '>.add.active', e => {
+      let $fields = $tableremove.find('.row>.field')
       $ndx.trigger('add', {
         cancel: _ => $ndx.trigger('remove-selected'),
-        data: _ => JSON.stringify({
-          location: $table.find('.row>.field>.location').val(),
-          strain_cost: parseFloat($table.find('.row>.field>.strain_cost').val()) || 0,
-          grain_cost: parseFloat($table.find('.row>.field>.grain_cost').val()) || 0,
-          bulk_cost: parseFloat($table.find('.row>.field>.bulk_cost').val()) || 0,
-          yield: parseFloat($table.find('.row>.field>.yield').val()) || 0,
-          count: parseFloat($table.find('.row>.field>.count').val()) || 0,
-          gross: parseFloat($table.find('.row>.field>.gross').val()) || 0,
-          strain: {
-            id: $table.find('.row>.field>.strains').val(),
-          },
-          grain_substrate: {
-            id: $table.find('.row>.field>.grain_substrate').val(),
-          },
-          bulk_substrate: {
-            id: $table.find('.row>.field>.bulk_substrate').val(),
-          },
-        }),
+        data: _ => $tableremove.get(0).jsonData($ndx, $fields),
         success: _ => $ndx.trigger('refresh'),
-        error: _ => $ndx.trigger('remove-selected'),
+        error: _ => $ndx.trigger('remove-selected'), // FIXME: this isn't working
       })
     })
     .on('click', '.remove.active', _ => $ndx.trigger('delete'))
@@ -206,7 +209,7 @@
           .toggleClass('noting')
           .hasClass('noting')
         ) {
-          $notes.trigger('refresh', ($table.data('row') || {}).id)
+          $notes.trigger('refresh', ($tableremove.data('row') || {}).id)
         }
       },
     })
@@ -222,19 +225,18 @@
 
   let $notes = $('body>.template>.notes')
     .clone(true, true)
-    .insertAfter($table)
+    .insertAfter($tableremove)
 
   let $events = $('body>.template>.table.events')
     .clone(true, true)
     .appendTo($lifecycle)
     .find('>div.rows')
-    .on('send', (e, ...ev) => {
-      $tablebar.find('.remove')[(ev.length !== 0 ? "removeClass" : "addClass")]('active')
-    })
+    .on('send', (e, ...ev) => $tablebar
+      .find('.remove')[(ev.length !== 0 ? "removeClass" : "addClass")]('active'))
     .trigger('initialize', {
       parent: 'lifecycle',
-      $owner: $table,
+      $owner: $tableremove,
     })
 
-  let fields = ['id', 'location', 'strain_cost', 'grain_cost', 'bulk_cost', 'yield', 'count', 'gross']
+  let simpletxt = ['id', 'location', 'strain_cost', 'grain_cost', 'bulk_cost', 'yield', 'count', 'gross']
 })()

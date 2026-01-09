@@ -1,0 +1,23 @@
+<div class="table ingredient" x-fetch="ingredients" x-target=">.rows" breadcrumb="ingredient">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+  </div>
+
+  <div class="rows">
+    <div class="row hover x-template">
+      <label class="field name">
+        <input class="name" name="name" tabindex="0">
+      </label>
+    </div>
+  </div>
+
+  <div class="buttonbar">
+    <div class="button insub edit expand" title="edit">&#8286;</div>
+    <div class="button insub done collapse" title="done">&times;</div>
+
+    <div class="button default text action delete"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text control add"></div>
+    <div class="button default text refresh"></div>
+  </div>
+</div>

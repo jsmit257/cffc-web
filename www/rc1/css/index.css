@@ -1,0 +1,233 @@
+:root {
+  --bg-color: #0a1020;
+  --fg-color: aliceblue;
+  --color-disabled: color-mix(in srgb, var(--fg-color) 50%, transparent);
+
+  /* highest order, above everything */
+  --z-error: 7;
+  /* 2nd most important data */
+  --z-login: 5;
+  /* dunno about this one yet */
+  --z-info: 3;
+  /* just above the (always-)enabled labels; for menus, footers, etc */
+  --z-menu: 2;
+  /* indices float between singletons/children and menus */
+  --z-ndx: 1;
+  /* 
+   instead of disabled/readonly inputs, just bury them when they should 
+   be inactive, and raise them when they're editable; technically then, 
+   they're still editable, but they're hard to focus, selects only have
+   a single option and the save button is inactive
+   */
+  --z-enabled: 1;
+  --z-disabled: -1;
+  --body-min-width: 80em;
+
+  /* random punctuation */
+  --css-bullet: '\2022';
+  /* \2734 ✴ \263c ? \157bc 🞼 \2747 ❇ \2748 ❈ */
+  --css-camera: '\263c';
+  --css-inherits: '\2190';
+
+  /* control buttons */
+  /* \25ba ► \25b6 ▶ \2bc8 ⯈ */
+  --css-list-collapsed: '\25b6';
+  /* \25bc ▼ \2bc6 ⯆ */
+  --css-list-expanded: '\25bc';
+  --css-sort-asc: '\2191';
+  --css-sort-desc: '\2193';
+}
+
+.background-image {
+  background-attachment: fixed;
+  background-color: var(--bg-color);
+  background-image: linear-gradient(var(--bg-color)), url(./images/background/image.avif);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: hard-light;
+}
+
+* {
+  color: var(--fg-color);
+  position: relative;
+}
+
+html {
+  /* color: aliceblue; */
+  /* font-size: 125%; */
+  /* height: 100%; */
+  line-height: 1.25;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+  min-width: var(--body-min-width);
+}
+
+body {
+  margin-left: auto;
+  margin-right: auto;
+
+  &>.timestamp,
+  & .x-template {
+    display: none;
+  }
+
+  &.contexting .context {
+    cursor: zoom-in;
+  }
+
+  &.ts-editing>.timestamp {
+    display: block;
+  }
+
+  &>.login,
+  &>.menubar,
+  &>.main,
+  &>.footer {
+    float: left;
+    min-width: var(--body-min-width);
+    width: 100%;
+  }
+
+  &>.main {
+    margin-bottom: 9em;
+    margin-top: 3.2em;
+    /* max-height: 50em; */
+    width: 100%;
+
+    & .workspace {
+      display: none;
+      float: left;
+      width: 100%;
+    }
+
+    & .workspace.active {
+      display: block;
+      /* width: 100%; */
+    }
+
+    & .workspace>.table {
+      border-width: 0;
+      border-color: #462a70;
+      border-left-width: 1px;
+      border-radius: 1em 1em 0 0;
+      border-style: solid;
+      border-top-width: 1px;
+      float: left;
+      position: relative;
+      width: 100%;
+    }
+  }
+
+  &.selecting>.main {
+    display: none;
+  }
+
+  &.hide-deleted [dtime],
+  &.hide-timestamp .scalar:is([sort-key="mtime"], [sort-key="ctime"]),
+  &.hide-uuid .scalar[sort-key="id"],
+  &.hide-notification>.table.notification {
+    display: none;
+  }
+
+  &>.footer {
+    /* background-color: red; */
+    bottom: 0;
+    float: left;
+    left: 0;
+    position: fixed;
+    z-index: var(--z-disabled);
+
+    &>ul {
+      float: left;
+    }
+
+    &>.powered-by,
+    &>.cookie-bar {
+      z-index: var(--z-menu);
+    }
+
+    &>.cookie-bar {
+      background-image: radial-gradient(ellipse at bottom left, var(--bg-color) 70%, transparent);
+      border-radius: 0 4em 0 0;
+      float: left;
+      width: 11em;
+
+      & input[type="checkbox"] {
+        appearance: auto;
+      }
+
+      &>.list::before {
+        bottom: 1em;
+        content: 'Hide';
+        font-weight: bolder;
+        line-height: 2em;
+        width: 100%;
+      }
+
+      &>.list {
+        display: flex;
+        flex-direction: column;
+        list-style-type: none;
+        margin: 0;
+        margin-bottom: 1em;
+
+        &>li {
+          &>input {
+            clear: left;
+            float: left;
+            margin-bottom: .5em;
+          }
+
+          &>label {
+            clear: right;
+            cursor: pointer;
+            /* float: left; */
+            /* width: 8em; */
+          }
+        }
+      }
+    }
+
+    &>.powered-by {
+      background-image: radial-gradient(ellipse at bottom right, var(--bg-color) 70%, transparent);
+      border-radius: 4em 0 0;
+      bottom: 0;
+      float: right;
+      padding-right: 1em;
+      position: relative;
+
+      &>div {
+        display: inline-block;
+      }
+
+      &>ul {
+        margin-left: 6em;
+        vertical-align: middle;
+
+        & .long-text {
+          display: none;
+        }
+      }
+
+      &>ul::before {
+        content: 'Powered by:';
+        float: left;
+        font-style: italic;
+        line-height: 4.5em;
+        margin-left: -7em;
+      }
+    }
+
+    &>.powered-by:hover>ul {
+      & .long-text {
+        display: block;
+      }
+
+      & .short-text {
+        display: none;
+      }
+    }
+  }
+}

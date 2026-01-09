@@ -1,0 +1,211 @@
+:root {
+  --default-table-height: 30em;
+  /* TODO: does this go in index.css, or does .workspace>.table go here? */
+  --table-border-left-width: 1px;
+
+  --column-line-height: 3em;
+  --row-line-height: 2em;
+}
+
+.main>.workspace>.table>.rows:not(.ndx) {
+  height: var(--default-table-height);
+}
+
+.table {
+
+  &.editing {
+    &>.rows.ndx>.row.record.selected>.status::after {
+      content: '(edit)';
+    }
+
+    &.adding>.rows.ndx>.row.record.selected>.status::after {
+      content: 'new';
+    }
+  }
+
+  &>.child-table {
+    /* make shared borders overlap */
+    margin-left: calc(-1 * var(--table-border-left-width));
+  }
+
+  &>* {
+    float: left;
+    /* line-height: 2; */
+    width: 100%;
+  }
+
+  & .field {
+    display: inline-block;
+    height: 2em;
+    line-height: 2;
+    position: relative;
+    z-index: -1;
+
+    &>input,
+    &>select {
+      float: left;
+      line-height: inherit;
+      position: relative;
+      width: 100%;
+    }
+  }
+
+  & .hover:not(.selected):hover {
+    background-image: linear-gradient(0, transparent, #aaa1, transparent);
+    border-radius: 25px;
+    cursor: pointer;
+  }
+
+  & .selected {
+    background-image: linear-gradient(0deg, transparent, #fff2, transparent);
+  }
+
+  &>.columns {
+    line-height: var(--column-line-height);
+    text-align: center;
+
+    &>.column {
+      color: #abc;
+      cursor: default;
+      float: left;
+      font-size: 110%;
+      font-weight: bolder;
+
+      &[sort-key] {
+        cursor: pointer;
+
+        &::after {
+          color: #fff8;
+          padding-left: 1em;
+        }
+
+        &[sort-order]::after {
+          content: var(--css-sort-asc);
+        }
+
+        &[sort-order="-1"]::after {
+          content: var(--css-sort-desc);
+        }
+      }
+    }
+  }
+
+  &>.rows {
+    overflow-y: auto;
+    overflow-x: initial;
+
+    &.ndx {
+      font-size: 125%;
+      font-weight: bolder;
+      overflow-x: clip;
+      overflow-y: auto;
+
+      &>.row.record {
+        cursor: pointer;
+        display: none;
+
+        &.selected {
+          display: block;
+        }
+
+        &>div {
+          cursor: inherit;
+          float: left;
+          padding-left: .33em;
+          padding-right: .33em;
+
+          &.mdash {
+            line-height: 1.75;
+          }
+        }
+      }
+    }
+
+    &>.row {
+      border-radius: 1em;
+      line-height: 2em;
+      float: left;
+      width: 100%;
+      position: relative;
+      padding-left: .5em;
+
+      &[dtime] {
+        background-image: linear-gradient(0, transparent, #fbb4, transparent);
+      }
+
+      &.editing {
+        &>.field {
+          z-index: initial;
+        }
+
+        & input,
+        & select {
+          /* appearance: auto; */
+          padding-right: 1em;
+          /* padding-top: .33em; */
+        }
+      }
+
+      &>.static,
+      &>.field {
+        cursor: default;
+        float: left;
+      }
+    }
+  }
+
+  &>.singleton {
+    &>.field {
+      clear: both;
+      display: flex;
+      flex-wrap: nowrap;
+      font-weight: bolder;
+      text-align: left;
+      width: 100%;
+
+      &>div.label {
+        display: inline-block;
+        width: 9em;
+        padding-left: 1em;
+      }
+
+      &>div:is(.dry-weight, .per-kilo, .short-date),
+      &>select,
+      &>input {
+        display: inline-block;
+        width: auto;
+      }
+
+      &>.substrate>option {
+        display: none;
+      }
+
+      &>.bulk.substrate>option[type="bulk"],
+      &>.grain.substrate>option[type="grain"],
+      &>.liquid.substrate>option[type="liquid"],
+      &>.plating.substrate>option[type="plating"] {
+        display: revert;
+      }
+    }
+
+    &.editing {
+      &>.field {
+        z-index: initial;
+      }
+
+      & input,
+      & select {
+        /* appearance: auto; */
+        /* 
+        auto makes too many uncontrollable changes to the bounding-box dimensions
+        so find another way to call attention to the editable state of these controls
+         */
+        padding-right: 1em;
+      }
+
+      & select>option {
+        background-color: var(--bg-color);
+      }
+    }
+  }
+}

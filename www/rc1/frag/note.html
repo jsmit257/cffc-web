@@ -1,0 +1,26 @@
+<div class="table note" x-target=">.rows">
+  <div class="rows" ts-edit="notes">
+    <div class="row x-template">
+      <div class="buttonbar rowbar">
+        <div class="button default icon control edit"></div>
+        <div class="button default icon action delete"></div>
+      </div>
+
+      <label class="field note">
+        <textarea class="note" tabindex="0" name="note"></textarea>
+      </label>
+
+      <label class="field break">
+        <div class="mtime" name="mtime" x-formatter="short-date"></div>
+      </label>
+
+      <label class="field">
+        <div class="ctime" name="ctime" x-formatter="short-date"></div>
+      </label>
+    </div>
+  </div>
+
+  <div class="buttonbar">
+    <div class="button icon add">add note</div>
+  </div>
+</div>

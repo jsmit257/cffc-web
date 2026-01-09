@@ -1,0 +1,68 @@
+<div class="table strain soft-delete" x-fetch="strains" x-target=">.rows" breadcrumb="strain">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+    <div class="column species" sort-key="species">Species</div>
+    <div class="column vendor" sort-key="vendor">Vendor</div>
+    <div class="column ctime" sort-key="ctime">Created At</div>
+    <div class="column saheader">Strain Attributes</div>
+  </div>
+
+  <div class="rows">
+    <div class="row hover x-template">
+      <label class="field name">
+        <input class="name" name="name" tabindex="0">
+      </label>
+
+      <label class="field species">
+        <input class="species" name="species" tabindex="0">
+      </label>
+
+      <label class="field vendor">
+        <select class="vendor" name="vendor" x-fetch="vendors" render-attr="name" tabindex="0"></select>
+      </label>
+
+      <div class="field ctime">
+        <div class="ctime short-date" x-formatter="short-date" name="ctime"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table strainattributes" x-target=">.rows" breadcrumb="strainattribute">
+    <datalist id="strain-attr-names" x-fetch="strainattributenames"></datalist>
+
+    <div class="columns">
+      <div class="column name" sort-key="name">Attribute Name</div>
+      <div class="column value">Value</div>
+    </div>
+
+    <div class="rows">
+      <div class="row hover x-template">
+        <label class="field">
+          <input class="name" name="name" list="strain-attr-names" tabindex="0">
+        </label>
+
+        <label class="field">
+          <input class="value" name="value" tabindex="0">
+        </label>
+      </div>
+    </div>
+
+    <div class="buttonbar">
+      <div class="button default icon control add" title="add"></div>
+      <div class="button default icon control edit" title="edit"></div>
+      <div class="button default icon action delete" title="cancel"></div>
+    </div>
+  </div>
+
+  <div class="child-table workspace photo" x-child="photo"></div>
+
+  <div class="buttonbar">
+    <div class="button default text action delete"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text control add"></div>
+    <div class="button default text refresh"></div>
+    <div class="button default text report" x-report="strain"></div>
+    <div class="button default text photos"></div>
+    <div class="button text gen">gen</div>
+  </div>
+</div>

@@ -57,13 +57,8 @@
           .get()
           .join(' + ')) || 'None') + ` - ${new Date(data.ctime).toLocaleString()}`)(data.sources))
     })
-    .on('click', '>.row', e => {
-      if (e.isPropagationStopped()) {
-        return false
-      }
-
-      $gentable.trigger('refresh', { url: `/generation/${$(e.currentTarget).attr('id')}` })
-    })
+    .on('click', '>.row', e => e.isPropagationStopped()
+      || $gentable.trigger('refresh', { url: `/generation/${$(e.currentTarget).attr('id')}` }))
 
   let $gentable = $generation.find('>.table.generation>.rows[name="editor"]')
     .off('click').off('send')

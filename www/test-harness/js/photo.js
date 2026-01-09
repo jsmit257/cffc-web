@@ -40,6 +40,7 @@ $(_ => {
       $table.find('>.row.removable').remove()
 
       data.forEach(v => {
+        // $table.find('>.row.template')
         $rowtmpl
           .clone(true, true)
           .appendTo($table)
@@ -123,10 +124,10 @@ $(_ => {
 
         other = {
           method: 'POST',
-          data: ((result = new FormData()) => {
+          data: ((result) => {
             result.append('file', file, file.name)
             return result
-          })(),
+          })(new FormData()),
           error: _ => { $selected.remove() },
           processData: false,
           contentType: false,

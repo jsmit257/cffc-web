@@ -12,10 +12,11 @@ body>.main>.footer>.cookie-bar {
   float: left;
   left: 0;
   padding-bottom: .5em;
-  margin-top: 2em;
-  position: fixed;
+  /* margin-top: 2em; */
+  /* position: fixed; */
   background-image: radial-gradient(ellipse at bottom left, var(--background-color) 70%, transparent);
   width: 9em;
+  margin-left: -9em;
 }
 
 body>.main>.footer>.cookie-bar>.list::before {
@@ -27,8 +28,9 @@ body>.main>.footer>.cookie-bar>.list::before {
 
 body>.main>.footer>.cookie-bar>.list {
   list-style-type: none;
-  margin-left: -1em;
-  margin-top: .5em;
+  /* margin-left: -1em; */
+  /* margin-top: .5em; */
+  margin: 0;
 }
 
 body>.main>.footer>.cookie-bar>.list>li>input {

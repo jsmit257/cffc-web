@@ -1,0 +1,49 @@
+<div class="table sources" name="sources" x-target=">.rows" x-formatter="sources" breadcrumb="source">
+  <div class="rows">
+    <div class="row origin-filter">
+      <label class="field">
+        <select class="type static" name="type" tabindex="0">
+          <option value="Spore">Spore</option>
+          <option value="Clone">Clone</option>
+        </select>
+      </label>
+      <div class="full">&nbsp;</div>
+    </div>
+
+    <div class="row x-template">
+      <div class="buttonbar rowbar">
+        <div class="button icon default control edit"></div>
+        <div class="button icon action delete"></div>
+      </div>
+
+      <label class="field origin">
+        <input type="radio" radio-group="origin" name="origin" value="strain" checked tabindex="0">
+        <span>Vendor</span>
+      </label>
+
+      <label class="field strain">
+        <span>Strain</span>
+        <select name="strain" x-fetch="strains" render="strain" tabindex="0"></select>
+      </label>
+
+      <label class="field lifecycle">
+        <span>Lifecycle</span>
+        <select name="lifecycle" x-fetch="lifecycles" render="lifecycle" tabindex="0"></select>
+      </label>
+
+      <label class="field origin">
+        <input type="radio" radio-group="origin" name="origin" value="event" tabindex="0">
+        <span>Local</span>
+      </label>
+
+      <label class="field event">
+        <span>Event</span>
+        <select name="event" x-fetch-multi name="events" render="event" tabindex="0"></select>
+      </label>
+    </div>
+
+    <div class="buttonbar">
+      <div class="button add">sdd source</div>
+    </div>
+  </div>
+</div>

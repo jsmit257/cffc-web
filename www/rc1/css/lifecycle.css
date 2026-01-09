@@ -1,0 +1,80 @@
+.workspace.lifecycle>.table.lifecycle {
+  &.seeking {
+    &>.rows.ndx>.row.record {
+      display: block;
+    }
+
+    &>.singleton.lifecycle,
+    &>.child-table.note,
+    &>.buttonbar {
+      display: none;
+    }
+  }
+
+  &.noting>.singleton.lifecycle {
+    display: none;
+  }
+
+  &.seeking>.rows.ndx,
+  &>.singleton.lifecycle,
+  &>.child-table.note,
+  &>.buttonbar {
+    height: 29rem;
+  }
+
+  &>.singleton.lifecycle,
+  &>.child-table.note,
+  &>.buttonbar {
+    margin-top: -2.5em;
+    padding-top: 2.5em;
+  }
+
+  &>.singleton.lifecycle,
+  &>.child-table.note {
+    width: calc(100% - 6em);
+  }
+
+  &>.rows.ndx {
+    z-index: var(--z-ndx);
+  }
+
+  &>.singleton.lifecycle {
+    &>.field>.dry-weight::after {
+      content: '% dry weight';
+    }
+
+    &>.field>.per-kilo::after {
+      content: '/kg';
+    }
+  }
+
+  &>.child-table.note>.table.note {
+    &>.rows {
+      /*       
+       not a perfect fit, but it's a multiple of row-height with room for 
+       the add button; seems like a fair model for now
+       */
+      height: calc(5 * var(--note-row-height));
+    }
+  }
+
+  &>.buttonbar {
+    float: right;
+    width: 5em;
+
+    &>.button {
+      margin-bottom: .5em;
+      margin-top: .5em;
+      margin-left: 0;
+      clear: both;
+
+      &.notes {
+        margin-bottom: 2em;
+      }
+
+      &.delete {
+        margin-top: 2em;
+      }
+    }
+  }
+}

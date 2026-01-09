@@ -4,9 +4,10 @@
       let $notice = $(e.currentTarget)
         .find('>.row.template')
         .clone(true, true)
+        .data(cfg)
         .toggleClass(`template ${sev}`)
         .insertAfter($(e.currentTarget).find('.fieldnames'))
-      $notice.find('>[name="when"]').text(new Date().toTimeString().slice(0, 8)) // FiXME
+      $notice.find('>[name="when"]').trigger('format', new Date().toISOString()) // FiXME
       $notice.find('>[name="severity"]').text(sev)
       $notice.find('>[name="action"]').text(action)
       $notice.find('>[name="message"]').text(msg)
@@ -31,15 +32,28 @@
     .on('alert', '>.row', (e, cfg) => $(e.currentTarget)
       .clone(true, true)
       .toggleClass('row alert')
-      .appendTo($(document.body).addClass('alerting'))
+      .appendTo($(document.body)
+        .addClass('alerting'))
       .trigger('activate', [$(e.currentTarget), cfg])
       .find('>[name="response"]')
       .remove())
     .on('click', '>.row', e => $(e.currentTarget)
-      .trigger('alert', $(e.currentTarget)))
+      .trigger('alert', $(e.currentTarget).data()))
 
   $(document)
     .on('activate', 'body>.alert', (e, src, cfg = {}) => {
+      cfg ||= $(e.currentTarget).data()
+
+      // let order = (a) => {
+      //   let head = $(e.currentTarget).find(`>[name="${a.shift()}"]`)
+      //   if (a.length === 0) {
+      //     return head
+      //   }
+      //   return $(e.currentTarget)
+      //     .find(`>[name="${head}"]`)
+      //     .insertBefore(order(a))
+      // }
+      // order(['action', 'message', 'severity', 'when'])
       $(e.currentTarget)
         .find('>[name="action"]')
         .insertBefore($(e.currentTarget)
@@ -51,25 +65,12 @@
       if (cfg.timeout) {
         $to.removeClass('template').text(cfg.timeout)
         timeout = setTimeout(_ => $(e.currentTarget)
-          .trigger('deactivate', 'timeout'), cfg.timeout * 1000)
+          .trigger('deactivate', 'timedout'), cfg.timeout * 1000)
         interval = setInterval(_ => $to.text(parseInt($to.text()) - 1), 1000)
       }
 
-      let data = {
-        src: src,
-        timeout,
-        interval,
-        keyups: e => {
-          switch (e.which) {
-            case 27: return $(document.body)
-              .find('>.alert')
-              .trigger('deactivate', 'cancel (kbd)')
-            case 13: return $(document.body)
-              .find('>.alert')
-              .trigger('deactivate', 'ok (kbd)')
-          }
-        },
-      }
+      let data = { src, timeout, interval }
+
       $(e.currentTarget)
         .data(data)
         .css({
@@ -77,17 +78,22 @@
           top: `${(visualViewport.height - e.currentTarget.clientHeight) * .4}px`,
         })
         .append($to.on('click', e => $(e.delegateTarget).trigger('tbd')))
-        .append($('<div>').addClass('cancel dialog-button').text('cancel')
-          .on('click', e => $(e.delegateTarget).trigger('deactivate', 'cancel (mouse)')))
-        .append($('<div>').addClass('ok dialog-button').text('ok')
-          .on('click', e => $(e.delegateTarget).trigger('deactivate', 'ok (mouse)')))
-
-      $(document).on('keyup', data.keyups)
+        .append($('<div>')
+          .addClass('cancel dialog-button')
+          .text('cancel')
+          .on('click', e => $(e.delegateTarget)
+            .trigger('deactivate', 'cancel (mouse)')))
+        .append($('<div>')
+          .addClass('ok dialog-button')
+          .text('ok')
+          .on('click', e => $(e.delegateTarget)
+            .trigger('deactivate', 'ok (mouse)')))
     })
     .on('deactivate', 'body>.alert', (e, resp) => {
-      let data = $(e.currentTarget).data()
-
-      $(document).off('keyup', data.keyups)
+      let data = $(document.body)
+        .removeClass('alerting')
+        .find('>.alert')
+        .data()
 
       data.src.find('>div[name="response"]').text(resp)
       clearTimeout(data.timeout)
@@ -95,6 +101,8 @@
 
       $(e.currentTarget).remove()
     })
-    .on('click', 'body>.alert>.ok', e => $(e.delegateTarget).trigger('deactivate', 'ok'))
-    .on('click', 'body>.alert>.cancel', e => $(e.delegateTarget).trigger('deactivate', 'cancel'))
+    .on('click', 'body>.alert>.ok', e => $(e.delegateTarget) // why don't they work?
+      .trigger('deactivate', 'ok'))
+    .on('click', 'body>.alert>.cancel', e => $(e.delegateTarget)
+      .trigger('deactivate', 'cancel'))
 })()

@@ -5,6 +5,13 @@ html {
   margin-right: auto;
   min-width: 80em;
   width: 60%;
+  /* background-image: linear-gradient( rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9) ), url(./images/background/image.avif); */
+  /* background-attachment: fixed; */
+  /* background-repeat: no-repeat; */
+  /* background-position: center; */
+  /* background-size: cover; */
+  /* background-origin: unset; */
+  /* height: 100%; */
 }
 
 div {

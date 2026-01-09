@@ -1,0 +1,146 @@
+.workspace.sources>.table.sources {
+  float: right;
+  height: var(--sources-area-height);
+
+
+
+
+
+
+
+
+
+  &>.rows {
+    &>.row.record {
+      height: 5em;
+
+      &>.field {
+        align-items: baseline;
+        clear: both;
+        display: flex;
+        flex-wrap: nowrap;
+        float: none;
+
+        &>span {
+          width: 8em;
+        }
+
+        &>select {
+          margin-right: 4em;
+        }
+
+        &>input {
+          appearance: auto;
+          width: auto;
+          left: 0;
+        }
+
+        &.origin {
+          width: 20%;
+          clear: none;
+          float: left;
+
+          &>span {
+            margin-left: 1em;
+            margin-right: 4em;
+          }
+        }
+
+        &:not(.origin) {
+          width: 80%;
+          clear: right;
+        }
+      }
+
+      &>.rowbar {
+        z-index: 1;
+        position: absolute;
+        margin-right: .5em;
+        line-height: 1.5;
+        clear: none;
+        right: 0;
+        top: .5em;
+      }
+
+      &.selected {
+        background-image: radial-gradient(ellipse at top right, #fff3 00%, #fff1 20%, #0000 50%), radial-gradient(ellipse at bottom left, #fff3 00%, #fff1 20%, #0000 50%);
+      }
+
+      &.editing {
+
+        &>.select,
+        &>.input {
+          appearance: auto;
+        }
+      }
+    }
+
+    &>.row.origin-filter {
+      &>label {
+        display: flex;
+        z-index: 1;
+
+        &::before {
+          content: 'Type: ';
+        }
+
+        &>select {
+          margin-left: .5em;
+        }
+      }
+
+      &>.full {
+        text-align: center;
+      }
+    }
+
+    &.empty>.row.origin-filter>label {
+      z-index: initial;
+
+      &>select {
+        appearance: auto;
+      }
+    }
+
+    &>.row.record[origin="event"]>.field.strain,
+    &>.row.record[origin="strain"]>.field:is(.lifecycle, .event) {
+      display: none;
+    }
+
+    &>.buttonbar {
+      width: 100%;
+
+      >.button {
+        float: right;
+        font-style: italic;
+      }
+
+      >.button::after {
+        color: cadetblue;
+        margin-right: .66em;
+        padding-left: 1em;
+        font-weight: bold;
+      }
+
+      &>.add::after {
+        content: var(--css-add);
+      }
+    }
+  }
+
+  &.editing:not(.adding)>.rows>.buttonbar,
+  &>.rows[source-type="clone"]>.buttonbar:nth-child(4),
+  &>.rows>.buttonbar:nth-child(5) {
+    display: none;
+  }
+
+  &.editing:not(.adding)>.rows {
+    &>.origin-filter>.full::before {
+      content: '(editing)';
+    }
+  }
+
+  &.adding>.rows>.origin-filter>.full::before {
+    content: '(adding)';
+  }
+}

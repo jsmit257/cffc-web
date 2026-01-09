@@ -1,0 +1,50 @@
+<div class="table substrate" x-fetch="substrates" x-target=">.rows" breadcrumb="substrate">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+    <div class="column type">
+      <label>
+        Type
+        <select class="type" tabindex="0">
+          <option value="plating">Plating</option>
+          <option value="liquid">Liquid</option>
+          <option value="grain">Grain</option>
+          <option value="bulk">Bulk</option>
+          <option value="all" selected="selected">All</option>
+        </select>
+      </label>
+    </div>
+    <div class="column vendor" sort-key="vendor">Vendor</div>
+    <div class="column ingredient">Ingredients</div>
+  </div>
+
+  <div class="rows">
+    <div class="row hover x-template">
+      <label class="field name">
+        <input class="name" name="name" tabindex="0">
+      </label>
+
+      <label class="field type" render="x-basic">
+        <select class="type static" name="type" tabindex="0">
+          <option value="plating">Plating</option>
+          <option value="liquid">Liquid</option>
+          <option value="grain">Grain</option>
+          <option value="bulk">Bulk</option>
+        </select>
+      </label>
+
+      <label class="field vendor">
+        <select class="vendor" name="vendor" x-fetch="vendors" render-attr="name" tabindex="0"></select>
+      </label>
+    </div>
+  </div>
+
+  <div class="child-table workspace ingredients" x-child="ingredient"></div>
+
+  <div class="buttonbar">
+    <div class="button default text action delete"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text control add"></div>
+    <div class="button default text refresh"></div>
+    <div class="button default text report" x-report="substrate"></div>
+  </div>
+</div>

@@ -1,0 +1,94 @@
+:root {
+  --gallery-image-width: 200px;
+  --gallery-tile-height: var(--gallery-image-width);
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(0, transparent, #bbb3, transparent);
+  /* background-image: radial-gradient(circle, green, transparent 10%), radial-gradient(ellipse, transparent 50%, #00f8); */
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  font-variant: slashed-zero;
+  font-family: system-ui;
+}
+
+.imgtile {
+  cursor: pointer !important;
+  display: flex !important;
+  height: var(--gallery-tile-height) !important;
+  align-items: center;
+  width: auto;
+
+  &>.image {
+    height: auto;
+    width: var(--gallery-image-width);
+  }
+}
+
+.imgtile-fullscreen {
+  align-items: center;
+  bottom: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  overflow-y: auto;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: var(--z-info);
+
+  &>.image {
+    height: auto;
+    width: 75%;
+  }
+}
+
+input,
+select {
+  appearance: none;
+  background-color: transparent;
+  border: 0;
+  color: white;
+  display: inline-block;
+  font-size: large;
+  outline: none;
+  overflow: clip;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+input[type="radio"] {
+  appearance: auto;
+}
+
+input[type="file"] {
+  border-radius: 1em;
+  border-right: 1px solid grey;
+}
+
+input::file-selector-button {
+  background-color: transparent;
+  border: thin solid grey;
+  border-radius: 1em 0.33em 0.33em 1em;
+  border-right: 0;
+  color: #94c9ff;
+  /* font-weight: bold; */
+  padding: 0.33em;
+}
+
+select>option {
+  background-color: var(--bg-color);
+}

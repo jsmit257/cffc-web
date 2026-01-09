@@ -1,0 +1,38 @@
+<div class="table eventtype" x-fetch="eventtypes" x-target=".rows" breadcrumb="eventtype">
+  <div class="columns">
+    <div class="column name" sort-key="name">Name</div>
+    <div class="column severity" sort-key="severity">Severity</div>
+    <div class="column stage" sort-key="stage">Stage</div>
+  </div>
+
+  <div class="rows">
+    <div class="row hover x-template">
+      <label class="field name">
+        <input class="name" name="name" tabindex="0">
+      </label>
+
+      <label class="field severity">
+        <select class="severity static" name="severity" render="x-basic" tabindex="0">
+          <option value=Begin>Begin</option>
+          <option value=Info>Info</option>
+          <option value=Warn>Warn</option>
+          <option value=Error>Error</option>
+          <option value=Fatal>Fatal</option>
+          <option value=RIP>RIP</option>
+          <option value=Generation>Generation</option>
+        </select>
+      </label>
+
+      <label class="field stage">
+        <select class="stages" name="stage" x-fetch="stages" render-attr="name" tabindex="0"></select>
+      </label>
+    </div>
+  </div>
+
+  <div class="buttonbar">
+    <div class="button default text action delete"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text control add"></div>
+    <div class="button default text refresh"></div>
+  </div>
+</div>

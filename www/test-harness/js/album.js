@@ -1,6 +1,6 @@
 (_ => {
   $('body>.main>.workspace>.album')
-    .on('activate', e => fetch('/album', {
+    .on('activate', e => fetch('album', {
       method: 'GET',
     }).then(async (resp) => {
       if (resp.status !== 200) {

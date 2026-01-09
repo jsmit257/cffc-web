@@ -1,0 +1,128 @@
+:root {
+  --buttonbar-height: 4em;
+
+  /* --css-add: '\2295'; */
+  --css-add: '\271a';
+  --css-back: '\21D0';
+  --css-cancel: '\2718';
+  --css-delete: '\2205';
+  --css-edit: '\205E';
+  --css-notes: '\266B';
+  --css-save: '\2714';
+}
+
+.table:is(.editing, .adding) .buttonbar>.button {
+
+  &.notes,
+  &.photos,
+  &.add,
+  &.edit,
+  &.refresh {
+    color: var(--color-disabled);
+    cursor: not-allowed;
+    font-weight: normal;
+  }
+}
+
+.table.noting>.buttonbar>.button:not(.notes),
+.table.photoing>.buttonbar>.button:not(.photos) {
+  visibility: collapse;
+}
+
+.buttonbar {
+  float: left;
+  height: var(--buttonbar-height);
+
+  &>.button {
+    cursor: pointer;
+    text-align: center;
+
+    &.text {
+      background-image: radial-gradient(circle at left, #99ffff5c, transparent 60%), radial-gradient(circle at right, #99ffff5c, transparent 60%);
+      background-image: radial-gradient(ellipse at center, transparent 40%, #99ffff5c);
+      border-radius: 1em 1em 1em 1em;
+      float: right;
+      font-weight: bolder;
+      line-height: 2em;
+      margin-bottom: 1em;
+      margin-left: 2em;
+      margin-top: 1em;
+      width: 5em;
+
+      &.add::before {
+        content: 'add';
+      }
+
+      &.cancel::before {
+        content: 'cancel';
+      }
+
+      &.delete::before {
+        content: 'delete';
+      }
+
+      &.edit::before {
+        content: 'edit';
+      }
+
+      &.notes::before {
+        content: 'notes';
+      }
+
+      &.photos::before {
+        content: 'photos';
+      }
+
+      &.refresh::before {
+        content: 'refresh';
+      }
+
+      &.report::before {
+        content: 'report';
+      }
+
+      &.save::before {
+        content: 'save';
+      }
+    }
+
+    &.icon {
+      font-size: larger;
+
+      &.add::before {
+        color: cadetblue;
+        content: var(--css-add);
+      }
+
+      &.back::before {
+        color: greenyellow;
+        content: var(--css-back);
+      }
+
+      &.cancel::before {
+        color: orange;
+        content: var(--css-cancel);
+      }
+
+      &.delete::before {
+        color: crimson;
+        content: var(--css-delete);
+      }
+
+      &.edit::before {
+        color: cyan;
+        content: var(--css-edit);
+      }
+
+      &.notes::before {
+        color: chartreuse;
+        content: var(--css-notes);
+      }
+
+      &.save::before {
+        color: lightgreen;
+        content: var(--css-save);
+      }
+    }
+  }
+}

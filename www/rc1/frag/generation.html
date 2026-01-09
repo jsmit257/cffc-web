@@ -1,0 +1,54 @@
+<div class="table generation" x-fetch="generations" x-target=">.rows.ndx" breadcrumb="generation">
+  <div class="rows ndx">
+    <div class="row hover x-template">
+      <div class="static ctime" name="ctime" x-formatter="long-date"></div>
+      <div class="mdash">&mdash;</div>
+      <div class="static sources" name="sources" x-formatter="sources"></div>
+      <div class="static status">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="singleton generation" ts-edit="generations">
+    <label class="field hover">
+      <div class="label">Plating</div>
+      <select class="plating substrate" name="plating_substrate" x-fetch-multi="substrates" render="substrate"
+        tabindex="0"></select>
+    </label>
+
+    <label class="field hover">
+      <div class="label">Liquid</div>
+      <select class="liquid substrate" name="liquid_substrate" x-fetch-multi="substrates" render="substrate"
+        tabindex="0"></select>
+    </label>
+
+    <label class="field no-edit hover progeny" hover="go to strain">
+      <div class="label">Progeny</div>
+      <select class="strains progeny no-change" x-fetch="strains" render="strain" tabindex="0">
+        <option value="#" class="permanent null-pointer">&mdash; None &mdash;</option>
+      </select>
+    </label>
+
+    <label class="field hover">
+      <div class="label">Modified</div>
+      <div class="mtime short-date" name="mtime" x-formatter="short-date"></div>
+    </label>
+
+    <label class="field hover">
+      <div class="label">Created</div>
+      <div class="ctime short-date" name="ctime" x-formatter="short-date"></div>
+    </label>
+  </div>
+
+  <div class="buttonbar">
+    <div class="button default text action delete"></div>
+    <div class="button default text control edit"></div>
+    <div class="button default text control add"></div>
+    <div class="button default text refresh"></div>
+    <div class="button default text report" x-report="generation"></div>
+    <div class="button text strain">strain</div>
+  </div>
+
+  <div class="child-table workspace active sources" x-child="source"></div>
+
+  <div class="child-table workspace active event" x-child="event"></div>
+</div>

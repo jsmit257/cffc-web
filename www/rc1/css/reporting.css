@@ -1,0 +1,141 @@
+.report>.entity {
+  width: 100%;
+
+  &>.entity-name {
+    padding-bottom: 1em;
+  }
+
+  &>.list {
+    font-family: monospace;
+    height: 60em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  &>.ndx {
+    border-radius: 15px;
+    border-style: none;
+    float: left;
+    display: none;
+    width: 100%;
+  }
+
+  &>.cliff-notes {
+    display: block !important;
+  }
+
+  /* some customizations */
+  &[name="strain"]>.ndx>.row {
+    &>.name {
+      width: 10em;
+    }
+
+    &>.species {
+      width: 12em;
+    }
+  }
+}
+
+.report .entity {
+  clear: left;
+  float: left;
+  line-height: 1.5;
+  padding-left: 1em;
+
+  &>.ndx>.row {
+    float: left;
+    width: 100%;
+
+    &>div {
+      float: left;
+      margin-right: 1em;
+    }
+  }
+
+  &>.list>.scalar {
+    &>.label {
+      clear: left;
+      float: left;
+      margin-right: .5em;
+      width: 7.5em;
+    }
+
+    &>.value {
+      float: left;
+      max-width: 80%;
+    }
+  }
+
+  &>:is(.entity-name, .cliff-notes) {
+    cursor: pointer;
+    float: left;
+  }
+
+  &>.entity-name {
+    width: 6.6em;
+
+    &::before {
+      content: var(--css-list-expanded);
+      display: block;
+      float: left;
+      margin-left: -1.2em;
+      text-align: center;
+      width: 1em;
+    }
+  }
+
+  &>.cliff-notes {
+    color: #f0f8ff88;
+    float: left;
+    margin-left: .3em;
+    width: fit-content;
+
+    &>div {
+      float: left;
+
+      &::before {
+        content: '\2022';
+        padding-left: .3em;
+        padding-right: .3em;
+      }
+
+      &:first-child::before {
+        content: '';
+        padding: 0;
+      }
+    }
+  }
+
+  &[name="source"]>.cliff-notes>:nth-child(2)::before {
+    content: var(--css-inherits);
+  }
+
+  &.collapsed {
+    &>.ndx {
+      display: block;
+    }
+
+    &>.entity-name::before {
+      content: var(--css-list-collapsed);
+    }
+
+    &>.list {
+      display: none;
+    }
+
+    &>.cliff-notes {
+      color: aliceblue;
+    }
+  }
+}
+
+.entity>.list>.scalar>.label::after,
+.entity.collapsed>.entity-name::after {
+  content: ':';
+}
+
+.entity>.entity-name::first-letter,
+.entity>.list>.scalar>.label::first-letter {
+  text-transform: uppercase;
+}

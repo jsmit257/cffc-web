@@ -1,0 +1,17 @@
+.workspace.vendor>.table.vendor {
+  /* width: 50%; */
+
+  & :is(.columns, .rows>.row)>:is(.column, .field) {
+    width: 50%;
+  }
+
+  /* 
+  &>.rows {
+    height: var(--default-table-height);
+  }
+  */
+
+  &>.buttonbar>.report {
+    float: left;
+  }
+}

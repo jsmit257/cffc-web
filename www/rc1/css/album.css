@@ -1,0 +1,118 @@
+:root {
+  --gallery-rowbar-width: 1em;
+}
+
+.main>.workspace.album>.table.album {
+  &>.rows>.row.record {
+    border-color: lightskyblue;
+    border-style: inset;
+    border-width: 2px;
+    cursor: zoom-in;
+    float: left;
+    margin-left: 10px;
+    margin-top: 10px;
+    width: auto;
+
+    &>.rowbar,
+    &>.detail {
+      display: none;
+    }
+
+    &:hover:not(.selected) {
+      background-image: radial-gradient(circle at center, #fff3, transparent);
+    }
+
+    &.selected {
+      background-image: radial-gradient(circle at center, transparent, #88f3);
+      border-style: outset;
+    }
+
+    &>.imgtile {
+      cursor: zoom-in;
+    }
+
+    &.full {
+      border: none;
+      cursor: zoom-out;
+      height: var(--default-table-height);
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      width: 100%;
+      z-index: var(--z-info);
+
+      &:hover {
+        background-image: initial;
+      }
+
+      &>.rowbar,
+      &>.detail {
+        display: contents;
+      }
+
+      &>.rowbar {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        width: var(--gallery-rowbar-width);
+      }
+
+      &>.imgtile {
+        height: 100% !important;
+
+        &>.image {
+          height: 75%;
+          margin-left: 1em;
+          margin-right: 1em;
+          width: auto;
+        }
+      }
+
+      &>div>.ctime,
+      &>div>.mtime {
+
+        &::before {
+          margin-right: .33em;
+        }
+
+        &>div {
+          display: inline;
+        }
+      }
+
+      &>div>.ctime::before {
+        content: 'Created:'
+      }
+
+      &>div>.mtime::before {
+        content: 'Modified:'
+      }
+
+      &>.owner {
+        float: left;
+
+        &>div {
+          display: inline;
+          margin-right: .33em;
+        }
+
+        &>[name="parenttype"] {
+          text-transform: capitalize;
+
+          &::after {
+            content: ':'
+          }
+        }
+
+        &>[name="link"] {
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}

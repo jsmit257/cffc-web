@@ -1,0 +1,51 @@
+<div class="table photo gallery" x-target=">.rows">
+  <div class="rows" ts-edit="photos">
+    <div class="row x-template">
+      <div class="buttonbar rowbar">
+        <div title="back" class="button icon back"></div>
+        <div title="edit" class="button icon state edit"></div>
+        <div title="delete" class="button icon delete"></div>
+        <div title="notes" class="button default icon notes"></div>
+      </div>
+
+      <div class="field imgtile">
+        <img class="image" name="image" x-image-path="album">
+      </div>
+
+      <label class="imaging break">
+        <input class="photo" type="file" accept="image/*" tabindex="0" multiple></textarea>
+      </label>
+
+      <label class="format imaging break">
+        <select class="no-clear" tabindex="0">
+          <option value="original" selected>original</option>
+          <option value="image/webp">webp</option>
+          <option value="image/png">png</option>
+          <option value="image/jpeg">jpeg</option>
+        </select>
+      </label>
+
+      <label class="scale imaging break">
+        <input class="no-clear" type="number" min="25" max="100" step="1" value="100" tabindex="0">
+      </label>
+
+      <div class="imaging camera">
+        <div class="button icon camera break">camera</div>
+      </div>
+
+      <div class="field break">
+        <div class="mtime" name="mtime" x-formatter="short-date"></div>
+      </div>
+
+      <div class="field break">
+        <div class="ctime" name="ctime" x-formatter="short-date"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="child-table workspace note" x-child="note"></div>
+
+  <div class="buttonbar">
+    <div class="button icon add">new photo</div>
+  </div>
+</div>
